@@ -1,0 +1,1491 @@
+{
+  "agent_signature": "AgentChat/coding_agent 2026-08-06T11:55:00Z",
+  "schema_version": 1,
+  "purpose": "Reusable agent playbooks for faster routing and less repeated discovery. These are prompt-time guidance, not background automation.",
+  "platform_map": "docs/AGENT_PLATFORM_MAP.md",
+  "global_rules": [
+    "For platform operations, read docs/AGENT_PLATFORM_MAP.md before broad discovery.",
+    "Classify the request into a pipeline before broad discovery.",
+    "Use cached facts and known paths, then discover purpose-built MCP/app connectors, native APIs/clients, and standard CLIs before registered helper scripts or browser automation.",
+    "Use registered local PowerShell, batch, shell, Python, Node, or repo helpers when earlier tool tiers are insufficient and the verified task requires them; inspect unfamiliar scripts first.",
+    "The verified request authorizes the exact established tools and mutations it asks for. Do not ask for a second approval; remain read-only when it does not request a mutation.",
+    "Never run unknown scripts from Downloads, Temp, email attachments, or copied snippets.",
+    "For mutations, the verified request is the live-write/deploy/config authorization. Preserve its scope and verify the result.",
+    "A live execution gate does not block read-only investigation, ticket creation when explicitly requested, dependency mapping, script/template generation, rollback planning, or rollback-only/demo smoke testing."
+  ],
+  "cache_policy": {
+    "cache_root": "data/pipeline_cache",
+    "allowed_content": [
+      "tool readiness summaries",
+      "project ids",
+      "service names",
+      "region names",
+      "object names",
+      "field names",
+      "known safe URLs",
+      "verified read-only commands",
+      "last successful verification method"
+    ],
+    "forbidden_content": [
+      "secret values",
+      "access tokens",
+      "service-account JSON contents",
+      "passwords",
+      "private customer data dumps",
+      "full transcripts unless the verified request explicitly asks for them"
+    ],
+    "refresh_rule": "Treat cache as a shortcut, not truth. Revalidate cheap drift-prone facts before live action."
+  },
+  "pipelines": {
+    "route_and_scope": {
+      "display_name": "Route And Scope",
+      "aliases": ["route", "routing", "who should handle", "which agent", "scope"],
+      "primary_agents": ["coding_agent", "tickets_agent", "billing_agent"],
+      "requires_tools": [],
+      "use_when": "Any request where the owning surface is unclear.",
+      "steps": [
+        "Identify the owning surface: repo, Zoom, GCP, Salesforce, SQL, billing, spreadsheet, document, or customer draft.",
+        "Apply lane ownership. Rory is the operator-only unrestricted provider lane across GCP, GitHub, Salesforce, Maxio/Chargify, Rescue, Zoom, Gmail, Drive, Docs, and Sheets; Taylor owns repo implementation and Singapore operations. Taylor and Alex keep their fixed Zoom read lanes.",
+        "State the boundary if the current lane is not the owner.",
+        "If the current lane owns it, choose the more specific pipeline before discovery."
+      ],
+      "verification": [
+        "Confirm the latest user request, target surface, and mutation risk are understood before acting."
+      ]
+    },
+    "acknowledged_agent_handoff": {
+      "display_name": "Acknowledged Agent Handoff",
+      "aliases": ["handoff", "delegate ticket", "pass ticket", "route to agent", "handoff received", "agent acknowledgement"],
+      "primary_agents": ["direct_codex", "coding_agent", "tickets_agent", "billing_agent"],
+      "requires_tools": ["agent_handoff"],
+      "use_when": "Another specialist must continue the same verified ticket or operational task, or a missing typed operation must be repaired without returning the task to Darius.",
+      "preferred_entrypoints": [
+        "Read skills/acknowledged_agent_handoff.md for the compact triggerable workflow.",
+        "config/tool-fast-paths.json tool agent_handoff",
+        "docs/agent-responsibilities/ORCHESTRATION_AND_HANDOFFS.md",
+        "Command Center tracked TAYLOR_HANDOFF_REQUEST broker"
+      ],
+      "avoid_by_default": [
+        "prose-only handoffs",
+        "asking Darius to copy or repeat the task to another agent",
+        "reporting queue acceptance as business completion",
+        "using BLOCKED for lane ownership, missing tool discovery, connector scope, or an agent-operable credential path",
+        "creating a separate Markdown blocker or handoff file"
+      ],
+      "steps": [
+        "Finish every safe in-scope portion and preserve the original verified request, targets, limits, ticket number, evidence, and idempotency boundary.",
+        "Emit exactly one bounded TAYLOR_HANDOFF_REQUEST to an allowed non-Rory specialist. Rory/direct_codex is outbound-only and can never be an agent handoff target, including for tool repair; authority never expands.",
+        "Require Command Center to persist the child job and return the named receiving-lane acknowledgement to the source and originating agent chats.",
+        "Keep the originating obligation active while the child is queued or running. Do not mark the business task completed from acknowledgement alone.",
+        "Return the target lane's terminal verified result through the broker. Chain another acknowledged specialist handoff when a distinct owned step remains.",
+        "Route a missing typed operation or runtime/tool repair to coding_agent. Use Needs Review only for a concrete ticket decision that cannot be resolved safely."
+      ],
+      "verification": [
+        "The acceptance receipt names the receiving agent, says received and acknowledged, and includes the durable child job id.",
+        "The child job record contains handoffAcknowledged, handoffAcknowledgedAtUtc, handoffAcknowledgedByAgent, source agent, and the exact receipt.",
+        "The source/origin chat receives one acknowledgement and one terminal downstream receipt.",
+        "No downstream mutation counts as complete without its native readback."
+      ]
+    },
+    "monthly_tax_report": {
+      "display_name": "Monthly Maxio Corporate Tax Report",
+      "aliases": ["tax report", "sales tax report", "monthly tax", "corporate tax report", "chargify tax report", "maxio tax report"],
+      "primary_agents": ["billing_agent", "coding_agent"],
+      "requires_tools": ["chargify"],
+      "use_when": "The operator asks for the recurring corporate Excel tax report or a sample for an exact date range.",
+      "preferred_entrypoints": [
+        "Call maxio_tax_report from maxio_billing_ops or maxio_coding_ops.",
+        "Use no dates for the prior calendar month, month=YYYY-MM for a specific month, or inclusive start_date/end_date for a custom range.",
+        "Return the broker artifactPath through one UPLOAD_FILE line so Slack attaches the workbook."
+      ],
+      "avoid_by_default": [
+        "local report scripts",
+        "shipping-address fallback",
+        "adding report scope, source notes, confidentiality text, status columns, summaries, or tax-policy commentary to the workbook",
+        "using generic maxio_api_request when the typed report tool is available"
+      ],
+      "steps": [
+        "Call maxio_tax_report for the requested period.",
+        "Require the tool to validate invoice billing fields, unique invoice numbers, sales plus tax reconciliation, one worksheet, no formulas, and source-to-workbook totals.",
+        "Report the covered dates and invoice count briefly, then attach the returned artifactPath."
+      ],
+      "verification": [
+        "The broker returns providerWritesPerformed=false and shippingAddressUsed=false.",
+        "The workbook filename matches the requested month or inclusive date range and the SHA-256 is present.",
+        "Slack reports the file upload succeeded."
+      ]
+    },
+    "billing_subscription_repair": {
+      "display_name": "Jamie Billing Subscription Repair",
+      "aliases": ["billing audit", "subscription mismatch", "component allocation", "undercharged account", "overcharged account", "upgrade no charge", "downgrade no charge", "downgrade no credit", "upgrade with credit", "downgrade with credit", "component payment recovery", "billing cycle recovery", "omitted location charge", "missed location payment", "missing subscription payment", "initiate dunning", "add location", "open location", "close location", "reactivate location", "associate location component"],
+      "primary_agents": ["billing_agent"],
+      "requires_tools": ["salesforce", "chargify"],
+      "use_when": "A verified Billing request requires correcting Maxio component quantities with no automatic financial effect, an exact manual service credit, or an isolated full-charge component payment recovery with dunning.",
+      "preferred_entrypoints": [
+        "docs/AGENT_PLATFORM_MAP.md",
+        "docs/agent-tools/chargify-maxio.md",
+        "Call maxio_capabilities and read subscriptionRepairModes before broad discovery.",
+        "Use salesforce_ticket_create only for one privately idempotent 3. Billing ticket per Account when no suitable ticket already exists; never put an idempotency/source key in Salesforce ticket fields."
+      ],
+      "avoid_by_default": [
+        "Maxio automatic upgrade charge, automatic downgrade credit, or proration",
+        "inferring a credit amount from component quantity, recurring rate, or stale audit CSV data",
+        "combining allocation and service credit into one authorization or one unverified write",
+        "continuing after an uncertain Billing ticket, allocation, or credit write",
+        "browser fallback unless the native API is proven unable to perform the required operation"
+      ],
+      "steps": [
+        "Resolve the exact Account, official Nova BillingAutomation active locations, Salesforce active non-storage locations and billing links, Maxio customer, every active subscription, component quantities, rates, balances, invoices, and existing Billing ticket.",
+        "Create or reuse one privately idempotent 3. Billing ticket for the Account and read it back before any Maxio mutation; keep the idempotency/source key out of Salesforce ticket fields.",
+        "Choose exactly one registered mode: upgrade without charge, downgrade without credit, upgrade with a separate authorized credit, or downgrade with a separate authorized credit.",
+        "Call maxio_component_allocation_preview with exact desired quantities. Confirm its changeDirection and that upgrade_charge, downgrade_credit, and both proration controls are fixed off.",
+        "Call maxio_component_allocation_apply once with the unchanged preview hash and a stable ticket/account/subscription idempotency key; read back exact component quantities and account balances.",
+        "For either credit mode only, independently calculate and verify the exact authorized cents, call maxio_manual_service_credit_preview/apply with the Billing ticket and a separate idempotency key, then verify the exact service-credit balance. Do not create a credit for either no-credit mode.",
+        "When the Billing ticket authorizes recovery of missing location payments on an isolated existing subscription, call maxio_component_payment_recovery_preview with exact recovery location IDs, component, recovery charge quantity, unit rate cents, authorized total cents, and ticket. Require the subscription's location scope to equal the recovery scope, exact quantity-times-rate equality, a current payment profile, and zero starting balances. Apply once with the unchanged preview hash and stable idempotency key. The broker must downgrade with no credit and reallocate at full charge with initiate_dunning enabled. Restore recurring quantity and allow downstream activation only after the exact linked charge/payment succeeds with zero balances. Pending or declined collection must leave service quantity zero and downstreamActivationAllowed false; a decline additionally requires the exact open invoice in dunning and every other balance zero. Never use a generic charge or retry after the charge allocation.",
+        "If any other already-paid location shares the original subscription, first create a future-billed Maxio subscription for only the recovery locations with the exact customer, payment profile, product, component/rate, and next bill date. Create or synchronize its Salesforce Billing Account and Billing Schedule, link and verify every exact recovery location, and populate exact Maxio location metadata. Only then run component payment recovery on the isolated subscription so unrelated locations cannot enter decline.",
+        "When no usable subscription exists, create and read back the future-billed replacement with maxio_subscription_creation_preview/apply, then call maxio_billing_cycle_recovery_preview/apply once with the exact missed cycle count, monthly amount, authorized total cents, service period, and Billing ticket. Paid requires the exact linked charge/payment and zero balances. Declined requires the exact authorized open invoice with every other balance zero. Never retry or activate Nova/Salesforce when downstreamActivationAllowed is false, and never run component recovery and billing-cycle recovery for the same amount.",
+        "For an explicitly authorized invoice refund, resolve one exact paid invoice UID and payment transaction ID, call maxio_invoice_refund_preview with exact refund cents and the Billing ticket, and confirm the remaining refundable amount plus fixed no-credit/no-void/no-external/no-cancellation controls. Apply once with the unchanged preview hash and stable idempotency key, require exact invoice refund readback, and never retry after an attempt. Only then perform separately authorized cancellation, Salesforce notes/closure, and the approved refund email with their own readbacks.",
+        "Synchronize authorized Salesforce location, subscription-link, and rate fields when applicable. For every add/open, close, or reactivation, create or reuse the required lifecycle order and verify its exact ticket, Account, subscription, location IDs, quantity, and type through salesforce_billing_account_orders_read. Reactivation and additional-location orders must have an empty approval state; cancellation orders retain their separate approval disposition. Send a required official Nova status write to Taylor as one tracked continuation and keep Jamie's parent job active until Taylor returns exact readback. Before a full Account close, preserve the exact official Nova active non-storage location IDs, compare them with Salesforce active non-storage rows, and call maxio_location_allocation_reconciliation_read across every current or recently changed subscription. Resolve routine Salesforce administrative or Maxio no-charge/no-credit allocation differences with typed preview/apply tools and repeat all three reads until they agree. For closings, preserve the complete Maxio pre-change component summary and preview hash, count only location-component deallocations, exclude storage and other components, require exact selected non-storage Salesforce location record IDs with a positive Chargify subscription ID, require those selected counts to match per subscription, and create one separately verified NovaPOS cancellation order per subscription. Full-account order creation also requires official_nova_location_ids. Verify that both the union of order location IDs and sum of absolute order location quantities equal the official total, while order-record count remains one per subscription. Before Account deactivation, require exact ticket-order coverage, zero current Nova active non-storage locations, and a Maxio reconciliation snapshot with zero open subscriptions and zero open location components. Post one concise Chatter result and close the Billing ticket only after every requested surface reads back correctly."
+      ],
+      "verification": [
+        "Official BillingAutomation/Nova active locations, Salesforce active non-storage locations, and Maxio open location-component quantity agree before closing; afterward Nova and Salesforce show zero active non-storage locations, Maxio shows zero open subscriptions/location components, and exact ticket-linked order location coverage equals the preserved official total.",
+        "The allocation reports the expected direction and exact quantities with no automatic charge, credit, or proration.",
+        "For a credit mode, the exact manual service-credit amount and resulting balance match the separate authorization; for a no-credit mode, balances prove no credit was created.",
+        "No unintended invoice, charge, credit, refund, void, payment-profile, next-assessment-date, or customer-email change occurred.",
+        "Component payment recovery returns downstreamActivationAllowed=true only with one exact linked successful charge/payment and zero balances; pending or declined collection reads back service quantity zero, and a decline verifies dunning plus the exact open invoice.",
+        "Billing-cycle recovery returns downstreamActivationAllowed=true only with the exact linked successful charge/payment and zero balances; a decline preserves the one exact authorized open invoice, keeps every location inactive, and cannot be retried.",
+        "For a partial-location recovery, the exact one-time charge and linked payment succeeded with all balances zero, or one failed payment is recorded with no charge accrual and no retry.",
+        "For a historical-cycle recovery, the exact one-time charge and linked payment succeeded with all balances zero, or the ticket-selected decline action read back either all zero balances or one exact authorized open-invoice balance with every other balance zero; no retry occurred.",
+        "The Billing ticket, Chatter result, and any requested closure read back successfully."
+      ]
+    },
+    "billing_payment_update_and_reactivation": {
+      "signature": "AgentChat/coding_agent 2026-08-03T23:30:00Z",
+      "display_name": "Billing Payment Update and Reactivation",
+      "aliases": ["update card and reactivate", "update payment information", "new credit card", "reactivate account", "reactivate subscription", "open account again", "payment profile assignment"],
+      "primary_agents": ["billing_agent"],
+      "requires_tools": ["salesforce", "chargify"],
+      "use_when": "A Billing ticket asks to update a payment method on the correct customer/account and reactivate the linked Maxio subscription and Salesforce lifecycle.",
+      "preferred_entrypoints": [
+        "Read the exact Billing ticket, linked Salesforce Account, Billing Account/Schedule, and Maxio customer/subscription before any write.",
+        "Call maxio_capabilities and require the typed payment-profile assignment, secure update-request, paid subscription-reactivation, and no-charge subscription-reactivation operations. Require the Salesforce payment-card ticket redaction preview/apply pair when the ticket contains card data.",
+        "Use salesforce_location_lifecycle_order_preview/apply after Maxio and billing-link readback; the reactivation order never enters approval."
+      ],
+      "avoid_by_default": [
+        "copying full card numbers, CVV, or raw payment data into prompts, Chatter, handoffs, logs, or generic API requests",
+        "assigning a payment profile without proving it belongs to the exact Maxio customer",
+        "using the paid reactivation route before the correct payment profile reads back on the exact subscription",
+        "treating active/trialing subscription state as payment success on the paid route without a new linked successful charge and payment for the exact authorized cents",
+        "leaving ticket card fields, CVV, expiration, billing address, or raw card text in Salesforce after the payment profile is updated",
+        "retrying a reactivation after any provider attempt",
+        "sending the task to Rory or using Needs Review merely because a secure payment update is pending",
+        "closing the ticket while Maxio, Salesforce billing links, the no-approval reactivation order, or Account state is incomplete"
+      ],
+      "steps": [
+        "Resolve the ticket's linked Salesforce Account and Contact, exact Maxio customer, exact subscription, current state, current balance/billing amount, and all current customer-owned payment profiles. Do not use company name similarity as identity proof.",
+        "If the correct current payment profile already exists, call maxio_subscription_payment_profile_assignment_preview/apply and require exact customer ownership, current/non-disabled profile state, unchanged preview hash, stable idempotency key, and subscription profile-ID readback.",
+        "If the customer must add a new method, call maxio_payment_profile_update_request_preview/apply so Maxio sends its secure update link. Post only the useful result, keep the Billing ticket open in its normal queue, and let the next individual-ticket review detect the new profile. This is owned follow-up work, not a Rory handoff or Needs Review decision.",
+        "After the correct profile is active, call salesforce_payment_card_ticket_redaction_preview/apply and require readback that every fixed payment-card field is cleared and raw card text is absent. Never return the original values in the preview or receipt.",
+        "For a paid reactivation, call maxio_subscription_reactivation_preview with resume_only or new_billing_period and the exact positive expected charge in cents. Call apply once with the unchanged hash and stable idempotency key; the function must verify one new linked successful charge and payment for that exact amount, not subscription state alone. When the ticket instead explicitly authorizes no customer charge and gives one future bill date, call maxio_subscription_no_charge_reactivation_preview/apply with the exact current reactivation charge as waived_charge_cents. That separate route requires zero starting balances, issues and consumes one ticket-bound service credit, and requires exact active state, customer identity, zero balances, and future bill-date readback; it does not require a payment profile or successful payment.",
+        "Continue only when the selected Maxio route returns downstreamActivationAllowed=true. The paid route additionally requires successfulPaymentVerified=true, active/trialing state, the same payment-profile ID, and zero balances. The explicitly no-charge route requires customerChargeCents=0, the exact issued and consumed service-credit cents, active/trialing state, exact customer ID, zero balances, and exact future billing date. On decline or missing paid collection evidence the broker must block retry, return the subscription to canceled if Maxio opened it, and no Salesforce or Nova location/account activation or ticket closure may run.",
+        "After the selected paid or no-charge Maxio gate succeeds, synchronize the required Salesforce locations and billing links, then create or reuse the reactivation order through salesforce_location_lifecycle_order_preview/apply. Require the exact Chargify subscription, compact location IDs, positive location quantity, and Billing Start / Stop Date. Never submit approval or set Reactivation from Decline, Location Reactivated in NovaPOS, or Account Activated in NovaPOS. Verify Account lifecycle state and post one concise net-new ticket outcome."
+      ],
+      "verification": [
+        "The exact Salesforce Account, Maxio customer, and subscription are linked by authoritative IDs; the paid route also verifies the exact payment profile.",
+        "Salesforce reads back cleared payment-card fields and no raw card text on the Billing ticket.",
+        "The paid route reads back exactly one new linked successful charge and payment for the authorized cents, zero balances, the intended payment-profile ID, and active/trialing state after no more than one reactivation attempt. The no-charge route instead reads back customerChargeCents=0, exact credit issue and consumption, active/trialing state, zero balances, exact customer ID, and the exact future bill date.",
+        "A decline or missing collection reads back a canceled subscription, downstreamActivationAllowed=false, no retry, and no downstream Salesforce/Nova activation.",
+        "If a secure update request is pending, the Billing ticket remains open and discoverable in its normal queue with a non-duplicative next-action update.",
+        "Salesforce billing links, the correctly classified reactivation order, empty approval state, omitted forbidden checkboxes, Account lifecycle state, and final ticket note all read back without duplicate Chatter."
+      ]
+    },
+    "billing_additional_trial_location": {
+      "signature": "AgentChat/coding_agent 2026-08-04T00:00:00-04:00",
+      "display_name": "Additional Trial Location and Nova Integrated Promo",
+      "aliases": ["additional trial location", "add trial location", "open a new location", "new additional location", "within 3 months order", "existing additional customer order", "Nova Integrated Promo"],
+      "primary_agents": ["billing_agent"],
+      "handoff_agents": ["coding_agent"],
+      "requires_tools": ["salesforce", "chargify", "nova_sql"],
+      "use_when": "A verified Account or Billing ticket requests one or more brand-new additional locations, including a no-charge trial addition and its Nova Integrated Promo.",
+      "preferred_entrypoints": [
+        "Read the exact Billing ticket, Account.CreatedDate, official Nova location, Salesforce billing rows, and Maxio customer/subscriptions before any write. Account Created Date is the only age start for a new additional-location classification.",
+        "Require the merchant provider from the ticket or operator. The only choices are Worldpay, Creditcall, Authorize.net, and Propelr; ask when it is absent and never infer a fallback.",
+        "Call maxio_capabilities and require the typed future-billed subscription, custom-field, location-mapping, allocation, product, Nova Integrated Promo credit, and balance operations."
+      ],
+      "avoid_by_default": [
+        "using New Customer Order, which is reserved for the website's first order on a new Account",
+        "using Within the 3-months for a reactivation, or for a new additional location at or after Account CreatedDate plus three calendar months",
+        "inferring a merchant provider from GSPayTech text, Account metadata, or an unmatched product",
+        "sharing the new location's subscription with unrelated locations or changing the Account flat rate",
+        "allocating with an immediate charge, credit, or proration",
+        "issuing a promo credit without exact location metadata, one mapped component at quantity one, and matching component rate",
+        "activating Nova before every billing and Salesforce readback succeeds",
+        "ending at a handoff, BLOCKED, or COMPLETED_WITH_ISSUES for an agent-operable tool, routing, or field failure"
+      ],
+      "steps": [
+        "Resolve the exact Account, Billing ticket, official Nova location ID and name, current payment profile, and requested monthly location rate. Use 9999 cents only when the ticket does not state a rate.",
+        "Resolve the selected provider's active zero-base-price Nova Integrated product through maxio_nova_integrated_products. Create or reuse a future-billed one-location subscription with maxio_subscription_creation_preview/apply so no initial charge or payment occurs.",
+        "Ensure the four fixed custom fields exist, map the exact location to its component, and set exactly one recurring component allocation at the exact monthly rate with every automatic charge, credit, and proration switch disabled.",
+        "Apply maxio_nova_integrated_promo_credit_preview/apply for exactly three months times the location's monthly rate. Require the short invoice-facing memo Nova Integrated Promo | Ticket <ticket> | Location <location>, an unchanged preview hash, a stable idempotency key, and exact service-credit balance readback.",
+        "Create or align the Salesforce Billing Account and Billing Schedule, link the exact subscription and location, set only that Location's Bill Amount and integrated-gateway flag, and leave Account.Flat_Rate_Amount__c unchanged.",
+        "Call salesforce_location_lifecycle_order_preview/apply. A reactivation always uses Re-activate an Existing Location. Only a brand-new additional location before Account.CreatedDate plus three calendar months uses Within the 3-months with Existing_Order_Type__c set to New Location; at or after the cutoff it uses Existing and (New) Additional Customer Order. Terms Agreed is not a classification date. The broker rejects New Customer Order and verifies exact ticket, subscription, location IDs, positive quantity, Billing Start / Stop Date, and no ProcessInstance.",
+        "Keep Jamie's parent job active while Taylor performs the tracked Nova activation step. Require official Nova readback before one concise ticket update or closure. If a safe step fails, read current state, repair or hand off the exact typed-tool/runtime defect, generate a fresh preview, and continue from the first incomplete step."
+      ],
+      "verification": [
+        "The provider is one of the four allowed values and the Maxio product matches it with no fallback.",
+        "The isolated subscription contains only the new location, all four custom fields agree, the mapped component quantity is one, and its rate equals the ticket rate or 9999-cent default.",
+        "The exact three-month Nova Integrated Promo credit and short ticket/location memo read back without duplicate or unrelated credits.",
+        "Salesforce reads back the exact Location rate, integrated flag, Billing Schedule/subscription link, age-correct order type, location IDs, quantity, Billing Start / Stop Date, unchanged Account flat rate, empty approval state, and no forbidden reactivation or NovaPOS activation fields.",
+        "Official Nova reads back the intended location active only after billing completion; the tracked handoff is acknowledged, the parent job completes, and the ticket leaves all agent lanes after verified closure."
+      ]
+    },
+    "billing_rate_or_promotion_change": {
+      "signature": "AgentChat/direct_codex 2026-07-31T00:00:00-04:00",
+      "display_name": "Complete Billing Rate or Promotion Change",
+      "aliases": ["rate change", "change rate", "new rate", "flat rate", "bill amount", "promotion", "promo", "coupon", "months free", "month free", "3 months free", "three months free", "discount applied"],
+      "primary_agents": ["billing_agent"],
+      "requires_tools": ["salesforce", "chargify"],
+      "use_when": "Any ticket explicitly requests an Account flat rate, changes one or more recurring location rates, or applies a promotion, even when the ticket contains only a short business instruction.",
+      "preferred_entrypoints": [
+        "Read the exact Billing ticket and official Nova BillingAutomation locations before selecting the subscription or Salesforce records.",
+        "Classify the request before writing: Account-wide flat rate, location-specific recurring rate, and promotion are separate instructions and may be combined only when the ticket explicitly combines them.",
+        "Call maxio_capabilities and use the typed product-change, coupon, allocation, balance, refund, and service-credit operations.",
+        "Use salesforce_billing_account_read for Payments Partner and rate context; use Account flat-rate tools only for an explicit Account-wide flat-rate request, and use the location-rate/gateway tools only for the exact affected locations."
+      ],
+      "avoid_by_default": [
+        "Treating a brief ticket as permission to complete only the single field or system named in its wording",
+        "Treating a promotion or location-specific rate as an Account-wide flat-rate request",
+        "Using GSPayTech Sub text or a merchant/subscription identifier as gateway-provider evidence",
+        "Applying a coupon or changing a subscription product through maxio_api_request, or changing a component without the typed preview/apply contract",
+        "Closing while an applicable Maxio product/coupon/rate, exact Salesforce location rate/gateway flag, explicit Account flat rate, subscription link, or invoice consequence is missing or unexplained",
+        "Posting an interim Chatter update and then a second closure update for the same outcome",
+        "Repeating the ticket request, customer identity, customer feelings, tool names, readback steps, or internal process in Chatter"
+      ],
+      "steps": [
+        "Treat the requested business outcome as the workflow key: ticket brevity does not narrow the standard, but it also does not broaden the rate scope. Resolve the exact Account and locations, then read official Nova active locations, Salesforce Account Payments Partner/flat rate, Location rate/gateway/Billing Schedule links, and Maxio subscription, product, components, coupons, balances, and relevant invoices.",
+        "For an explicit Account-wide flat-rate request, update Account.Flat_Rate_Amount__c and every applicable recurring location component and Location Bill Amount. For a location-specific rate, update only the exact location's recurring Maxio component and Salesforce Location Bill Amount; never set or copy an Account flat rate unless the ticket explicitly requests one.",
+        "For a Nova Integrated promotion, require an explicit provider limited to Worldpay, Creditcall, Authorize.net, or Propelr. GSPayTech Sub text and Account Payments Partner are not provider evidence, and no fallback is allowed. If the provider is absent, ask before any write. Resolve the matching active zero-base-price product with maxio_nova_integrated_products.",
+        "Use maxio_subscription_product_change_preview/apply to set the exact same-family zero-base-price Nova Integrated product and preserve coupons, component allocations, balances, and billing dates. Use salesforce_billing_location_gateway_update for only the participating integrated locations.",
+        "For a promotion, call maxio_subscription_coupon_preview/apply with the exact configured coupon, Billing ticket, unchanged preview hash, and stable idempotency key. Verify coupon code and term. A promotion does not itself authorize an Account flat rate or a new location rate; apply only an explicitly stated post-promotion location rate.",
+        "Resolve the current invoice consequence before completion. Record that no refund or credit is due, explain which existing invoice remains and why, or execute the separately authorized exact refund/service credit and verify its amount, balance, and invoice status. A coupon does not itself adjust an already-issued invoice.",
+        "Read back every applicable billing surface. If one is genuinely inapplicable, retain the business reason; do not silently omit it. Do not mark completed or close the ticket while an applicable requested outcome is missing.",
+        "Post at most one final Salesforce update: use salesforce_ticket_resolve when closing, otherwise salesforce_ticket_chatter_post, never both for the same outcome. Read the latest feed first and post only net-new information. Prefer one plain update for one completed action; use Cause, Resolution, or Next steps only when each supplied section adds a distinct new fact.",
+        "Include a promotion term, resulting recurring/location rate, refund amount plus direct refunded-invoice link, credit disposition, audit correction, or follow-up only when that information is new to the ticket. Never repeat an approved price, request, prior diagnosis, or known context, and never narrate tools, checks, permissions, or internal execution."
+      ],
+      "verification": [
+        "Maxio reads back the intended provider-specific Nova Integrated product, coupon/term when applicable, and intended recurring component rate and quantity, with unchanged unrelated coupons, allocations, balances, and billing dates.",
+        "Salesforce reads back Payments Partner, each exact applicable Location Bill Amount and integrated-gateway flag, and any required Billing Schedule/subscription link; Account flat rate is changed only when explicitly requested and otherwise remains unchanged or is cleared when mistakenly set.",
+        "Every relevant current invoice has an explicit no-action, refund, credit, audit, or separately tracked disposition with exact amount/status where applicable.",
+        "The ticket feed contains at most one concise net-new outcome update, with no repeated or filler sections, and the ticket is closed only when all applicable outcomes are complete."
+      ]
+    },
+    "monthly_billing_alignment_audit": {
+      "signature": "AgentChat/coding_agent 2026-07-26T00:51:47Z",
+      "display_name": "Monthly Nova Salesforce Maxio Billing Alignment",
+      "aliases": ["monthly billing audit", "billing alignment", "fake account audit", "location status audit", "billing schedule audit", "billing account audit", "location component mapping"],
+      "primary_agents": ["billing_agent", "coding_agent"],
+      "requires_tools": ["salesforce", "chargify", "nova_sql"],
+      "use_when": "Jamie runs the recurring customer billing audit or Taylor independently checks and repairs a capability/runtime blocker in that audit.",
+      "preferred_entrypoints": [
+        "docs/AGENT_PLATFORM_MAP.md",
+        "docs/agent-tools/salesforce.md",
+        "docs/agent-tools/chargify-maxio.md",
+        "Call salesforce_capabilities, maxio_capabilities, nova_api_preflight, and nova_sql_preflight before broad discovery; confirm nova_billing_locations_read and maxio_subscription_creation_preview/apply are exposed.",
+        "Jamie creates or reuses one privately idempotent 3. Billing ticket per Account and never stores its idempotency/source key in Salesforce fields. Taylor may use an existing Billing ticket for bounded repair but cannot create one."
+      ],
+      "avoid_by_default": [
+        "Treating a CSV, Salesforce status, Rainfall row, or Maxio location map as the authoritative active-location list",
+        "Treating absent Maxio location metadata as a billing blocker",
+        "Inventing location-to-component links from rate, count, age, or ordering",
+        "Using generic Salesforce writes or generic Maxio metadata writes",
+        "Retrying a pending or uncertain mutation without exact readback",
+        "Closing the Billing ticket before all requested systems agree"
+      ],
+      "steps": [
+        "Resolve the exact Account identity by Salesforce ID or exact Nova_ID__c. Call nova_billing_locations_read with the exact Company_Username__c; its fixed Nova BillingAutomation projection is the authoritative active-location list. Use Salesforce for administrative state and billing bookkeeping, and Maxio for financial subscription/component state.",
+        "Classify findings as fake-account classification, Salesforce location status/rate/link mismatch, missing Billing Account/Schedule bookkeeping, Maxio allocation mismatch, optional location metadata enrichment, or an intentional free exception.",
+        "Create or reuse one exact 3. Billing ticket for each Account before writes and read it back.",
+        "Use salesforce_account_fake_classification_preview/apply for Fake_Account__c. Use salesforce_billing_location_alignment_preview/apply for one exact location status, zero-or-positive rate, subscription link, or schedule link. When lifecycle and link fields both change, the typed apply stages lifecycle first, reads it back, then clears or assigns only the remaining links so Salesforce automation sees a valid transition. Active unbilled locations require the explicit intentional_free exception and zero/empty rate.",
+        "Use salesforce_billing_structure_read then salesforce_billing_structure_alignment_preview/apply to reuse or create NovaPOS_Billing_Account__c and NovaPOS_Billing_Schedule__c, set Active_Schedule__c, and link exact Nova location IDs. When one Nova ID has duplicate Salesforce rows, verify the canonical rows and pass a complete salesforce_location_ids selector; omission stays fail-closed. For an existing subscription under a customer that has another nonempty schedule-owning Billing Account, pass the exact billing_account_id and billing_schedule_id selectors. The operation preserves every other nonempty schedule owner and synchronizes only the selected subscription parent; only verified scheduleless partial duplicates may be detached. Refuse unresolved account, schedule, subscription, or location ambiguity.",
+        "For Maxio component changes, use the registered no-financial-effect allocation preview/apply sequence. Add a separate exact manual credit only when separately authorized.",
+        "When the verified Maxio customer has no active subscription, use maxio_subscription_creation_preview/apply with an exact current payment profile, monthly product, component, quantity, rate in cents, future next_billing_at, and Billing ticket. Verify the new subscription, allocation, future date, and zero open/pending invoice balance before aligning Salesforce.",
+        "Use maxio_location_custom_fields_read then maxio_location_custom_fields_preview/apply once for missing fixed site definitions. Use maxio_subscription_location_metadata_read then maxio_subscription_location_mapping_preview/apply only after exact official Nova location IDs/names and current Maxio component IDs/quantities are verified.",
+        "After every write, read back the same target. On a pending/uncertain outcome, stop that mutation, read current state, generate a fresh preview, and continue only with a new idempotency key when the remaining action is unambiguous.",
+        "Post one concise Billing-ticket Chatter result and close only when the requested alignment and customer communication are complete."
+      ],
+      "verification": [
+        "Official Nova active locations, Salesforce active non-storage locations, and Maxio active non-storage component quantities agree, except for explicitly documented intentional-free locations.",
+        "Fake_Account__c, each staged location status/rate/link update, the exact selected per-subscription Billing Account/Schedule rows, preserved schedule owners, and Active_Schedule__c read back exactly.",
+        "Maxio allocations show no automatic charge, credit, or proration. Any manual credit matches separately authorized cents and final balances.",
+        "LocationComponentMap counts equal current component allocations and every mapped location ID/name came from verified official records; missing metadata alone never changes billing classification.",
+        "Jamie and Taylor capability checks contain every registered monthly-audit tool, including nova_billing_locations_read and maxio_subscription_creation_preview/apply, with preapproved execution, and a repeat dry run produces no capability blocker or duplicate write."
+      ]
+    },
+    "live_gmail_inbox_triage": {
+      "signature": "AgentChat/coding_agent 2026-07-14T19:30:00-04:00",
+      "display_name": "Taylor Live Gmail Inbox Triage",
+      "aliases": ["gmail", "email", "inbox", "mail", "spam", "draft reply", "email watch"],
+      "primary_agents": ["direct_codex", "coding_agent"],
+      "requires_tools": ["gmail"],
+      "use_when": "Taylor is scanning, cleaning, prioritizing, or drafting replies for the actual Gmail mailbox.",
+      "cached_facts": [
+        "Command Center uses one 10-second near-real-time native Gmail history collector and the durable data/command_center/inbox_work.sqlite3 ledger; legacy email watchers are suppressed while it is enabled.",
+        "The dashboard Mail Watch view is projected directly from action_pending ledger state; ops_email_watch.json is compatibility output only, not a source of truth.",
+        "Read threads and threads whose latest message is SENT are excluded; a newer unread inbound message after a reply can make the thread actionable again.",
+        "Routine cleanup is thread-scoped and every Gmail mutation requires label-state readback.",
+        "Taylor never sends, replies, forwards, or dispatches a Drawing Board brief automatically except for the guarded same-mailbox acknowledgement on replies to Your NovaPOS invoice is ready."
+      ],
+      "preferred_entrypoints": [
+        "docs/agent-tools/gmail.md",
+        "GET /ops/inbox-ledger/status for aggregate health and metrics; GET /ops/inbox-ledger/events for bounded dashboard updates.",
+        "Connected Gmail list_labels, paginated search_emails, batch_read_email, and read_email_thread tools.",
+        "Gateway Gmail REST label/draft client when the connector lacks the exact mutation."
+      ],
+      "avoid_by_default": [
+        "Running legacy Gmail watchers concurrently with the inbox ledger collector.",
+        "Treating the command-center cache count as the Gmail Inbox count.",
+        "Keeping read, answered, failure, FYI, automated-status, or no-action threads in Mail Watch.",
+        "Scanning only the first search page.",
+        "Browser-based Gmail triage.",
+        "Any automated send, reply, forward, or Drawing Board dispatch outside the guarded invoice-reply acknowledgement."
+      ],
+      "steps": [
+        "Read live Inbox/Spam label counts, then paginate the full scoped search.",
+        "Deduplicate by threadId and read the whole thread before deciding whether it is unread, unanswered, and actionable.",
+        "For every operator-requested reply or reply draft, use the exact live Gmail source message being answered and Reply All by default. Inspect newer thread activity but never substitute a bounce, automated reply, or earlier agent-created outbound as the reply source. Derive the exact audience only from live Reply-To/From, To, and Cc headers; never infer or type an address from a name or naming pattern.",
+        "If Darius explicitly narrows the audience, start from live Reply All and remove only the named exact thread recipients. Otherwise preserve the complete Reply All set. Save with the selected Gmail sendAs signature exactly once and read back thread id, To, and Cc.",
+        "Exclude read threads and threads whose latest message is SENT; allow a newer unread inbound message after a reply to re-enter when action is still required.",
+        "Archive/mark read routine noise and completed FYI; restore clear false-positive Spam; keep failures, FYI, automated status, waiting-without-action, and no-action mail out of Mail Watch.",
+        "For an unread customer reply whose normalized subject is exactly Your NovaPOS invoice is ready, send one idempotent acknowledgement from the verified sendAs mailbox matching the original recipient, verify readback, and continue normal support intake.",
+        "Draft all other concise replies for review without sending.",
+        "For operational mail, assigned deadlines, reminders, follow-ups, decisions, or meeting preparation explicitly directed to Darius, create or update at most one source-keyed, operator-owned Drawing Board task; never auto-dispatch it. Manager-assigned deadlines qualify even when no email reply is needed.",
+        "Never create a Drawing Board brief from support-ticket mail, Salesforce notifications, automated telemetry/failures, Singapore existing/retired-interface, authentication/upload-status/remediation mail, or vague invitations.",
+        "Write only remaining actionable items to the command-center cache.",
+        "Apply exact thread actions and verify returned labels before counting success."
+      ],
+      "verification": [
+        "Re-read Gmail label/thread state after mutations.",
+        "Re-read every cached thread and assert it is still unread, its latest message is inbound rather than SENT, and it needs a reply or decision.",
+        "Assert Drawing Board output is source-deduplicated, actionable, and not dispatched.",
+        "Reconcile live unread thread counts separately from actionable dashboard count.",
+        "Assert the scan path did not invoke send or forward except for a verified, idempotent invoice-reply acknowledgement routed onward to support intake."
+      ]
+    },
+    "gcp_cloud_run_health": {
+      "display_name": "GCP / Cloud Run Health",
+      "aliases": ["gcp", "gcloud", "cloud run", "service health", "cloud logging", "deploy error", "performance"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["gcp"],
+      "use_when": "Cloud Run services, jobs, logs, deploy failures, environment, project, service health, or performance checks.",
+      "cached_facts": [
+        "Default auto-tickets project: gen-lang-client-0051653266",
+        "Default auto-tickets region: us-central1",
+        "Rainfall service/build region may be us-south1; verify from repo config before acting.",
+        "Service-account key path, if configured, should live outside the repo under AppData/Local/CodexBillingAgent/gcloud."
+      ],
+      "preferred_entrypoints": [
+        "Read config/ops.env for variable names only; never print values.",
+        "In the private runtime, use Rory's rory_operator_ops broker for exact operator-directed full GCP operations and gcp_github_ops for safer discovery.",
+        "Use native gcloud read-only commands when needed from a trusted operator session instead of repo helper scripts.",
+        "Use Google Cloud console or connector tools if already available in the current session."
+      ],
+      "avoid_by_default": [
+        "scripts/gcloud-ops-tool.ps1",
+        "scripts/setup-gcp-ops-service-account.ps1",
+        "cloudbuild/deploy wrapper scripts"
+      ],
+      "steps": [
+        "Confirm project, region, service/job name, and whether the user asked for read-only or mutation.",
+        "Check cached project/service facts and repo config first.",
+        "Inspect service/job/log state using configured MCP/app tools, then native gcloud/API tooling; use browser only for a proven UI-only need.",
+        "Summarize health, likely cause, and lowest-risk fix.",
+        "For deploys, env changes, IAM, or traffic changes, execute only when the verified request asks for that exact mutation; do not seek a second approval."
+      ],
+      "verification": [
+        "For read-only checks, cite the service/job/log evidence inspected.",
+        "For approved mutations, verify post-change state and note rollback path."
+      ]
+    },
+    "support_shift_review_reminders": {
+      "signature": "AgentChat/direct_codex 2026-08-04T15:00:00Z",
+      "display_name": "Shift-Aware Support Review Reminders",
+      "aliases": ["support reviews", "review reminders", "shift reminders", "eduardo ticket reminder"],
+      "primary_agents": ["direct_codex"],
+      "requires_tools": ["google_sheets", "zoom"],
+      "use_when": "The authenticated operator asks for recurring shift-aware reminders to support representatives about customer review requests and Eduardo's ticket review.",
+      "preferred_entrypoints": [
+        "Use the deterministic nova-support-shift-reminders timer on the private runtime.",
+        "Read the fixed New Schedule 2026 spreadsheet and current month tab in America/New_York.",
+        "Check both configured customer-review channels for each active representative's activity during the current shift before sending one combined Ghost Busters reminder."
+      ],
+      "avoid_by_default": [
+        "reminding Darius",
+        "more than one review reminder per representative shift",
+        "sending before the one-hour shift grace period",
+        "blind replay after an uncertain Zoom write",
+        "including ticket or customer details in the reminder"
+      ],
+      "steps": [
+        "Parse only the roster rows bounded by each weekly date header and treat overnight end times as the following day.",
+        "For active scheduled representatives after the one-hour grace period, read both review channels for same-shift sender activity.",
+        "Use durable per-representative shift keys for review reminders and a separate per-shift key for Eduardo's ticket reminder.",
+        "Send at most one combined Ghost Busters channel message, then require exact message-ID and body readback before persisting completion."
+      ],
+      "verification": [
+        "Read GET /ops/support-shift-reminders for the sanitized current result.",
+        "Require exact Zoom channel message-ID and body readback for any sent reminder.",
+        "Verify the timer remains enabled only when the private runtime and Zoom preflight markers are present."
+      ]
+    },
+    "zoom_admin_and_zva": {
+      "display_name": "Zoom Admin / ZVA",
+      "aliases": ["zoom", "zva", "contact center", "ai studio", "virtual agent", "team chat", "queue", "engagement"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["zoom"],
+      "use_when": "Zoom AI Studio, Zoom Contact Center, ZVA, Team Chat, queue, engagement, alerting, or Zoom-to-Salesforce configuration.",
+      "cached_facts": [
+        "Nova Zoom AI Studio URL: https://novapointofsale.zoom.us/ai-studio/virtual-agent",
+        "Use displayed Edge Profile 1 only for Nova Zoom admin browser work.",
+        "Displayed Edge Profile 1 maps to Edge internal Default on this machine; internal Profile 1 displays as Profile 2."
+      ],
+      "preferred_entrypoints": [
+        "Use Zoom MCP/API or native app/browser connector when available.",
+        "Use an already-open authenticated browser session only through non-disruptive tab/browser APIs.",
+        "Open new tabs by default; do not navigate the user's active tab unless explicitly requested.",
+        "Use CDP/browser clicks and fills, not physical mouse/keyboard GUI control.",
+        "If connector access is blocked by a stale Agent Chat runtime lock, clear only locks whose owner process has exited; if another live session holds browser access, ask for handoff instead of opening an isolated Zoom profile.",
+        "Use local KB exports as product guidance only; they do not authorize Zoom admin action."
+      ],
+      "avoid_by_default": [
+        "scripts/edge-browser-tool.ps1",
+        "scripts/sync-zoom-kb.ps1",
+        "ad hoc browser-launch scripts",
+        "isolated or unauthenticated Zoom browser profiles",
+        "force-restarting or closing the user's browser",
+        "Windows GUI automation that controls the real mouse/keyboard"
+      ],
+      "steps": [
+        "Confirm whether the request is read-only inspection, configuration, or a live customer-facing change.",
+        "Check cached Zoom URL/profile rules before opening anything.",
+        "Prefer existing browser/connectors over helper scripts.",
+        "If displayed Edge Profile 1 is already running without CDP, do not restart it unless the verified request asks for a restart; then use the guarded restart without seeking a second approval.",
+        "For configuration changes, describe the exact setting and save/publish impact, execute the verified request, and verify readback.",
+        "Verify in Zoom preview, visible UI state, or API readback where possible."
+      ],
+      "verification": [
+        "Report what was changed, what was not changed, and any license/permission blocker."
+      ]
+    },
+    "internal_staff_request": {
+      "display_name": "Salesforce-First Internal Staff Request",
+      "aliases": ["message an employee", "internal request", "ask leo", "tag employee", "staff handoff", "employee follow-up"],
+      "primary_agents": ["coding_agent", "tickets_agent", "billing_agent"],
+      "requires_tools": ["salesforce_ticket_internal_request_post", "zoom_team_chat_recipient_resolve", "zoom_team_chat_send"],
+      "use_when": "An agent needs a Nova employee to act on a customer, billing, support, or operational request.",
+      "preferred_entrypoints": [
+        "Reuse the one existing ticket that owns the requested action; if none exists, the support or billing owner creates exactly one.",
+        "For Leo or any other employee who uses Salesforce, call salesforce_ticket_internal_request_post with the exact active Nova Salesforce user, one brief conversational request, and a stable idempotency key. The broker creates a real Chatter mention and owns the first-message-of-day greeting.",
+        "Only Julio or Wiko may receive an employee-request DM. Resolve configured:julio or configured:wiko, then use zoom_team_chat_send."
+      ],
+      "avoid_by_default": [
+        "formal status-memo wording",
+        "redundant ticket numbers, amounts, extension details, or process narration",
+        "plain @Name text instead of a Salesforce Mention segment",
+        "untagged Chatter handoffs",
+        "duplicate tickets for the same action",
+        "direct messages to Leo or another Salesforce user",
+        "using the tracked agent-to-agent broker as an employee notification"
+      ],
+      "steps": [
+        "Resolve the exact Account and action-owning ticket before any write.",
+        "Write only the company, problem, urgency, and requested action the employee needs.",
+        "Use one stable idempotency key from the ticket, recipient, and intended request.",
+        "Let the broker determine whether this is the first America/New_York message to that recipient today.",
+        "Require exact ticket-feed mention/text readback or exact Zoom message-id/body readback."
+      ],
+      "verification": [
+        "Verify one write, the exact recipient, a real Salesforce mention or approved Julio/Wiko alias, the concise request, daily greeting state, and duplicate prevention."
+      ]
+    },
+    "zoom_team_chat_direct_message": {
+      "display_name": "Julio/Wiko Zoom Request Message",
+      "aliases": ["zoom direct message", "zoom dm", "message julio", "message wiko", "send zoom team chat"],
+      "primary_agents": ["coding_agent", "tickets_agent", "billing_agent"],
+      "requires_tools": ["zoom_team_chat_recipient_resolve", "zoom_team_chat_send"],
+      "use_when": "A verified operator request or preserved signed delegation asks for one internal request to Julio or Wiko, who do not regularly use Salesforce.",
+      "preferred_entrypoints": [
+        "Use the existing Support Dashboard Calls Server-to-Server OAuth app; do not use General OAuth or create another app.",
+        "Call zoom_team_chat_recipient_resolve with configured:julio or configured:wiko. Every other employee request goes on the relevant Salesforce ticket with a real mention.",
+        "Call zoom_team_chat_send with brief conversational text, preserved authorization context, and one stable idempotency key. The broker adds the first-message-of-day greeting."
+      ],
+      "avoid_by_default": [
+        "broad user-directory enumeration",
+        "raw email addresses, display names, guessed contacts, or any recipient other than Julio or Wiko",
+        "channel messages or attachments",
+        "browser automation as a send fallback",
+        "Support Reports or any other Zoom app credential",
+        "the legacy General OAuth refresh-token path",
+        "blind retry after timeout or uncertain provider result",
+        "arbitrary Zoom API paths"
+      ],
+      "steps": [
+        "Preserve the approved alias, brief request, business reason, ticket or job context, and any user limits.",
+        "Resolve exactly one configured active Julio or Wiko Zoom user.",
+        "Use a stable idempotency key derived from the source job or ticket and intended message.",
+        "Let the broker add Hey <FirstName>, only when this is the first verified message to that person on the America/New_York day.",
+        "Let the broker persist its pending journal before the provider call.",
+        "Require exact Zoom message-id and body readback; reconcile an uncertain result before any retry."
+      ],
+      "verification": [
+        "Record the resolved recipient name/email, Zoom message id, exact body readback result, idempotency key, and whether a duplicate was prevented."
+      ]
+    },
+    "zoom_explicit_operator_message": {
+      "display_name": "Explicit Operator Zoom Message",
+      "aliases": ["message this person in zoom", "send zoom message", "zoom dm anyone", "message thor contact", "custom email domain zoom"],
+      "primary_agents": ["direct_codex", "coding_agent", "tickets_agent", "billing_agent", "claude_agent"],
+      "requires_tools": ["zoom_operator_team_chat_recipient_resolve", "zoom_operator_team_chat_send"],
+      "use_when": "The authenticated operator explicitly asks an agent to send one exact Zoom Team Chat message to a named person.",
+      "preferred_entrypoints": [
+        "Resolve by one exact Zoom email address or unique full name. Custom email domains are allowed.",
+        "Send the exact requested message with the preserved operator authorization context and one stable idempotency key.",
+        "Require exact provider message-id and body readback."
+      ],
+      "avoid_by_default": [
+        "using this path for scheduled or automated Julio/Wiko flows",
+        "guessing between duplicate names",
+        "adding recipients not named by the operator",
+        "blind retry after timeout or uncertain outcome"
+      ],
+      "steps": [
+        "Preserve the exact operator request and message text.",
+        "Resolve exactly one contact.",
+        "Journal before the provider attempt.",
+        "Send once and verify message id, body, sender presence, and recipient."
+      ],
+      "verification": [
+        "Report the resolved recipient, verified message id, readback result, and duplicate-prevention state."
+      ]
+    },
+    "zoom_operational_knowledge": {
+      "display_name": "Zoom Operational Knowledge Research",
+      "aliases": ["zoom chat history", "zoom meeting notes", "my notes", "meeting summary", "call transcript", "search zoom versions"],
+      "primary_agents": ["direct_codex", "coding_agent", "tickets_agent", "billing_agent", "claude_agent"],
+      "requires_tools": ["zoom_team_chat_channels", "zoom_team_chat_history", "zoom_docs_archives", "zoom_docs_archive_content"],
+      "use_when": "An agent needs bounded Zoom Team Chat, meeting-note, My Notes, meeting-summary, or archived transcript evidence.",
+      "preferred_entrypoints": [
+        "List visible channels or archive metadata first.",
+        "Use one exact returned identifier and a bounded 2025-or-newer window.",
+        "Keep raw message, note, and transcript content transient."
+      ],
+      "avoid_by_default": [
+        "caller-supplied download URLs",
+        "unbounded history scans",
+        "persisting raw transcripts or private chat",
+        "publishing person-specific evidence"
+      ],
+      "steps": [
+        "Classify Team Chat versus Docs/archive evidence.",
+        "Inventory the bounded source before content retrieval.",
+        "Retrieve only exact selected evidence.",
+        "Sanitize any durable summary."
+      ],
+      "verification": [
+        "Report the bounded window, returned source count, selected IDs, and coverage gaps."
+      ]
+    },
+    "ghostbusters_chat_overview": {
+      "display_name": "Ghost Busters Chat Overview",
+      "aliases": ["chat overview", "ghostbusters overview", "nova version hub", "printer driver links", "support initiatives hub"],
+      "primary_agents": ["claude_agent", "direct_codex", "coding_agent"],
+      "requires_tools": ["zoom_ghostbusters_overview_read", "zoom_ghostbusters_overview_update"],
+      "use_when": "Public Nova versions, tools, resources, support initiatives, topics, or recurring reminders should be added to the fixed Ghost Busters Chat Overview.",
+      "preferred_entrypoints": [
+        "Read the fixed overview first.",
+        "Read docs/NOVA_VERSION_MATRIX.md and use only source evidence dated 2025 or later.",
+        "For Drive resources, use google_drive_support_reads to resolve the exact file or folder before proposing a link.",
+        "Replace the fixed document through the typed API operation with one stable idempotency key and readback."
+      ],
+      "avoid_by_default": [
+        "personal or person-specific material",
+        "one-on-one, HR, disciplinary, or performance material",
+        "customer, account, ticket, subscription, phone, or email details",
+        "secrets, credentials, API keys, or access tokens",
+        "any Zoom Doc other than the fixed Chat Overview"
+      ],
+      "steps": [
+        "Collect public operational evidence only.",
+        "Keep the page support-team focused; do not publish agent-specific maintenance policy.",
+        "Use only HTTPS links already registered in docs/NOVA_VERSION_MATRIX.md; if a requested link is absent or the source is unavailable, stop before the Zoom write.",
+        "Validate the full replacement for private data.",
+        "Write once and require same-document readback."
+      ],
+      "verification": [
+        "Verify the fixed file id and name, requested content hash, link-manifest hash, provider readback, and public-content safeguards."
+      ]
+    },
+    "zoom_support_chat_monitoring": {
+      "display_name": "Zoom Support Chat Monitoring",
+      "aliases": ["zva chat", "virtual agent chat", "support member chat", "contact center messaging", "chat session monitor"],
+      "primary_agents": ["tickets_agent"],
+      "requires_tools": ["zoom_support_chat_monitor"],
+      "use_when": "Read-only monitoring or ticket investigation of completed ZVA chats, active Contact Center messaging, or explicitly allowlisted support Team Chat sessions.",
+      "cached_facts": [
+        "ZVA engagement/transcript reports are completed-session data and use HEAVY endpoints.",
+        "Contact Center open engagements expose live status metadata, not a live ZVA message stream.",
+        "Team Chat monitoring is disabled unless exact support targets are allowlisted."
+      ],
+      "preferred_entrypoints": [
+        "Run py -3 -m codex_slack_bridge.zoom_chat_monitor from the bridge root.",
+        "Read data/command_center/zoom_chat_monitor.json and correlate only high-confidence identifiers to a support ticket.",
+        "Delegate missing Zoom app scopes or role configuration to coding_agent."
+      ],
+      "avoid_by_default": [
+        "Zoom admin/browser UI",
+        "full employee DM monitoring",
+        "message send or mark-read APIs",
+        "engagement transfer, takeover, whisper, or barge",
+        "copying full transcripts into Slack or Salesforce"
+      ],
+      "steps": [
+        "Refresh the local monitor cache read-only.",
+        "Separate successful surfaces from scope/license errors.",
+        "Summarize session state, queue/agent, topic, risk flag, and smallest next action.",
+        "Use full transcript content only when the verified request needs the drill-down."
+      ],
+      "verification": [
+        "Confirm no Zoom mutation endpoint was called.",
+        "Confirm Team Chat targets came from the explicit allowlist.",
+        "Report data freshness and any missing scope or license."
+      ]
+    },
+    "salesforce_support_email_intake_create": {
+      "display_name": "Taylor Verified Support-Email Ticket Create",
+      "aliases": ["support email intake", "ops support email", "support-email ticket", "salesforce_support_email_ticket_create"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "The command-center ops-support-email-intake workflow has one qualified actionable Gmail message and Taylor must create or reuse its exact Classic/Wave support ticket.",
+      "preferred_entrypoints": [
+        "Use salesforce_support_email_ticket_create only; Taylor does not receive generic salesforce_ticket_create.",
+        "Pass the exact Gmail source_email_id and source_key=support-email:<source_email_id> as private broker inputs only. The server owns Darius Parlor, Account/linkage eligibility, private-journal idempotency, and bounded readback; Gmail/thread/provider/source identifiers never belong in Salesforce ticket fields."
+      ],
+      "avoid_by_default": [
+        "caller-selected Ticket_Created_by__c or idempotency key",
+        "Demo, test, template, fallback, fake, ambiguous, or cross-linked Accounts",
+        "Alex dispatch or Gmail mutation before gateway live Salesforce readback"
+      ],
+      "steps": [
+        "Resolve one authoritative eligible Account and optional same-Account Contact/Location; select only 1. NOVA Classic or 2. Nova Wave.",
+        "Call the dedicated create with the exact private source identifiers and a concise customer-support description containing no Gmail/thread/provider/source identifiers.",
+        "Accept created or reused only after the tool's exact private-journal receipt and live ticket readback; then return the bounded claim to the command-center gateway."
+      ],
+      "verification": [
+        "The tool receipt verifies Darius Parlor, Account and optional linkage, support record type, customer-support description, issue fields, private source-journal identity, and open state without storing source identity on the ticket.",
+        "The gateway independently reads the live ticket and authoritative Account eligibility before Alex or Gmail effects."
+      ]
+    },
+    "salesforce_billing_closure_email_intake": {
+      "display_name": "Jamie Verified Billing Closure-Email Intake",
+      "aliases": ["billing closure email", "account close confirmation", "location close confirmation", "ops-billing-closure-email-intake"],
+      "primary_agents": ["billing_agent"],
+      "requires_tools": ["salesforce_billing_ops"],
+      "use_when": "A customer-authored cancellation confirmation arrives through billing@novapointofsale.com and must be preserved on the matching request ticket or a new Billing ticket.",
+      "preferred_entrypoints": [
+        "Use the near-real-time inbox-ledger route and inspect the staged exact EML rather than the subject alone.",
+        "Reuse one clearly matching open Billing/Classic/Wave request ticket, or call salesforce_billing_closure_email_ticket_create with source_key=billing-closure-email:<source_email_id> as private broker input only; never store Gmail/thread/provider/source identifiers in ticket fields.",
+        "Use salesforce_account_cancellation_email_attachment_status/upload for the exact EML name and SHA-256."
+      ],
+      "avoid_by_default": [
+        "treating close-account subject wording as full-account scope",
+        "creating a duplicate request ticket",
+        "cancellation, order, Maxio, money, Chatter, ticket-close, or customer-send actions during intake",
+        "marking Gmail read before independent Salesforce ticket and attachment-digest readback"
+      ],
+      "steps": [
+        "Resolve the unique eligible Account and authoritative active locations.",
+        "Classify account, location, or ambiguous scope from the actual customer text and verified location set.",
+        "Reuse or create the request ticket and upload the exact EML with idempotency and digest readback.",
+        "Let the gateway independently verify Salesforce, then mark only the exact Gmail message read."
+      ],
+      "verification": [
+        "The ticket is open, linked to the exact eligible Account, and one of the three operational record types.",
+        "The exact EML digest is present on that ticket.",
+        "Gmail acknowledgement occurs only after independent Salesforce readback."
+      ]
+    },
+    "salesforce_ticket_investigation": {
+      "display_name": "Salesforce Ticket Investigation",
+      "aliases": ["salesforce", "ticket", "novapos ticket", "case", "flow", "chatter", "review all tickets", "review open tickets", "review support tickets", "review billing tickets", "ticket audit"],
+      "primary_agents": ["tickets_agent", "billing_agent", "coding_agent"],
+      "requires_tools": ["salesforce"],
+      "use_when": "One-ticket investigation or a complete support/billing queue review that must inspect and disposition every live ticket individually.",
+      "preferred_entrypoints": [
+        "Read ticket fields and comments first.",
+        "Use existing Salesforce helper modules or connectors when already configured.",
+        "For account mapping, resolve Account.Company_Username__c before SQL."
+      ],
+      "avoid_by_default": [
+        "bulk Salesforce mutation scripts",
+        "flow/admin changes not requested by the verified task"
+      ],
+      "steps": [
+        "For a queue review, establish the exact live ticket set, then open every ticket individually; never use a sample or infer actionability from queue, subject, age, or status alone.",
+        "For each ticket, read fields, status, newest top-level Chatter and nested replies, attachments, linked LogMeIn/Rescue evidence, and the minimum authoritative Salesforce, SQL, billing, or KB evidence needed to diagnose whether a real issue remains.",
+        "Treat a disconnected, customer-ended, technician-ended, or system-ended LogMeIn/Rescue session as resolved when the customer did not reconnect and nobody made a specific callback, contact, or follow-up arrangement. Customer confirmation is not required, and generic unresolved/partial/followup_needed labels do not outweigh the transcript.",
+        "Give each ticket one disposition: close it and reconcile its support/billing queue or review card; keep it open with one exact owner and next action; or retain Needs Review only for one concrete decision authoritative evidence cannot answer.",
+        "Treat the existing request, prior comments, and customer context as known. If a useful update answers a relevant existing Chatter post, use salesforce_ticket_chatter_reply with its exact feed-element ID while the ticket stays open, or supply that feed_element_id to salesforce_ticket_resolve when the same update closes it. Otherwise use a top-level post only when no relevant parent exists. Post only net-new cause evidence or the next action, prefer one plain update for one fact, and omit repeated facts, filler sections, process narration, routine sentiment, and request recaps. When closure adds no useful fact beyond the existing evidence, call salesforce_ticket_resolve without update sections and do not manufacture a closure note."
+      ],
+      "verification": [
+        "For read-only investigation, separate evidence from inference and account for every ticket in the established set.",
+        "For approved Salesforce writes, read back the changed record or nested comment and skip an outcome already present anywhere in the ticket feed.",
+        "A closed ticket no longer remains in the support, billing, or Needs Review work queue."
+      ]
+    },
+    "salesforce_approved_template_email": {
+      "display_name": "Salesforce Approved-Template Customer Email",
+      "aliases": ["salesforce email", "template email", "customer email", "ticket email", "support email", "billing email", "company credentials", "ticket 347370", "one-off message"],
+      "primary_agents": ["direct_codex", "tickets_agent", "billing_agent", "coding_agent"],
+      "requires_tools": ["salesforce_template_email"],
+      "use_when": "A verified support or billing workflow needs to inventory, preview, duplicate-check, or send one server-registered Salesforce customer-email situation.",
+      "preferred_entrypoints": [
+        "config/tool-fast-paths.json tool salesforce_template_email",
+        "docs/agent-tools/salesforce.md approved-template email section",
+        "salesforce_capabilities followed by salesforce_email_sender_preflight and salesforce_email_template_inventory"
+      ],
+      "avoid_by_default": [
+        "freehand subject, body, HTML, wrapper, greeting, signature, sender, template, or recipient inputs",
+        "trying a pending, missing, content-pending, rejected, obsolete, internal-only, broken, unsafe, or similarly named template",
+        "support delivery from billing@novapointofsale.com or billing delivery from support@novapointofsale.com",
+        "proactive ticket email from darius@novapointofsale.com",
+        "retrying a send after provider acceptance without reconciling EmailMessage readback",
+        "using the sensitive ticket 347370 route for any other ticket, template, or recipient"
+      ],
+      "steps": [
+        "Resolve the exact ticket and lane, call salesforce_capabilities, then call the no-input salesforce_email_sender_preflight and salesforce_email_template_inventory. Continue only with one exact approved_sendable row whose registrySendable and availableToLane values are true.",
+        "Read salesforce_ticket_email_log_read before preview so an existing exact recipient, subject, and department FromAddress is not duplicated.",
+        "For a general situation, call salesforce_ticket_template_email_preview with only ticket_id, the fixed situation, and exactly its requiredDetails. The server resolves template, subject, recipient policy, stored wrapper, and department Org-Wide Email Address.",
+        "For support_one_off_message, provide only one to three short customer-relevant paragraphs. The route fixes Nova POS Support Update, the linked ticket Contact, support sender, letterhead, and Nova Point of Sale Support signature, and allows only Nova-owned HTTPS links.",
+        "For ticket 347370 credentials, Alex or Rory calls salesforce_ticket_company_credentials_email_preview with the exact two positively evidenced requested recipients. Do not inspect, reproduce, hash, compare, or return the rendered credential body.",
+        "When the verified request includes customer delivery, call only the sendTool named by the same inventory row. Do not seek a second approval and do not switch tools, sender, template, or recipients.",
+        "Require one exact EmailMessage readback per recipient with the fixed subject and support@novapointofsale.com for support or billing@novapointofsale.com for billing. If provider acceptance is uncertain or readback is incomplete, report the uncertainty and do not retry.",
+        "If the needed row is non-sendable, use its classificationReason as the routing answer. Rory must create, correct, activate, move, or approve the exact Salesforce template and release its fixed mapping; agents must not rediscover alternatives.",
+        "For a reply from darius@novapointofsale.com, require the direct_darius_inbound_reply row. It remains missing and has no send tool until an exact approved stored template, fixed subject/body/wrapper/signature, and mapping are released. The future policy may use only one exact incoming Salesforce EmailMessage on the same ticket with Darius in ToAddress and must derive the sole recipient from that message's external FromAddress."
+      ],
+      "verification": [
+        "No agent input surface accepts senderAddress, template ID, subject, raw body, arbitrary HTML, or an unregistered recipient.",
+        "Support cannot send as billing, billing cannot send as support, and neither department route can fall back to Darius.",
+        "The sender preflight accepts no sender, address, template, ticket, or recipient inputs; Darius readiness never authorizes a proactive send.",
+        "The preview verifies the stored subject, HTML and plain text, resolved merge/manual placeholders, single wrapper/signature, and exact department sender without writing.",
+        "Ticket 347370 preview and receipt expose only non-secret validation and exact authorized recipients; excluded and inferred addresses are rejected.",
+        "Every successful delivery reports the exact verified FromAddress and EmailMessage receipt for every recipient.",
+        "The support one-off route is available only through its exact registered stored template and single bounded message placeholder. The billing one-off route remains unavailable until its exact stored template and mapping are approved. Agent-rendered support signatures normalize to Nova Point of Sale Support, billing signatures normalize to Nova POS Team, and any remaining Izhak Musli or Itzhak Musli signature fails before preview or send."
+      ]
+    },
+    "weekly_yaron_support_metrics": {
+      "display_name": "Weekly Yaron Support Metrics",
+      "aliases": ["weekly support metrics", "yaron report", "support calls", "phone calls", "nova classic tickets", "nova wave tickets", "friday report"],
+      "primary_agents": ["tickets_agent", "billing_agent", "coding_agent"],
+      "requires_tools": ["salesforce", "zoom"],
+      "use_when": "Weekly Friday Zoom report containing only total support calls and one combined total of eligible support tickets for Yaron.",
+      "preferred_entrypoints": [
+        "Use command-center endpoint POST /ops/weekly-yaron-report/send for the full scheduled workflow.",
+        "Read docs/AGENT_PLATFORM_MAP.md Weekly Yaron Support Metrics before broad discovery.",
+        "Use zoom_support_queue_metrics over the Zoom Contact Center historical engagement log for the exact six-agent roster stored in config/zoom-weekly-support-agents.json. Read calls.total for unique voice calls and keep chatSessions.total separate; transfers and multi-agent handling count once in the team total.",
+        "Use Salesforce NovaPOS_Ticket__c read-only data for ticket counts."
+      ],
+      "avoid_by_default": [
+        "command-center kanban ticket cache as the count source",
+        "excluding demo/test/template accounts",
+        "excluding closed tickets",
+        "excluding Bug, Feature Request, or Development Service tickets",
+        "sending the Zoom message from billing_agent when the verified task did not ask that lane to send it"
+      ],
+      "steps": [
+        "Compute the window as previous Friday 12:00 AM through current Friday 12:00 AM America/New_York.",
+        "Call zoom_support_queue_metrics for the exact window and fixed roster. Use calls.inbound plus calls.outbound as the team voice-call total; never use the all-channel agent-engagement total or include chat sessions.",
+        "Count all NovaPOS_Ticket__c records created/opened in that window whose RecordType is exactly 1. NOVA Classic or 2. Nova Wave.",
+        "Do not apply account, IsClosed, Technical Issue, Main Issue, bug, feature-request, demo, test, template, Demo Nova Cafe, or Acme Acres filters.",
+        "Write data/command_center/ops_weekly_yaron_report.json with the window, verified call totals, ticket totals, and sources.",
+        "Use the typed Zoom sender to deliver one idempotent message containing only the date range, total calls, and total tickets to uniquely verified Yaron Bachar; record exact message-id/body readback and never fall back to email."
+      ],
+      "verification": [
+        "State the exact date window used.",
+        "Report source/read path for both Zoom and Salesforce counts.",
+        "Reuse the existing Support Dashboard Calls S2S app for both metric reads and the one typed Team Chat send; require ZOOM_TEAM_CHAT_SENDER_USER_ID to match the S2S token owner and one active Nova Zoom user, never use me, and do not create another app.",
+        "Before Zoom delivery, verify the fixed Yaron recipient and both totals; atomically bind the idempotency key to the report request before the provider attempt, then require exact Zoom message-id, body, sender-email, and configured-recipient readback.",
+        "Do not expose Nova Classic/Wave, inbound/outbound, queue, channel, or per-agent breakdowns in the message, and do not retry an uncertain Zoom send without reconciling Zoom history."
+      ]
+    },
+    "weekly_support_quality": {
+      "display_name": "Thor Weekly Support Quality",
+      "aliases": ["thor weekly quality", "support quality audit", "weekly support agenda", "call transcript review", "representative coaching gaps"],
+      "primary_agents": ["claude_agent"],
+      "requires_tools": ["support_quality", "logmein_rescue"],
+      "use_when": "The scheduled Wednesday 09:00 America/New_York watcher or a manual run must measure fixed-roster Zoom call quality, review bounded Rescue evidence and the gateway-sanitized Classic/Wave ticket projection, track unresolved support topics, and build the Tech Time support-meeting agenda.",
+      "preferred_entrypoints": [
+        "Use the enabled Wednesday 09:00 America/New_York watcher for a four-hour agenda lead before the 13:00 Tech Time meeting; keep the manual Command Center quality-run surface available.",
+        "Use the existing Support Dashboard Calls S2S app through zoom_quality_ops and the exact four-tool Rescue reader.",
+        "Use the Command Center supplied sanitized projection by default; when source validation requires it, Thor may use the separate read-only Salesforce ticket and weekly-total evidence MCP.",
+        "Use the separate Google support-resource MCP for GET-only Drive metadata/listing, Docs, and bounded Sheets evidence needed by the support dashboard.",
+        "Supply only sanitized prior THOR_SUPPORT_QUALITY_RESULT summaries; never inject raw stored transcripts."
+      ],
+      "avoid_by_default": [
+        "changing the evidence-backed Wednesday 09:00 America/New_York schedule without a newly verified meeting cadence",
+        "Salesforce ticket mutation, ticket work, Gmail, review packets, or customer messages",
+        "Zoom administration, caller-supplied URLs, or messaging without an explicit operator request",
+        "Rescue mutation or Technician Console automation",
+        "persisting raw transcripts, chats, phone numbers, customer names, email addresses, or recording URLs",
+        "ranking representatives without audited sample size and source coverage"
+      ],
+      "steps": [
+        "Validate one completed UTC window, the fixed roster, gateway-sanitized ticket projection, source health, and prior sanitized summary coverage.",
+        "Inventory fixed-roster voice engagements and agent-performance evidence; inventory bounded Rescue sessions and performance.",
+        "Select deterministic representative evidence and record every missing, disabled, processing, or truncated transcript as a coverage gap.",
+        "Measure knowledge accuracy, troubleshooting method, ownership and escalation, communication clarity, and professionalism only when supported by evidence.",
+        "Separate individual coaching gaps from recurring product, documentation, process, or team knowledge gaps.",
+        "Compare prior sanitized summaries and bounded historical evidence; retain first-seen and last-seen windows for topics that remain unresolved.",
+        "Return exactly one THOR_SUPPORT_QUALITY_RESULT object. Command Center validates and atomically publishes it; no ticket mutation or automatic message action follows."
+      ],
+      "result_contract": {
+        "marker": "THOR_SUPPORT_QUALITY_RESULT:",
+        "schema_version": 1,
+        "statuses": ["complete", "partial", "blocked"],
+        "required_fields": ["schemaVersion", "status", "window", "coverage", "representatives", "unresolvedTopics", "knowledgeGaps", "professionalismGaps", "agenda", "sourceHealth"],
+        "gateway_owned_fields": ["generatedAtUtc", "jobId", "publicationId", "publicationDigest", "idempotencyKey"],
+        "forbidden_fields": ["rawTranscript", "rawChat", "transcriptUrl", "downloadUrl", "playbackUrl", "phoneNumber", "customerName", "customerEmail", "ticketId", "ticketNumber", "credentials", "providerReceipt"]
+      },
+      "verification": [
+        "Thor's effective MCP inventory contains typed Zoom quality/history/transcript and explicit-recipient send tools, the exact four Rescue readers, bounded Salesforce ticket/weekly-total reads, and GET-only Google Drive/Docs/Sheets support-resource reads; it contains no Gmail, Salesforce mutation, Rescue control, or Google Workspace mutation tool.",
+        "Every representative measure includes audited sample size and source coverage.",
+        "The durable artifact contains no raw transcript/chat text, customer identifiers, or URLs.",
+        "A partial source yields status partial and explicit coverage gaps rather than an unsupported complete score.",
+        "One idempotency key publishes at most one verified artifact per reporting window, and no downstream external write occurs."
+      ]
+    },
+    "nova_sql_readonly": {
+      "display_name": "Nova SQL Typed Diagnostics",
+      "aliases": ["sql", "database", "mssql", "invoice", "layaway", "inventory", "customer_orders"],
+      "primary_agents": ["tickets_agent", "billing_agent", "coding_agent"],
+      "requires_tools": ["nova_sql_ops"],
+      "use_when": "A registered typed Nova database diagnostic is needed. Agents never receive raw SQL credentials or a generic query tool.",
+      "preferred_entrypoints": [
+        "Call the registered typed Nova SQL MCP operation.",
+        "Use the operation's preview and status functions before an authorized execution.",
+        "If the needed typed operation is absent, state the access limitation and route to its owning lane."
+      ],
+      "avoid_by_default": [
+        "raw SQL or generic query tools",
+        "agent-authored staging-table commands",
+        "database credentials or connection strings in an agent process"
+      ],
+      "steps": [
+        "Resolve the exact account through the scoped Salesforce lookup operation.",
+        "Call the narrowest registered business operation.",
+        "Keep database resolution, statements, transactions, and cleanup inside the broker.",
+        "Read back the typed result through the same broker operation."
+      ],
+      "verification": [
+        "Report bounded counts and business identifiers returned by the broker.",
+        "Confirm the agent received no credential, connection string, or raw statement surface."
+      ]
+    },
+    "nova_sql_invoice_spare_investigation": {
+      "display_name": "Nova Invoice Spare Deep Investigation",
+      "aliases": ["spare", "spare invoice", "negative spare", "minimum price approval", "SpareInvoiceID", "invoice approved below minimum"],
+      "primary_agents": ["tickets_agent", "billing_agent", "coding_agent"],
+      "requires_tools": ["nova_sql_invoice_spare_investigation"],
+      "use_when": "An invoice spare is unexpected, an attached invoice approved a below-minimum sale, or the operator needs the causal arithmetic rather than a header lookup.",
+      "preferred_entrypoints": [
+        "Read skills/deep_operational_investigation.md for the compact triggerable workflow.",
+        "Resolve the exact Company_Username__c, then call nova_sql_invoice_spare_investigation with one invoice ID.",
+        "Read docs/agent-tools/nova-invoice-spare.md and review every related invoice, line, payment, coupon, location setting, and returned inference boundary.",
+        "Use a narrow nova_sql_read follow-up or source-code trace only when the typed result identifies a remaining gap."
+      ],
+      "avoid_by_default": [
+        "surface-level invoice-header summaries",
+        "non-quantity-aware discount formulas",
+        "treating current product minimum prices as historical facts",
+        "declaring a duplicate deduction without both the database signature and applicable persistence paths",
+        "editing invoice financial history during diagnosis"
+      ],
+      "steps": [
+        "Reconcile gross products, per-unit discount times quantity, net products, invoice total, and payments.",
+        "Traverse SpareInvoiceID in both directions and account for every direct consumer.",
+        "Reconstruct own spare plus full attached spare and explain why the approval passed or failed.",
+        "Explain any exact current-minimum snapshot gap and matching product contributions as an inference.",
+        "Trace each source-spare persistence call before confirming a duplicate deduction."
+      ],
+      "verification": [
+        "The result is fixed_deep_read_only, related invoices are bounded, and writesPerformed and arbitrarySqlExposed are false.",
+        "The final explanation separates stored facts, reconstructed arithmetic, and code or historical-setting inference."
+      ]
+    },
+    "nova_sql_api_customer_email_cohort": {
+      "display_name": "Taylor Verified API-Customer Email Cohort",
+      "aliases": ["api customers", "api customer emails", "api capabilities recipient list", "api announcement recipients"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "Taylor needs a verified deduplicated recipient list for active Nova customers with unexpired API access and at least one active location.",
+      "preferred_entrypoints": [
+        "Call nova_sql_api_customer_email_cohort with no arguments.",
+        "Use only the returned verified recipients; the cohort operation does not send email."
+      ],
+      "avoid_by_default": [
+        "generic POS_Main SQL",
+        "caller-supplied SQL or filters",
+        "reading API password or refresh-token fields",
+        "including inactive, blocked, deleted, fake, or locationless accounts",
+        "sending mail without a separate explicit authorization"
+      ],
+      "steps": [
+        "Read the fixed unexpired API-access candidates from POS_Main.dbo.users through the dedicated column-SELECT credential.",
+        "Resolve exact Company_Username__c matches in Salesforce.",
+        "Require Account.NovaPOS_Active__c > 0, no blocked/deleted/fake flags, and at least one active NovaPOS_Location__c.",
+        "Validate Email_Address__c with recurly__Email__c fallback and deduplicate case-insensitively."
+      ],
+      "verification": [
+        "The result reports its exact filters, candidate count, exclusion counts, eligible account count, and deduplicated recipient count.",
+        "Confirm arbitrarySqlExposed, writesExposed, and emailSent are all false."
+      ]
+    },
+    "nova_sql_tool_authoring": {
+      "display_name": "Taylor Typed Nova SQL Tool Authoring",
+      "aliases": ["missing sql tool", "new sql tool", "purpose-built sql operation", "account copy tool", "database merge tool"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["gcp_github_ops"],
+      "use_when": "A verified Nova SQL workflow cannot be represented by an installed typed operation or the generic bounded write executor.",
+      "preferred_entrypoints": [
+        "Implement the new typed operation under tools/scoped-operations-mcp with focused unit, security, and lane-exposure tests.",
+        "Use gcp_github_ops bounded content_text/content_base64 file payloads to publish only the selected source, test, and documentation files to a guarded codex/ branch and open a pull request.",
+        "When the authenticated operator explicitly authorizes release, preview and merge only that scoped SQL PR, wait for its successful immutable Cloud Build, then preview, promote, and read back only the pinned agent runtime."
+      ],
+      "avoid_by_default": [
+        "bypassing the installed guarded cross-account executor for a variation it already supports",
+        "granting a tenant SQL login cross-database access",
+        "direct protected-branch writes, workflow edits, generic GitHub administration, arbitrary GCP mutation, IAM changes, or unbuilt releases",
+        "raw credentials, direct SQL connections, or unreviewed scripts"
+      ],
+      "steps": [
+        "Capture the failed job, exact missing business operation, verified source and target accounts, and invariants.",
+        "Design a typed input schema and operation-owned safety boundary.",
+        "For multi-database work, resolve each Salesforce account and use the target-bound developer broker with an explicit read-only source allowlist.",
+        "Implement explicit staging/crosswalks, backup/rollback, operation-specific ceilings, idempotency, and pre/post-write readback.",
+        "Run focused and full scoped-provider tests.",
+        "Publish a guarded branch and PR.",
+        "If the operator authorized implementation but not release, stop after the PR and report its immutable head SHA.",
+        "If the operator authorized implementation and release, call github_scoped_sql_pull_request_preview, merge only its identical hash, wait for the successful immutable build, call gcp_agent_runtime_release_preview/apply, then verify the active release and all affected lane tool sets."
+      ],
+      "verification": [
+        "Taylor's GitHub App cannot write protected branches directly, edit workflows, administer repositories, or browse Taylor's private workspace.",
+        "Taylor's merge surface accepts only codex/* to main in codex-slack-bridge with scoped SQL source, focused tests, bounded supporting files, an immutable head SHA, and no incomplete or failing checks.",
+        "Taylor's release surface accepts only the same or a newer successful immutable main-branch Cloud Build artifact for the pinned agent VM, independently verifies the active release, exposes no rollback, and requires preview hash, idempotency, preflight-gated restart, and post-boot active-release readback.",
+        "The immutable build passes and live MCP tool sets match the post-change capability contract.",
+        "No tenant credential receives cross-database access and no secret reaches a model process."
+      ]
+    },
+    "nova_sql_guarded_write": {
+      "display_name": "Taylor Guarded Nova SQL Write",
+      "aliases": ["sql update", "sql insert", "database update", "db write", "temporary table", "locationid correction", "cross-account copy", "table range copy", "set-based upsert", "identity insert"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A verified request requires a Nova SQL UPDATE, INSERT, local temporary table, or set-based copy/upsert from one or more exact Nova source accounts into one exact target. Every such request routes to Taylor regardless of its originating agent.",
+      "preferred_entrypoints": [
+        "Resolve the exact Company_Username__c and POS database using scoped reads.",
+        "For cross-account work, call nova_sql_data_move_read first with the exact target, exact source_company_usernames, and bounded candidate/count SELECT needed to establish the row mapping and exact affected count.",
+        "Call nova_sql_write_preview with the complete immutable statement list, exact expected affected rows, verification scalar, stable idempotency key, exact writable company_username, and source_company_usernames when reading other Nova accounts.",
+        "Call nova_sql_execute_guarded only with the exact preview hash returned for that plan."
+      ],
+      "avoid_by_default": [
+        "direct or native SQL write clients or exposing the developer credential",
+        "DELETE, DROP, TRUNCATE, ALTER, or MERGE",
+        "UPDATE without WHERE",
+        "INSERT without explicit columns",
+        "permanent CREATE TABLE",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Inspect the target schema and verify the exact row mapping read-only.",
+        "For cross-account work, use only approved-source three-part reads in set-based INSERT SELECT or UPDATE FROM JOIN statements. Express ranges as parameters, upserts as UPDATE then INSERT, and identity preservation with identity_insert=true.",
+        "Provide every permanent target so the broker can verify permissions, identity metadata, triggers, temporal behavior, and update cascades.",
+        "Review the preview's deterministic full-table backup names and source row counts.",
+        "Execute the identical plan in one application-locked transaction.",
+        "Retain every generated backup table and the durable idempotency receipt."
+      ],
+      "verification": [
+        "nova_sql_data_move_read is available only to Taylor and permits cross-database references only to the explicitly named read-only sources.",
+        "Every permanent target has a full backup with the same pre-write row count.",
+        "Affected rows equal the approved exact count and remain at or below 10000 for local plans or 100000000 for cross-account set-based plans.",
+        "Every three-part database reference is an explicitly previewed source; every permanent DML target is a two-part table in the bound target database.",
+        "The scalar verification matches both before commit and after commit.",
+        "Record backup table names, affected rows, and post-commit readback only in the guarded receipt and private agent memory. Any authorized Salesforce ticket update contains only the human-useful business result and excludes source message IDs, database or backup names, row counts, plan hashes, tool status, validation errors, and scope disclaimers."
+      ]
+    },
+    "nova_sql_location_region_update": {
+      "display_name": "Taylor Fixed Location Region Update",
+      "aliases": ["RegionId update", "change location region", "set location region", "dbo.Locations RegionId", "LocationId region correction"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A verified operator request names one exact POS company database, one LocationId, and one positive RegionId to set on dbo.Locations.",
+      "preferred_entrypoints": [
+        "Use nova_sql_location_region_update immediately; do not start a general model or broad schema discovery for the exact request shape.",
+        "Pass only company_username, location_id, region_id, and a source-job idempotency key. The operation accepts no SQL.",
+        "For Command Center or Slack direct requests, use the deterministic Taylor-owned fast path."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview or nova_sql_execute_guarded",
+        "raw SQL, direct credentials, or Rory-owned SQL mutation",
+        "RegionId 0, multiple locations, multiple databases, ambiguous targets, or a changed request",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Resolve the exact row and destination region inside the fixed broker.",
+        "Validate the reviewed nonzero-RegionId trigger contract and backup permissions.",
+        "Create and row-count-verify a full dbo.Locations backup before the one-row update.",
+        "Commit at most once and read back the exact LocationId and RegionId."
+      ],
+      "verification": [
+        "The result identifies the exact company, LocationId, and RegionId.",
+        "A non-no-op write has one full dbo.Locations backup and one committed update.",
+        "Post-commit readback exactly matches the requested RegionId.",
+        "The operation reports arbitrarySqlAccepted=false and retains its idempotency receipt."
+      ]
+    },
+    "nova_sql_location_reactivation_update": {
+      "display_name": "Taylor Fixed Location Reactivation Update",
+      "aliases": ["reactivate Nova location", "LocationManagerEmployeeID 1 to 0", "activate Nova account location", "official Nova location inactive"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A verified operator request names one exact Company_Username__c and LocationId whose dbo.Locations LocationManagerEmployeeID must change from exactly 1 to exactly 0.",
+      "preferred_entrypoints": [
+        "Use nova_sql_location_reactivation_update with only company_username, location_id, and a stable source-job idempotency key.",
+        "The operation accepts no SQL and fixes the before and after values at 1 and 0.",
+        "Use this route when the general guarded executor rejects the reviewed Locations trigger."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview or nova_sql_execute_guarded for dbo.Locations while its DML trigger is enabled",
+        "raw SQL, direct credentials, trigger disabling, or Rory-owned SQL mutation",
+        "a starting value other than 1, a nonpositive RegionId, multiple locations, or multiple databases",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Read and lock the exact LocationId, requiring LocationManagerEmployeeID 1 and a positive RegionId.",
+        "Validate the exact reviewed tr_Locations_FixZero definition and destination RegionId.",
+        "Create and row-count-verify a full dbo.Locations backup before the one-row update.",
+        "Update only the exact row from 1 to 0, preserve RegionId, commit once, and read back the fixed result."
+      ],
+      "verification": [
+        "The result identifies the exact company and LocationId without accepting caller SQL.",
+        "A non-no-op write has one full dbo.Locations backup and one committed update.",
+        "Post-commit readback reports LocationManagerEmployeeID 0 and the unchanged positive RegionId.",
+        "The operation retains the backup name and durable idempotency receipt."
+      ]
+    },
+    "nova_sql_location_layaway_enable": {
+      "display_name": "Taylor Fixed Location Layaway Enablement",
+      "aliases": ["enable layaway", "turn on layaways", "location layaway settings", "Locations_Layaways", "layaway defaults"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A verified request asks to enable layaway for one or more exact LocationIds on one Salesforce-resolved Nova account.",
+      "preferred_entrypoints": [
+        "Route the request to Taylor even when it originates with Alex or Jamie.",
+        "Call nova_sql_location_layaway_enable with only company_username, location_ids, and a stable source-job idempotency key.",
+        "The broker fixes all setting values and accepts no SQL, table, column, disclaimer, percentage, or expiration inputs."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview or nova_sql_execute_guarded",
+        "raw SQL, direct credentials, caller-selected defaults, or Rory-owned SQL mutation",
+        "ambiguous accounts or locations, missing LocationIds, duplicate LocationIds, or more than 100 locations",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Resolve one exact Salesforce Account Company_Username__c and the exact Nova LocationIds.",
+        "Validate dbo.Locations_Layaways schema, permissions, trigger absence, and every requested dbo.Locations row.",
+        "If every requested row already has the fixed defaults, return a verified no-op.",
+        "Otherwise create and row-count-verify a full dbo.Locations_Layaways backup, then update existing requested rows and insert missing requested rows in one transaction.",
+        "Read back every requested row before and after commit and retain the durable receipt."
+      ],
+      "verification": [
+        "Each requested LocationId has exactly one Locations_Layaways row.",
+        "ExpirationDay is 90, IsChangeLayawayExpirationDate is 0, MinFirstPayment is 10, and Disclaimer is exactly Please come back and ask for our returning customer discount!",
+        "Only changed or missing requested rows are affected; other locations remain untouched.",
+        "A non-no-op write has a complete verified backup, one committed transaction, exact readback, arbitrarySqlAccepted=false, and an idempotency receipt."
+      ]
+    },
+    "nova_sql_table_restore": {
+      "display_name": "Taylor Guarded Nova SQL Table Recovery",
+      "aliases": ["restore table", "recover table", "restore column", "undo database update", "point in time table recovery", "restore database copy"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A SQL Server restore copy named POS_<Company_Username__c>_RESTORE exists and an authorized recovery must copy selected non-secret columns back to uniquely matched existing rows in the live table.",
+      "preferred_entrypoints": [
+        "Call nova_sql_table_restore_preview with the exact company username, schema, table, unique key columns, restore columns, and a stable idempotency key.",
+        "Review candidate, source-only, target-only, and matching counts plus the deterministic full-table backup name.",
+        "Call nova_sql_table_restore_execute only with the identical inputs and exact preview_hash."
+      ],
+      "avoid_by_default": [
+        "raw SQL, database credentials, caller-selected source database names, or cross-database SQL joins",
+        "DELETE, INSERT, MERGE, schema changes, row creation, row removal, or backup cleanup",
+        "secret, password, token, merchant-credential, identity, computed, generated, rowversion, or user-defined restore columns",
+        "non-unique or null key mappings, temporal targets, enabled DML/DDL triggers, cascading updates, more than 10000 changed rows, or more than 250000 snapshot rows",
+        "retrying an uncertain execute without reconciling the durable receipt and live readback"
+      ],
+      "steps": [
+        "Resolve Company_Username__c and require the fixed source name POS_<company>_RESTORE; the broker opens isolated source and live connections with no credential or SQL exposed to the agent.",
+        "Validate identical requested-column metadata, unique non-null keys, and exact source/live projections.",
+        "Preview the update-only plan. Source-only and target-only rows are preserved; only shared rows whose selected restore columns differ are candidates.",
+        "On execute, stage the source projection in a connection-local temporary table, application-lock and table-lock the live target, recheck the preview hash, and create a complete deterministic copy of the live target.",
+        "Update only the requested restore columns on shared keys, verify exact affected rows and zero remaining mismatches before commit, then perform an isolated post-commit readback and retain the receipt and safety copy."
+      ],
+      "verification": [
+        "Taylor alone exposes nova_sql_table_restore_preview and nova_sql_table_restore_execute; Alex and Jamie do not.",
+        "Neither tool accepts SQL or a source database name; source resolution is always POS_<company>_RESTORE.",
+        "The target row count is unchanged, source-only and target-only rows are preserved, every changed row matches the restore projection, and the full target backup row count matches the pre-write target.",
+        "The result reports only bounded counts, identifiers, plan/receipt evidence, and never returns credentials or restored row values."
+      ]
+    },
+    "nova_sql_locations_feature_columns_migration": {
+      "display_name": "Taylor Fixed Locations Feature-Column Migration",
+      "aliases": ["session idle time column", "surcharge columns", "surcharge percentage column", "surcharge label column", "locale code column", "alter locations table"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "A verified request asks to add one or more of the five approved nullable feature columns to dbo.Locations in an exact POS company database.",
+      "preferred_entrypoints": [
+        "Resolve the exact Company_Username__c; never accept a USE statement, database fragment, or caller-supplied SQL.",
+        "Call nova_sql_locations_feature_columns_preview with the exact company username and a stable idempotency key.",
+        "Call nova_sql_locations_feature_columns_execute only with the exact plan hash returned by that preview."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview for ALTER",
+        "direct or native SQL clients",
+        "any table other than dbo.Locations",
+        "any column or type outside the five fixed definitions",
+        "DELETE, DROP, TRUNCATE, MERGE, or backup cleanup",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Read and validate existing definitions for SessionIdleTime, IsSurchargeEnabled, SurchargePercentage, SurchargeLabel, and locale_code.",
+        "Review the deterministic full dbo.Locations backup name and source row count in the preview.",
+        "Execute the exact preview under the database application lock and table lock.",
+        "Retain the backup and durable idempotency receipt."
+      ],
+      "verification": [
+        "The backup row count matches dbo.Locations before ALTER.",
+        "Only previously missing approved columns were added.",
+        "All five definitions and nullability values match exact expected metadata after commit.",
+        "Record the company database, backup table, columns added, and verified readback only in the guarded receipt and private agent memory. Any authorized Salesforce ticket update contains only the human-useful business result."
+      ]
+    },
+    "nova_sql_kit_upgrade": {
+      "display_name": "Taylor Kit Upgrade",
+      "aliases": ["kit upgrade", "apply kit upgrade", "upgrade kit feature", "kit discount columns", "kit bundle columns", "kit date columns"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "The authorized request is to apply the fixed 15-column Kit upgrade to one exact Salesforce-resolved Nova account.",
+      "preferred_entrypoints": [
+        "Resolve the requested account to one exact Salesforce Company_Username__c.",
+        "Call nova_sql_kit_upgrade_preview with that exact company username and a stable idempotency key; the table and schema contract are broker-fixed.",
+        "Call nova_sql_kit_upgrade_execute only with the identical username/key and exact plan hash returned by that preview."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview for ALTER",
+        "direct or native SQL clients",
+        "caller-selected database, table, column, type, or SQL input",
+        "an unresolved, ambiguous, or guessed account name",
+        "creating KitTier or changing KitItem, KitSettings, or KitRegion",
+        "retry after an uncertain commit"
+      ],
+      "steps": [
+        "Resolve and read back the exact target company username before preview.",
+        "Verify the exact 15 approved nullable definitions and capture the existing Kit row count and preserved-data checksum.",
+        "Review the deterministic full dbo.Kit backup name in the preview.",
+        "Execute under the database application lock and Kit table lock.",
+        "Retain the backup and durable idempotency receipt."
+      ],
+      "verification": [
+        "The connected database is exactly POS_<resolved company username>.",
+        "The backup row count and all 12 preserved Kit columns match the live table exactly.",
+        "Only previously missing approved columns were added and initialized to NULL.",
+        "All 15 definitions, nullability values, and absent defaults match Demo Nova Cafe after commit."
+      ]
+    },
+    "nova_sql_instyle_demo_sync": {
+      "display_name": "Taylor Set-Based Instyle Demo Copy",
+      "aliases": ["invoice repair", "Instyle demo sync", "Instyle demo rebuild", "tickets 347072 and 347073", "LE_BOUTIQUE_INSTYLE", "Instyle_Fragrance", "DEMO_NOVA_CAFE"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "Taylor is validating the reusable SQL account-copy pattern on DEMO_NOVA_CAFE from the fixed LE_BOUTIQUE_INSTYLE and Instyle_Fragrance sources. SQL Server copies only missing transformed keys, including InventoryHistoryItem, rebuilds the product crosswalk, creates populated inactive products for missing source product IDs, fixes product references, and applies the verified invoice-link repairs.",
+      "preferred_entrypoints": [
+        "Read tools/scoped-operations-mcp/docs/instyle-demo-sync.md, then call nova_sql_capabilities and require instyleDemoSyncConfigured=true.",
+        "Call nova_sql_instyle_demo_sync_preview with one stable test-run idempotency key.",
+        "Call nova_sql_instyle_demo_sync_execute with the same key and the exact preview_hash. This demo-only operation is already authorized to run without a target backup.",
+        "If execute returns execution_failed_reconciliation_required or its result is uncertain, call nova_sql_instyle_demo_sync_status with the same key before any retry."
+      ],
+      "avoid_by_default": [
+        "generic nova_sql_write_preview or caller-authored SQL",
+        "alternate source or target accounts, databases, tables, mappings, rows, or statements",
+        "granting one tenant login cross-database rights",
+        "transporting source rows through Python or agent memory",
+        "clearing the InventoryHistoryItem target",
+        "creating a disposable-demo backup",
+        "reusing a preview after source schema, target row, target schema, or target checkpoint drift; ordinary new source rows are expected and do not invalidate the fixed live-source contract"
+      ],
+      "steps": [
+        "Confirm Taylor lists nova_sql_instyle_demo_sync_preview, nova_sql_instyle_demo_sync_status, and nova_sql_instyle_demo_sync_execute; confirm Alex and Jamie do not.",
+        "Preview the fixed accounts, packaged SQL hash, source schema hashes, and demo baseline.",
+        "Execute the exact hash. One database-side SQL batch reads both sources, creates the source-qualified product map, inserts only missing transformed keys, copies missing InventoryHistoryItem rows set-wise, creates populated inactive products, and repairs orphan references.",
+        "The fixed target-side repair also inserts the eleven verified Instyle invoice-product rows and aligns their InvoiceID values plus the matching Invoice_Employees and Invoice_Payments links.",
+        "Read back zero nonblank product-key duplicates, zero product-reference orphans, zero blank InvoiceID values in Invoice_Products, populated placeholder ProductName/SKU/BarcodeNumber, 44 Nova locations, four regions, and InventoryHistoryItem coverage for both sources."
+      ],
+      "verification": [
+        "The tools accept only idempotency_key and, for execute, preview_hash; no caller-selected account, database, table, mapping, row, statement, or SQL field exists.",
+        "Both source connections are read-only and the receipt states sourceDatabasesReadOnly=true.",
+        "The demo target is not cleared, only missing InventoryHistoryItem keys are copied, and targetBackupRequired=false is explicit because DEMO_NOVA_CAFE is the disposable test account.",
+        "Product crosswalk mappings are source-qualified; all 15 Nova product-reference tables read back with zero positive orphans.",
+        "Inactive missing-product rows have deterministic ProductName, SKU, BarcodeNumber, and ProductIsAvailable=false values.",
+        "The eleven fixed Invoice_Products rows read back against the eight verified Instyle invoices.",
+        "No credential, connection string, raw SQL, or cross-database tenant permission reaches the agent."
+      ]
+    },
+    "nova_sql_instyle_runway_merge": {
+      "display_name": "Taylor Fixed Instyle Runway Production Merge",
+      "aliases": ["Instyle Runway merge", "tickets 347072 and 347073", "LE_BOUTIQUE_INSTYLE", "Instyle_Fragrance", "INSTYLE_RUNWAY"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "The authenticated operator authorizes the reviewed production merge of LE_BOUTIQUE_INSTYLE and Instyle_Fragrance into the fixed INSTYLE_RUNWAY account.",
+      "preferred_entrypoints": [
+        "Read tools/scoped-operations-mcp/docs/instyle-runway-production-merge.md.",
+        "Call nova_sql_capabilities and require instyleRunwayMergeConfigured=true.",
+        "Call nova_sql_instyle_runway_merge_preview with one stable production idempotency key and review the exact account identities, 24/20 location plan, 107/142/11 source scope, schema hashes, source fingerprints, and clean target baseline.",
+        "Call nova_sql_instyle_runway_merge_execute only with the same key and exact preview_hash.",
+        "If execute is uncertain or reports execution_failed_reconciliation_required, call nova_sql_instyle_runway_merge_status with the same key before any retry."
+      ],
+      "avoid_by_default": [
+        "the demo-only Instyle operation or DEMO_NOVA_CAFE",
+        "generic nova_sql_write_preview or caller-authored SQL",
+        "alternate source or target accounts, databases, regions, tables, mappings, rows, or statements",
+        "transporting business rows through Python or granting tenant cross-database access",
+        "reusing a preview after source data, source schema, target data, target schema, or Salesforce identity drift",
+        "deleting a backup, quarantine row, crosswalk row, or receipt"
+      ],
+      "steps": [
+        "Resolve all three fixed Salesforce Account IDs and Company_Username__c values server-side.",
+        "Fingerprint both source schemas, all business-table row counts, source locations, products, invoice-product links, and the exact 107 placeholder / 142 linked-line / 11 quarantine scope.",
+        "Require the reviewed clean 18-location INSTYLE_RUNWAY scaffold and immutable target hash.",
+        "Within one SQL Server transaction, lock the target, back up every business table, create the two destination regions, map source A locations to 1-24 and source B locations to 25-44, copy all compatible business tables, and preserve the source-qualified immutable product crosswalk.",
+        "Commit only after exact location/region mapping, dedupe, placeholder, history, declared relationship, quarantine, skipped-table, and positive product-orphan checks pass.",
+        "Read back the durable receipt, full backup manifest, crosswalk plan hash, 44 locations, two regions, exact history coverage, and zero validated orphan/mismatch counts."
+      ],
+      "verification": [
+        "The tools accept only idempotency_key and, for execute, preview_hash; all accounts, databases, offsets, region names, mappings, scopes, and SQL are fixed by the broker.",
+        "Both source databases remain read-only and every permanent mutation is target-bound.",
+        "Every preexisting target business table has a full row-count-matched retained backup.",
+        "The product winner uses the highest ProductID for the normalized four-field key and every dependent product reference uses the source-qualified crosswalk.",
+        "Exactly 107 inactive placeholders cover 142 valid historical invoice lines, exactly 11 invoice-less rows are quarantined, and no positive product-reference orphan remains.",
+        "All 44 locations read back with exact source names under their correct one-of-two destination regions."
+      ]
+    },
+    "nova_sql_oklahoma_hawaii_catalog_replace": {
+      "display_name": "Taylor Fixed Oklahoma HAWAII Catalog Replacement",
+      "aliases": ["Oklahoma Hawaii catalog", "replace Oklahoma products", "Unique Lifestyle Hawaii products"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["salesforce_coding_ops"],
+      "use_when": "The authenticated operator requests the one reviewed full replacement of Oklahoma's catalog from the unique HAWAII category in Unique Lifestyle LLC.",
+      "preferred_entrypoints": [
+        "Read tools/scoped-operations-mcp/docs/oklahoma-hawaii-catalog-replace.md and require oklahomaHawaiiCatalogReplaceConfigured=true.",
+        "Call nova_sql_oklahoma_hawaii_catalog_replace_preview with rory-8702-oklahoma-hawaii-full-replace-v1.",
+        "Call nova_sql_oklahoma_hawaii_catalog_replace_execute only with that same key and the exact preview_hash.",
+        "After any uncertain execute, call nova_sql_oklahoma_hawaii_catalog_replace_status before considering a retry."
+      ],
+      "avoid_by_default": [
+        "the generic guarded executor or caller-authored DELETE",
+        "any alternate source, target, category, table, row, mapping, or SQL input",
+        "partial deactivation or insertion after a failed fixed preflight",
+        "retrying after source, target, dependency, schema, or count drift",
+        "dropping or cleaning an immutable target backup"
+      ],
+      "steps": [
+        "Require source database unique_lifestyle_llc, its unique HAWAII category ID 87, exactly 26 source products, one category, zero required wholesaler rows, and no unsupported source references.",
+        "Require the reviewed Oklahoma baseline of 723 products, six categories, one wholesaler, zero product-ID collisions, zero external catalog dependencies, no changed-table triggers, and the exact reviewed dependency metadata.",
+        "Create immutable full backups of Products, Products_Categories, and Products_Wholesalers.",
+        "In one serializable transaction, delete only the three fixed target catalog tables and insert only the fixed HAWAII category, required wholesalers, and 26 HAWAII products from the source by set-based SQL.",
+        "Read back exactly 26 products, one HAWAII category, zero wholesalers, zero non-HAWAII rows, and zero unsupported or orphaned references."
+      ],
+      "verification": [
+        "Only Taylor lists the preview/status/execute tools, and the tools accept no caller-selected business or SQL scope.",
+        "The source is read-only by operation policy and every mutation statement targets Oklahoma.",
+        "The three immutable backup row counts equal the reviewed target baseline before deletion.",
+        "Generic DELETE remains rejected everywhere outside this fixed typed operation.",
+        "The committed receipt and authoritative post-commit readback match the exact final catalog."
+      ]
+    },
+    "development_service_account_copy": {
+      "display_name": "Development Service Account Copy",
+      "aliases": [
+        "development service",
+        "account copy",
+        "copy account",
+        "merge account",
+        "combine accounts",
+        "new account",
+        "location count",
+        "dedupe products",
+        "product crosswalk",
+        "invoice_products",
+        "inventory history",
+        "transaction history",
+        "pk conflicts",
+        "offset"
+      ],
+      "primary_agents": ["tickets_agent", "coding_agent"],
+      "requires_tools": ["salesforce_support_ops", "salesforce_coding_ops"],
+      "use_when": "Salesforce Development Service work that needs a planning/review ticket plus the typed Nova account-copy business operation.",
+      "preferred_entrypoints": [
+        "Use the scoped Salesforce MCP to create or update the planning ticket when explicitly requested.",
+        "Alex resolves and hands off the exact source/destination identities, typed table scopes, business match keys, selected columns, and missing logical relationships.",
+        "Taylor calls nova_sql_account_copy_preview with that bounded specification.",
+        "Execute only the approved immutable plan through nova_sql_account_copy_execute."
+      ],
+      "avoid_by_default": [
+        "executing a handed-off SQL artifact or accepting raw SQL in the account-copy tools",
+        "agent-created or agent-dropped staging tables",
+        "editing the executor's approved plan",
+        "putting internal SQL details into Salesforce ticket notes"
+      ],
+      "steps": [
+        "Create the minimal planning ticket through the scoped Salesforce MCP only when explicitly requested.",
+        "Resolve exact source and destination account identifiers through scoped lookups.",
+        "Call nova_sql_account_copy_preview and review its bounded dependency, collision, dedupe, relationship, and impact summary.",
+        "When explicitly authorized, pass only the returned immutable plan identifier to nova_sql_account_copy_execute.",
+        "The executor owns transaction boundaries, staging creation/drop, identity remapping, cleanup after failure, rollback, idempotency, and readback.",
+        "Call nova_sql_account_copy_status before any retry after an uncertain result and report the verified business outcome."
+      ],
+      "verification": [
+        "Read back Salesforce ticket ids and account links after ticket creation.",
+        "Verify the executor reports a committed transaction, full target backups, exact affected rows, and post-commit relationship readback.",
+        "State clearly whether execution ran; never expose raw SQL or credentials to the agent."
+      ]
+    },
+    "logmein_rescue_support": {
+      "display_name": "LogMeIn Rescue Support",
+      "aliases": ["logmein", "log me in", "rescue", "remote support", "calling card", "pin code"],
+      "primary_agents": ["tickets_agent"],
+      "requires_tools": ["rescue_console", "salesforce_support_ops"],
+      "use_when": "Authenticated Rescue session, performance, or chat-log evidence is needed for support work.",
+      "preferred_entrypoints": [
+        "docs/agent-tools/logmein-rescue.md",
+        "Use rescue_console_status, rescue_list_sessions, rescue_read_performance, and rescue_read_chat only."
+      ],
+      "avoid_by_default": [
+        "Rescue send, PIN, assignment, transfer, session control, or admin operations.",
+        "Technician Console automation or browser fallback.",
+        "Changing the MCP configuration or credentials."
+      ],
+      "steps": [
+        "Confirm read-only MCP health and exact session context.",
+        "Read only the session, performance, or chat-log evidence needed for the assigned task.",
+        "Use the scoped Salesforce MCP separately when ticket context is required.",
+        "For any Rescue mutation request, state that this lane does not have that access or ability."
+      ],
+      "verification": [
+        "Confirm mutation tools are absent and report bounded readback without exposing credentials or unnecessary chat content."
+      ]
+    },
+    "repo_code_change": {
+      "display_name": "Repo Code Change",
+      "aliases": ["repo", "code", "bug", "commit", "push", "github", "test", "build"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": [],
+      "use_when": "Local code edits, tests, commits, pushes, CI, UI changes, or generated artifacts.",
+      "preferred_entrypoints": [
+        "Use rg, git diff/status, and file reads first.",
+        "Use apply_patch for manual edits.",
+        "Prefer direct compiler/test commands over repo wrapper scripts when practical."
+      ],
+      "avoid_by_default": [
+        "install scripts",
+        "PowerShell/batch wrapper scripts",
+        "downloaded executables",
+        "security-sensitive helper scripts"
+      ],
+      "steps": [
+        "Inspect existing patterns and current git state.",
+        "Make narrow edits with apply_patch.",
+        "Verify with the smallest safe direct command. If verification requires a script, ask or explain why it was skipped.",
+        "Summarize only files actually changed by this task."
+      ],
+      "verification": [
+        "Prefer direct unit test runner, compiler, or static parse command.",
+        "If no safe verification was run, state that clearly."
+      ]
+    },
+    "singapore_ftp_nonsubmission": {
+      "signature": "AgentChat/direct_codex 2026-07-13T18:45:00-04:00",
+      "display_name": "Singapore FTP Upload and Non-Submission Workflow",
+      "aliases": ["singapore", "singpore", "singapore routine", "singpore routine", "send singapore to taylor", "ftp routine", "singapore ftp", "ftp uploader", "nonsubmission", "non-submission", "resubmission", "julio", "zero sales", "sales verification"],
+      "primary_agents": ["coding_agent"],
+      "requires_tools": ["singapore_ftp", "gmail", "zoom"],
+      "use_when": "Daily 8 AM Eastern Singapore Grab & Upload for the prior night's delivery, trusted server-change mail, and strict non-submission processing, including an explicit run-now request.",
+      "preferred_entrypoints": [
+        "Use the command-center endpoint POST /ops/singapore-ftp/scan for the full workflow.",
+        "Read skills/singapore_ftp.md for policy only; do not inspect the background service's private state.",
+        "Use Taylor's deterministic background runner, which resolves credentials and canonical interface configuration internally.",
+        "For command-center Singapore routine jobs, the approved actions are: read matching Gmail, upload configured failure attachments with remote verification, catalogue every active result, mark authentication failures and pure zero-sale notices read with per-message readback, maintain existing private server entries from verified instructions, silently ignore verified retired interfaces, enforce the 90-day no-success and no-customer-contact retirement gate, send a compact sanitized active-work outcome to Taylor direct Agent Chat, and process every strict true non-submission independent of the private transfer catalog. Send new machine/dates through one source-safe Zoom batch of no more than 600 characters; for machine/dates already present in verified Zoom history, reply to the prior request with the short reminder. Operational outcomes never create Salesforce tickets or Needs Review packets; only an explicit brand-new interface request may create a ticket."
+      ],
+      "avoid_by_default": [
+        "printing embedded FTP/SFTP credentials from the packaged uploader",
+        "sending zero-sales or sales-verification items to Julio",
+        "sending to a guessed Zoom contact, name, user ID, group, or channel",
+        "launching, rebuilding, repairing, or duplicating the working desktop uploader",
+        "editing the background service's private interface configuration from ambiguous or untrusted credential emails"
+      ],
+      "steps": [
+        "Find recent Singapore FTP/submission/resubmission emails.",
+        "Separate true non-submission dates from zero-sales and sales-verification content.",
+        "Exclude zero-sales and sales-verification items from the Julio message; mark pure zero-sales notices read automatically with exact Gmail readback.",
+        "Run Grab & Upload headlessly as the automatic routine and catalogue each result first. Operational status/failure/authentication/remediation/configuration/reactivation outcomes never create Salesforce tickets or Needs Review packets. Only an explicit brand-new Singapore integration/interface request may create a ticket. Silently ignore verified retired interfaces unless reactivation is requested and use guarded Gmail readback.",
+        "Process strict non-submissions in the same automatic run and message Julio for true missing dates whether or not that machine is in the private transfer catalog.",
+        "If a verified instruction or trusted credential-change email changes or retires an existing connection, use the private atomic server patch command and report field names only. Reactivate a tombstone only from explicit instruction; never auto-create an unknown entry.",
+        "Build one source-safe Zoom batch of at most 600 characters per run. Keep all rows linked to one source email together; if one linked group cannot fit, leave that source unread and unresolved while continuing unrelated valid sources.",
+        "For a repeated machine/date already present in verified Zoom history, do not create a new request; reply to its verified prior message with `Hey Julio, just a reminder on this Singapore resubmission. Thanks.`",
+        "Before the provider call, atomically persist a durable outbox binding the exact source message IDs, machine/date rows, rendered body, and hash. Reconcile an unfinished outbox before creating another batch.",
+        "Resolve ZOOM_SINGAPORE_JULIO_CONTACT as Julio's exact contact email and require exactly one active Zoom user; names, user IDs, groups, and channels are invalid.",
+        "After sending, require exact Zoom message-ID, body, sender-email, and configured-recipient-email readback, plus exact reply-parent readback for reminders. Persist verified machine/date/source coverage before Gmail label mutation, then leave overflow sources deferred and unread for five-minute continuation cycles until the backlog is drained.",
+        "A human operational message remains background-service work; only an explicit request to create/build/add/provision/onboard/set up a brand-new Singapore integration/interface may enter the ticket path. Mark a non-submission source read only after every linked date is covered by a verified new request or verified reminder reply.",
+        "Write data/command_center/ops_singapore_ftp.json with approvedActions, nonsubmissions, ignored counts, Zoom status, upload status, and mailbox status."
+      ],
+      "verification": [
+        "Require exact Zoom message-ID, body, sender-email, and configured-recipient-email readback after every send, plus exact reply-parent readback for reminder replies.",
+        "Verify the durable outbox was written before the send, binds the same source rows and body, and is reconciled before the next batch.",
+        "Verify deferred source-linked rows remain unread, retain exact inbox-ledger ownership, and continue in later five-minute bounded cycles until none remain.",
+        "Parse/read back Taylor's private server list without exposing destination credentials.",
+        "Do not retry uncertain sends or mailbox writes without readback."
+      ]
+    },
+    "kb_correction": {
+      "display_name": "Knowledge Base Correction",
+      "aliases": ["kb", "knowledge", "article", "hallucination", "zva answer", "documentation"],
+      "primary_agents": ["tickets_agent", "coding_agent"],
+      "requires_tools": [],
+      "use_when": "Correcting ZVA/Nova KB answers, auditing chatbot behavior, or reconciling product documentation.",
+      "preferred_entrypoints": [
+        "Use existing KB exports and user-provided screenshots/comments first.",
+        "Confirm product lane: Nova Wave, Nova Classic, Billing, or General.",
+        "Update the source article when the issue is missing or incorrect KB content."
+      ],
+      "avoid_by_default": [
+        "Zoom publish/save when the verified task did not request it",
+        "new skills when a KB article correction is enough"
+      ],
+      "steps": [
+        "Identify the wrong answer and source lane.",
+        "Find the closest existing article or source.",
+        "Patch the article or draft the exact correction.",
+        "Only add guidance/skills when the KB cannot represent the rule."
+      ],
+      "verification": [
+        "Test or preview the corrected answer when available.",
+        "Note whether publish/save was performed or whether the verified request did not include it."
+      ]
+    }
+  }
+}

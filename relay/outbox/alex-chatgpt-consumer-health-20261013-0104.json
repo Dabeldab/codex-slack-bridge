@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-13T01:10:21Z",
+  "duplicate": false,
+  "error": "task did not reach a terminal state within 300 seconds",
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "",
+    "created_at": "2026-10-13T01:05:18.757136+00:00",
+    "error": "",
+    "job_id": "cc-20261013T010518Z-37460252d4",
+    "message": "",
+    "ok": true,
+    "result": "",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-13T01:05:18.773476+00:00",
+    "status": "running",
+    "terminal": false
+  },
+  "job_id": "cc-20261013T010518Z-37460252d4",
+  "relay_status": "timeout",
+  "status": "running",
+  "submitted_at": "2026-10-13T01:05:15Z",
+  "task_id": "alex-chatgpt-consumer-health-20261013-0104",
+  "version": 1
+}

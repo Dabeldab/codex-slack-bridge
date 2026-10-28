@@ -1,0 +1,61 @@
+# Example Codex MCP additions for GCP + GitHub ops.
+# Copy relevant sections into %USERPROFILE%\.codex\config.toml
+# (merge with your existing config — do not replace the whole file).
+#
+# GitHub: the curated GitHub plugin is usually enough:
+#
+#   [plugins."github@openai-curated"]
+#   enabled = true
+#
+# Optional GitHub MCP server (if you prefer MCP over the plugin):
+#
+#   [mcp_servers.github]
+#   command = "npx"
+#   args = ["-y", "@modelcontextprotocol/server-github"]
+#   startup_timeout_sec = 60
+#   [mcp_servers.github.env]
+#   GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_TOKEN}"
+#
+# GCP: remote Google-managed MCP servers may have auth issues in some clients.
+# For Codex CLI on Windows, gcloud CLI is the most reliable path. Ensure:
+#   gcloud auth login
+#   gcloud auth application-default login
+#   gcloud config set project YOUR_PROJECT_ID
+#
+# Optional: point Codex at a service account for unattended ops (least privilege):
+#
+#   [mcp_servers.gcp_ops.env]
+#   GOOGLE_APPLICATION_CREDENTIALS = "C:/path/to/ops-readonly-sa.json"
+#   CLOUDSDK_CORE_PROJECT = "your-gcp-project-id"
+#
+# Suggested IAM for read-only ops: roles/logging.viewer, roles/monitoring.viewer,
+# roles/run.viewer, roles/secretmanager.viewer
+# For controlled writes add: roles/run.developer (scoped to specific services)
+#
+# Optional Zoom MCP server (if you configure a Zoom Marketplace MCP integration):
+#
+#   [mcp_servers.zoom]
+#   command = "npx"
+#   args = ["-y", "@zoom/mcp-server-zoom"]   # replace with your Zoom MCP package
+#   startup_timeout_sec = 60
+#   [mcp_servers.zoom.env]
+#   ZOOM_ACCOUNT_ID = "${ZOOM_ACCOUNT_ID}"
+#   ZOOM_CLIENT_ID = "${ZOOM_CLIENT_ID}"
+#   ZOOM_CLIENT_SECRET = "${ZOOM_CLIENT_SECRET}"
+#
+# Without MCP, the zoom_workplace skill uses S2S OAuth + curl against
+# https://api.zoom.us/v2. See skills/zoom_workplace.md and config/ops.env.example.
+
+# Scoped operations MCP servers expose Salesforce tickets/fixed business
+# operations plus exact-account, bounded read-only Nova SQL preflight/SELECT
+# tools. Provider and database credentials stay inside the MCP process.
+#
+# [mcp_servers.salesforce_support_ops]
+# command = 'C:\path\to\scoped-operations-mcp\.venv\Scripts\python.exe'
+# args = ["-m", "scoped_operations_mcp.salesforce_server"]
+# [mcp_servers.salesforce_support_ops.env]
+# SCOPED_AGENT_LANE = "tickets_agent"
+# SALESFORCE_ENV_FILE = 'C:\protected\connector\.env'
+#
+# Create separate entries for coding_agent and billing_agent with distinct MCP
+# names and SCOPED_AGENT_LANE values. Do not expose a generic Salesforce MCP.

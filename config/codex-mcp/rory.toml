@@ -1,0 +1,4 @@
+# Cloud Run native Rory policy. Provider/tool access remains enforced by the
+# application capability contract; this template adds no implicit MCP servers.
+approval_policy = "never"
+sandbox_mode = "workspace-write"

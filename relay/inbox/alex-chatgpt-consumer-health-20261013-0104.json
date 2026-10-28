@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "task_id": "alex-chatgpt-consumer-health-20261013-0104",
+  "agent": "alex",
+  "title": "Read-only Alex ChatGPT Work consumer health probe",
+  "instruction": "This is a read-only relay health probe. Do not call Salesforce, Rescue, Zoom, Gmail, databases, cloud APIs, or any external tool. Reply with exactly: COMPLETED Relay health probe: Alex is online.",
+  "timeout_seconds": 300,
+  "created_at": "2026-10-13T01:04:47Z"
+}

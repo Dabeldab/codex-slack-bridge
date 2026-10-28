@@ -1,0 +1,34 @@
+# Production reasoning-provider overlay. ChatGPT Work is the only model provider.
+extends: agents.gcp-runtime.yaml
+
+defaults:
+  # Only these lanes may be instantiated, scheduled, routed, or exposed.
+  active_agents: [coding_agent, billing_agent, tickets_agent]
+  ops_weekly_support_quality_enabled: false
+  reasoning_relay_enabled: false
+
+agents:
+  direct_codex:
+    provider: disabled
+    mcp_allowlist: []
+  raw_codex:
+    provider: disabled
+  coding_agent:
+    provider: codex_cli
+    codex_executable: "/usr/local/bin/codex"
+    mcp_config_path: "/etc/nova/codex-mcp-policy/taylor.toml"
+    # Cloud Run has no sudo / per-agent Linux users; run codex directly.
+    codex_command_prefix: []
+  tickets_agent:
+    provider: codex_cli
+    codex_executable: "/usr/local/bin/codex"
+    mcp_config_path: "/etc/nova/codex-mcp-policy/alex.toml"
+    codex_command_prefix: []
+  billing_agent:
+    provider: codex_cli
+    codex_executable: "/usr/local/bin/codex"
+    mcp_config_path: "/etc/nova/codex-mcp-policy/jamie.toml"
+    codex_command_prefix: []
+  claude_agent:
+    provider: disabled
+    mcp_allowlist: []

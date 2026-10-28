@@ -1,0 +1,48 @@
+# Authenticated, non-writing Cloud Run shadow configuration.
+# This is intentionally not a production agent configuration. It contains no
+# Slack channels, agents, provider credentials, or enabled background workers.
+
+defaults:
+  runtime_mode: shadow
+  workspace_root: "/app"
+  state_db: "/tmp/nova-command-center/bridge.sqlite3"
+  max_workers: 1
+
+  command_center_auth_enabled: true
+  command_center_google_auth_enabled: true
+  command_center_session_token_path: "/tmp/nova-command-center/session.token"
+  command_center_session_ttl_seconds: 28800
+
+  memory_enabled: false
+  memory_sqlite_path: "/tmp/nova-command-center/memory.sqlite3"
+  memory_desktop_json_mirror: false
+  cognitive_memory_sqlite_path: "/tmp/nova-command-center/cognitive-memory.sqlite3"
+  learning_registry_enabled: false
+  learning_registry_sqlite_path: "/tmp/nova-command-center/learning-registry.sqlite3"
+  prospective_enabled: false
+  prospective_sqlite_path: "/tmp/nova-command-center/prospective.sqlite3"
+  drawing_board_digest_enabled: false
+  drawing_board_sqlite_path: "/tmp/nova-command-center/drawing-board.sqlite3"
+
+  voice_room_enabled: false
+  local_voice_room_enabled: false
+  agent_runtime_monitor_enabled: false
+  polling_enabled: false
+  slack_heartbeat_enabled: false
+
+  ops_inbox_ledger_enabled: false
+  ops_inbox_ledger_path: "/tmp/nova-command-center/inbox-work.sqlite3"
+  ops_support_email_intake_enabled: false
+  ops_email_watch_enabled: false
+  ops_schedule_watch_enabled: false
+  ops_ticket_refresh_enabled: false
+  ops_salesforce_delta_enabled: false
+  ops_salesforce_work_ledger_path: "/tmp/nova-command-center/salesforce-work.sqlite3"
+  ops_kpi_dashboard_enabled: false
+  ops_propelr_nmi_enabled: false
+  ops_singapore_ftp_enabled: false
+  ops_weekly_yaron_report_enabled: false
+  ops_zoom_chat_monitor_enabled: false
+
+agents: {}
+channels: {}

@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-13T00:47:00Z",
+  "error": "relay HTTP 502: Unauthorized",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-13T00:46:59Z",
+  "task_id": "alex-relay-health-20261013-0046",
+  "version": 1
+}

@@ -1,0 +1,17 @@
+# Jamie stays inside the application capability contract in Cloud Run.
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.salesforce_billing_ops]
+command = "/usr/local/bin/python"
+args = ["-m", "codex_slack_bridge.codex_mcp_proxy", "salesforce_billing_ops"]
+env_vars = ["NOVA_CODEX_BROKER_ENDPOINT", "NOVA_CODEX_BROKER_PROOF"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+
+[mcp_servers.maxio_billing_ops]
+command = "/usr/local/bin/python"
+args = ["-m", "codex_slack_bridge.codex_mcp_proxy", "maxio_billing_ops"]
+env_vars = ["NOVA_CODEX_BROKER_ENDPOINT", "NOVA_CODEX_BROKER_PROOF"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180

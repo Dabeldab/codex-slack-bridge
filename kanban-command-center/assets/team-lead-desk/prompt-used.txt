@@ -1,0 +1,6 @@
+AgentChat/coding_agent 2026-07-09T12:45:00-04:00
+Codex 2026-07-09T20:31:00-04:00
+
+Active asset revised from the original full-console team lead sprite. The original full-console version is preserved as team-lead-1-original-console.png for revert.
+
+Current production sprite: compact pixel-art team lead overlay for the existing center office desk, transparent background, bald adult man with medium-brown skin, glasses, dark navy/blue clothing, and small visible hands. No separate wraparound desk or duplicate console in the active overlay, so the character sits into the office map's center desk instead of covering it with a second desk.

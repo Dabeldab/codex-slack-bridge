@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-14T19:35:31Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-14T19:35:28.172088+00:00",
+    "created_at": "2026-10-14T19:33:57.750826+00:00",
+    "error": "",
+    "job_id": "cc-20261014T193357Z-8f30e20411",
+    "message": "",
+    "ok": true,
+    "result": "COMPLETED_WITH_ISSUES\n\n- Authentication: Failed—not established\n- Query: Failed\n- Total open tickets: Unavailable\n- Counts by approved record type: Unavailable\n- Configured limit: 200\n- Truncation: Undetermined\n- Operational blocker: Yes—the approved Salesforce support MCP tool isn’t available in this run. No data was changed.",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-14T19:33:57.754632+00:00",
+    "status": "completed_with_issues",
+    "terminal": true
+  },
+  "job_id": "cc-20261014T193357Z-8f30e20411",
+  "relay_status": "completed",
+  "status": "completed_with_issues",
+  "submitted_at": "2026-10-14T19:33:57Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-193328",
+  "version": 1
+}

@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: nova-gcp-ops
+Version: 0.1.0
+Summary: Authenticated, audited Nova GCP and runtime operations MCP
+Requires-Python: >=3.11
+Requires-Dist: mcp[cli]==1.28.1
+Requires-Dist: google-auth<3,>=2.30
+Provides-Extra: test
+Requires-Dist: pytest<9,>=8; extra == "test"

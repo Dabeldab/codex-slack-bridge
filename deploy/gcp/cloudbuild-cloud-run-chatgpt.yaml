@@ -1,0 +1,256 @@
+steps:
+  - id: build-chatgpt-relay-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file
+      - deploy/gcp/Dockerfile.cloud-run-chatgpt
+      - --tag
+      - ${_IMAGE}
+      - .
+
+  - id: verify-chatgpt-relay-image
+    name: gcr.io/cloud-builders/docker
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        docker run --rm --entrypoint python "${_IMAGE}" -c "import codex_slack_bridge.nova_control_mcp; import codex_slack_bridge.reasoning_relay_claims; print('Nova Control imports verified')"
+        docker run --rm --entrypoint python "${_IMAGE}" -c "import pyodbc; assert 'ODBC Driver 18 for SQL Server' in pyodbc.drivers(), pyodbc.drivers(); print('SQL Server ODBC driver verified')"
+        docker run --rm --entrypoint codex "${_IMAGE}" --version
+    waitFor:
+      - build-chatgpt-relay-image
+
+  - id: push-chatgpt-relay-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_IMAGE}
+    waitFor:
+      - verify-chatgpt-relay-image
+
+  - id: deploy-chatgpt-relay-cloud-run
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        gcloud run deploy "${_DEPLOY_SERVICE}" \
+          --project="${PROJECT_ID}" \
+          --region="${_DEPLOY_REGION}" \
+          --image="${_IMAGE}" \
+          --service-account="${_RUNTIME_SERVICE_ACCOUNT}" \
+          --ingress=all \
+          --port=8080 \
+          --concurrency=8 \
+          --min-instances=0 \
+          --max-instances=1 \
+          --cpu=1 \
+          --memory=1Gi \
+          --timeout=3600 \
+          --execution-environment=gen2 \
+          --cpu-throttling \
+          --clear-cloudsql-instances \
+          '--update-env-vars=BRIDGE_CONFIG=/app/config/agents.cloud-run-chatgpt.yaml,COMMAND_CENTER_HOST=0.0.0.0,COMMAND_CENTER_PORT=8080,COMMAND_CENTER_DISABLE_WATCHERS=0,FIRESTORE_ENABLED=1,FIRESTORE_PROJECT_ID=${PROJECT_ID},COMMAND_CENTER_GOOGLE_AUTH_ENABLED=1,COMMAND_CENTER_URL=http://127.0.0.1:8080,COMMAND_CENTER_PUBLIC_ORIGIN=${_PUBLIC_ORIGIN},GOOGLE_REDIRECT_URI=${_PUBLIC_ORIGIN}/auth/google/callback,NOVA_AGENT_RUNTIME_MODE=primary,NOVA_COMMAND_CENTER_STARTUP_GRACE_SECONDS=15,SLACK_SOCKET_MODE_ENABLED=0,REASONING_RELAY_ENABLED=1,REASONING_RELAY_REPOSITORY=dariusmakesstuff/codex-slack-bridge,REASONING_RELAY_BRANCH=reasoning-relay-bus,REASONING_RELAY_POLL_SECONDS=2,REASONING_RELAY_RESPONSE_TIMEOUT_SECONDS=900,REASONING_RELAY_JOB_TIMEOUT_SECONDS=3600,REASONING_RELAY_MAX_ROUNDS=20,REASONING_RELAY_BROKER_COMMAND=/usr/local/bin/python -m codex_slack_bridge.reasoning_relay_broker,GITHUB_ALLOWED_REPOSITORIES=dariusmakesstuff/codex-slack-bridge,GITHUB_APP_ID_PATH=/run/nova-secrets/github-app-id/value,GITHUB_APP_INSTALLATION_ID_PATH=/run/nova-secrets/github-app-installation-id/value,GITHUB_APP_PRIVATE_KEY_PATH=/run/nova-secrets/github-app-private-key/value,SALESFORCE_USE_CLIENT_CREDENTIALS=1,CODEX_HOME=/home/nova/.codex,COMMAND_CENTER_TRUSTED_BEARER_PATH=/run/nova-relay-secrets/command-center-upstream-token' \
+          '--update-secrets=/run/nova-secrets/github-app-id/value=nova-agents-github-app-id:latest,/run/nova-secrets/github-app-installation-id/value=nova-agents-github-app-installation-id:latest,/run/nova-secrets/github-app-private-key/value=nova-agents-github-app-private-key:latest,/run/secrets/operator-message-signing-key=nova-agents-operator-signing-key:latest,SALESFORCE_CLIENT_ID=nova-agents-salesforce-client-id:latest,SALESFORCE_CLIENT_SECRET=nova-agents-salesforce-client-secret:latest,SALESFORCE_LOGIN_URL=nova-agents-salesforce-login-url:latest,SALESFORCE_INSTANCE_URL=nova-agents-salesforce-instance-url:latest,RESCUE_USER=nova-agents-rescue-user:latest,RESCUE_PASS=nova-agents-rescue-password:latest,RESCUE_BASE=nova-agents-rescue-base:latest,RESCUE_GROUP_NODE_ID=nova-agents-rescue-node-id:latest,CHARGIFY_API_KEY=nova-agents-chargify-api-key:latest,CHARGIFY_BASE_URL=nova-agents-chargify-base-url:latest,GOOGLE_CLIENT_ID=nova-command-center-google-client-id:latest,GOOGLE_CLIENT_SECRET=nova-command-center-google-client-secret:latest,GOOGLE_OAUTH_ALLOWED_EMAILS=nova-command-center-google-allowed-emails:latest,CODEX_CLI_OAUTH=codex-cli-oauth:latest,/run/nova-relay-secrets/command-center-upstream-token=nova-command-center-upstream-token:4' \
+          --quiet
+    waitFor:
+      - push-chatgpt-relay-image
+
+  - id: verify-chatgpt-relay-cloud-run
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        service_json="$(gcloud run services describe "${_DEPLOY_SERVICE}" --project="${PROJECT_ID}" --region="${_DEPLOY_REGION}" --format=json)"
+        SERVICE_JSON="$service_json" python3 - <<'PY'
+        import json
+        import os
+
+        service = json.loads(os.environ["SERVICE_JSON"])
+        template = ((service.get("spec") or {}).get("template") or {}).get("spec") or {}
+        containers = template.get("containers") or []
+        if not containers:
+            raise SystemExit("Cloud Run service has no container spec")
+        container = containers[0]
+        env = {item.get("name"): item for item in container.get("env") or [] if item.get("name")}
+        required_env = {
+            "BRIDGE_CONFIG",
+            "REASONING_RELAY_ENABLED",
+            "REASONING_RELAY_REPOSITORY",
+            "REASONING_RELAY_BRANCH",
+            "REASONING_RELAY_BROKER_COMMAND",
+            "GITHUB_ALLOWED_REPOSITORIES",
+            "GITHUB_APP_ID_PATH",
+            "GITHUB_APP_INSTALLATION_ID_PATH",
+            "GITHUB_APP_PRIVATE_KEY_PATH",
+            "CODEX_HOME",
+        }
+        missing = sorted(required_env - set(env))
+        if missing:
+            raise SystemExit("Cloud Run relay env missing: " + ", ".join(missing))
+        if "CODEX_CLI_OAUTH" not in env:
+            raise SystemExit("CODEX_CLI_OAUTH secret is not mounted")
+        if str((env["REASONING_RELAY_ENABLED"].get("value") or "")).lower() not in {"1", "true", "yes", "on"}:
+            raise SystemExit("REASONING_RELAY_ENABLED is not enabled")
+        if env["REASONING_RELAY_BRANCH"].get("value") != "reasoning-relay-bus":
+            raise SystemExit("REASONING_RELAY_BRANCH is not reasoning-relay-bus")
+        volumes = {v.get("name"): v for v in template.get("volumes") or [] if v.get("name")}
+        mounts = container.get("volumeMounts") or []
+        mounted_paths = {m.get("mountPath") for m in mounts if m.get("mountPath")}
+        required_mount_roots = {
+            "/run/nova-secrets/github-app-id",
+            "/run/nova-secrets/github-app-installation-id",
+            "/run/nova-secrets/github-app-private-key",
+        }
+        if not required_mount_roots.issubset(mounted_paths):
+            raise SystemExit(
+                "Cloud Run GitHub App secret mounts missing: "
+                + ", ".join(sorted(required_mount_roots - mounted_paths))
+            )
+        print("Cloud Run relay configuration verified")
+        PY
+    waitFor:
+      - deploy-chatgpt-relay-cloud-run
+
+  - id: route-chatgpt-relay-traffic
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - services
+      - update-traffic
+      - ${_DEPLOY_SERVICE}
+      - --project=${PROJECT_ID}
+      - --region=${_DEPLOY_REGION}
+      - --to-latest
+      - --quiet
+    waitFor:
+      - verify-chatgpt-relay-cloud-run
+
+  - id: deploy-nova-control-mcp
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        gcloud run deploy "${_CONTROL_SERVICE}" \
+          --project="${PROJECT_ID}" \
+          --region="${_DEPLOY_REGION}" \
+          --image="${_IMAGE}" \
+          --service-account="${_RUNTIME_SERVICE_ACCOUNT}" \
+          --ingress=all \
+          --port=8080 \
+          --concurrency=4 \
+          --min-instances=0 \
+          --max-instances=1 \
+          --cpu=1 \
+          --memory=1Gi \
+          --timeout=900 \
+          --execution-environment=gen2 \
+          --cpu-throttling \
+          --command=python \
+          --args=-m,codex_slack_bridge.nova_control_mcp \
+          '--update-env-vars=BRIDGE_CONFIG=/app/config/agents.cloud-run-chatgpt.yaml,NOVA_CONTROL_MCP_AUTH_MODE=${_CONTROL_AUTH_MODE},REASONING_RELAY_REPOSITORY=dariusmakesstuff/codex-slack-bridge,REASONING_RELAY_BRANCH=reasoning-relay-bus,REASONING_RELAY_POLL_SECONDS=2,GITHUB_ALLOWED_REPOSITORIES=dariusmakesstuff/codex-slack-bridge,GITHUB_APP_ID_PATH=/run/nova-secrets/github-app-id/value,GITHUB_APP_INSTALLATION_ID_PATH=/run/nova-secrets/github-app-installation-id/value,GITHUB_APP_PRIVATE_KEY_PATH=/run/nova-secrets/github-app-private-key/value,SALESFORCE_USE_CLIENT_CREDENTIALS=1' \
+          '--remove-env-vars=NOVA_CONTROL_MCP_RESOURCE_URL,NOVA_CONTROL_AUTH_AUDIENCE,NOVA_CONTROL_AUTH_REQUIRED_SCOPES' \
+          '--update-secrets=/run/nova-secrets/github-app-id/value=nova-agents-github-app-id:latest,/run/nova-secrets/github-app-installation-id/value=nova-agents-github-app-installation-id:latest,/run/nova-secrets/github-app-private-key/value=nova-agents-github-app-private-key:latest,/run/secrets/operator-message-signing-key=nova-agents-operator-signing-key:latest,SALESFORCE_CLIENT_ID=nova-agents-salesforce-client-id:latest,SALESFORCE_CLIENT_SECRET=nova-agents-salesforce-client-secret:latest,SALESFORCE_LOGIN_URL=nova-agents-salesforce-login-url:latest,SALESFORCE_INSTANCE_URL=nova-agents-salesforce-instance-url:latest,RESCUE_USER=nova-agents-rescue-user:latest,RESCUE_PASS=nova-agents-rescue-password:latest,RESCUE_BASE=nova-agents-rescue-base:latest,RESCUE_GROUP_NODE_ID=nova-agents-rescue-node-id:latest' \
+          '--remove-secrets=NOVA_CONTROL_AUTH_ISSUER_URL' \
+          --quiet
+    waitFor:
+      - route-chatgpt-relay-traffic
+
+  - id: verify-nova-control-mcp-private
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        service_json="$(gcloud run services describe "${_CONTROL_SERVICE}" --project="${PROJECT_ID}" --region="${_DEPLOY_REGION}" --format=json)"
+        policy_json="$(gcloud run services get-iam-policy "${_CONTROL_SERVICE}" --project="${PROJECT_ID}" --region="${_DEPLOY_REGION}" --format=json)"
+        SERVICE_JSON="$service_json" POLICY_JSON="$policy_json" python3 - <<'PY'
+        import json
+        import os
+
+        service = json.loads(os.environ["SERVICE_JSON"])
+        policy = json.loads(os.environ["POLICY_JSON"])
+        template = ((service.get("spec") or {}).get("template") or {}).get("spec") or {}
+        containers = template.get("containers") or []
+        if not containers:
+            raise SystemExit("Nova Control has no container spec")
+        container = containers[0]
+        if container.get("command") != ["python"]:
+            raise SystemExit("Nova Control command is not pinned to python")
+        if container.get("args") != ["-m", "codex_slack_bridge.nova_control_mcp"]:
+            raise SystemExit("Nova Control module args are not pinned")
+
+        env = {item.get("name"): item for item in container.get("env") or [] if item.get("name")}
+        required = {
+            "BRIDGE_CONFIG",
+            "NOVA_CONTROL_MCP_AUTH_MODE",
+            "REASONING_RELAY_REPOSITORY",
+            "REASONING_RELAY_BRANCH",
+            "GITHUB_ALLOWED_REPOSITORIES",
+            "GITHUB_APP_ID_PATH",
+            "GITHUB_APP_INSTALLATION_ID_PATH",
+            "GITHUB_APP_PRIVATE_KEY_PATH",
+        }
+        missing = sorted(required - set(env))
+        if missing:
+            raise SystemExit("Nova Control env missing: " + ", ".join(missing))
+
+        values = {name: str(item.get("value") or "").strip() for name, item in env.items()}
+        if values["NOVA_CONTROL_MCP_AUTH_MODE"] != "cloudrun_iam":
+            raise SystemExit("Nova Control auth mode is not cloudrun_iam; no OAuth identity provider is configured for this deployment")
+        for leftover in ("NOVA_CONTROL_AUTH_ISSUER_URL", "NOVA_CONTROL_MCP_RESOURCE_URL", "NOVA_CONTROL_AUTH_AUDIENCE", "NOVA_CONTROL_AUTH_REQUIRED_SCOPES"):
+            if leftover in env:
+                raise SystemExit(f"Nova Control still has unused OAuth env var {leftover}; this deployment has no real OAuth issuer")
+
+        for binding in policy.get("bindings") or []:
+            members = set(binding.get("members") or [])
+            if "allUsers" in members:
+                raise SystemExit("Nova Control must stay private: allUsers must never be granted run.invoker on this service")
+
+        print("Nova Control verified private (cloudrun_iam, no public IAM binding)")
+        PY
+    waitFor:
+      - deploy-nova-control-mcp
+
+  - id: deploy-ticket-refresh-job
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        gcloud run jobs deploy "${_TICKET_REFRESH_JOB}" \
+          --project="${PROJECT_ID}" \
+          --region="${_DEPLOY_REGION}" \
+          --image="${_IMAGE}" \
+          --service-account="${_RUNTIME_SERVICE_ACCOUNT}" \
+          --command=python \
+          --args=-m,codex_slack_bridge.ticket_sync_job \
+          --tasks=1 \
+          --parallelism=1 \
+          --max-retries=1 \
+          --task-timeout=3600s \
+          --cpu=1 \
+          --memory=2Gi \
+          '--set-env-vars=BRIDGE_CONFIG=/app/config/agents.cloud-run-chatgpt.yaml,COMMAND_CENTER_DISABLE_WATCHERS=1,FIRESTORE_ENABLED=1,FIRESTORE_PROJECT_ID=${PROJECT_ID},NOVA_AGENT_RUNTIME_MODE=primary,SALESFORCE_USE_CLIENT_CREDENTIALS=1,CODEX_HOME=/home/nova/.codex' \
+          '--set-secrets=/run/secrets/operator-message-signing-key=nova-agents-operator-signing-key:latest,SALESFORCE_CLIENT_ID=nova-agents-salesforce-client-id:latest,SALESFORCE_CLIENT_SECRET=nova-agents-salesforce-client-secret:latest,SALESFORCE_LOGIN_URL=nova-agents-salesforce-login-url:latest,SALESFORCE_INSTANCE_URL=nova-agents-salesforce-instance-url:latest,RESCUE_USER=nova-agents-rescue-user:latest,RESCUE_PASS=nova-agents-rescue-password:latest,RESCUE_BASE=nova-agents-rescue-base:latest,RESCUE_GROUP_NODE_ID=nova-agents-rescue-node-id:latest,CHARGIFY_API_KEY=nova-agents-chargify-api-key:latest,CHARGIFY_BASE_URL=nova-agents-chargify-base-url:latest,CODEX_CLI_OAUTH=codex-cli-oauth:latest' \
+          --quiet
+    waitFor:
+      - push-chatgpt-relay-image
+
+substitutions:
+  _DEPLOY_SERVICE: nova-command-center-shadow
+  _CONTROL_SERVICE: nova-control-mcp
+  _TICKET_REFRESH_JOB: nova-ticket-refresh
+  _CONTROL_AUTH_MODE: cloudrun_iam
+  _DEPLOY_REGION: us-central1
+  _RUNTIME_SERVICE_ACCOUNT: nova-command-center-shadow@gen-lang-client-0051653266.iam.gserviceaccount.com
+  _PUBLIC_ORIGIN: https://nova-command-center-shadow-3qcpmfwo7a-uc.a.run.app
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+timeout: 1800s

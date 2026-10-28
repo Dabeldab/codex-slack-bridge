@@ -1,0 +1,9 @@
+AgentChat/coding_agent 2026-07-09T10:15:00Z
+
+Use the Nova Ops images already shown as style references, but generate a new office map background only. No characters, no UI cards, no labels, no readable text.
+
+Create a production 2D game office room background for a kanban command center, 3/4 top-down pixel-art perspective, cyberpunk NOC dashboard mood, dark navy floor, subtle tile grid, neon cyan and green accents, warm desk wood, practical support operations room.
+
+Composition: one central team-lead command desk in the center with small monitors and chair space; four separate agent desks positioned around it: upper-left support desk, upper-right billing desk, lower-left ops desk, lower-right Claude desk. Leave clear walkable corridors between every desk and the center desk. Include visible path-friendly floor lanes, but no arrows, no dashed lines, no labels. Add small office props like monitors, keyboards, file cabinets, plants, server rack, water cooler, and wall screens without text. Keep the scene uncluttered enough for sprite characters to walk over it.
+
+Runtime requirements: no people or robots baked into the background, no cards, no ticket text, no UI chrome, no speech bubbles, no logos, no letters, no numbers. The background must work as a game map under transparent sprites. The center area and each desk should have an obvious standing spot in front of the desk. Strong readable silhouettes, crisp pixel-art outlines, no blur, no photorealism.

@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-19T18:26:13Z",
+  "error": "private Command Center is unavailable",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-19T18:25:54Z",
+  "task_id": "chatgpt-alex-runtime-audit-20261019-01",
+  "version": 1
+}

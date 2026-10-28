@@ -1,0 +1,18 @@
+Payment Gateway
+A payment gateway can be called the middle-man between the merchant (Store) and the merchant bank, which is also connected to a large network of credit card issuing banks. One of the other main functions of credit card processing payment gateways, besides communication, is encryption. A payment gateway encrypts and decrypts all the data being sent through it.
+Payment Processor
+Payment processors, Acquirers or Merchant Provider are the financial institutions that work in the background to provide all the payment processing services used by the merchant. These companies usually have partnerships with other companies that directly deal with merchants.
+Merchant
+Retailer who may buy goods from any or all sources for resale to anyone and everyone for profit. Short and sweet the merchant is the business owner.
+Transaction Flow
+Role of Payment Gateway and Processor
+A cardholder/customer walks into a store and puts items in their cart and goes to the sales person to checkout in Nova.
+Sales Person Takes the persons card and swipes/inserts the card to charge the customer.
+The Gateway encrypts and forwards the card data to the acquiring bank (processor)
+The processor then sends a request to the credit card issuing bank for verification and authorization.
+If all is good the transaction will be approved and the processor will charge the credit card and the customers card will have a pending charge which usually will settle at the end of the business day.
+At the end of the day, the funds are transferred to the merchants bank.
+The whole process takes just a few seconds.
+Example of Gateways we currently use:
+Authorize.net, Creditcall, Heartland, Velocity, Stellar, Mercury(vantiv).
+Processor is a bank or ISO: Such as wells fargo, chase, North American Bankcard(NAB)

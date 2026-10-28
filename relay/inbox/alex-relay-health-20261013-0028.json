@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "task_id": "alex-relay-health-20261013-0028",
+  "agent": "alex",
+  "title": "Read-only Alex relay health probe after WIF repair",
+  "instruction": "This is a read-only relay health probe. Do not call Salesforce, Rescue, Zoom, Gmail, databases, cloud APIs, or any external tool. Reply with exactly: COMPLETED Relay health probe: Alex is online.",
+  "timeout_seconds": 300,
+  "created_at": "2026-10-13T00:28:39Z"
+}

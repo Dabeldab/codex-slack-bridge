@@ -1,0 +1,34 @@
+{
+  "checkedAtUtc": "2026-10-19T20:28:04.351789+00:00",
+  "deployed": false,
+  "inputSha": "0348c0385dd23d2b51950f5496145c54f1bc4945",
+  "patchedAgentsBlob": "db26708a39813b1629f1a3ba21dc1e4f46b19d9a",
+  "runId": "39319350206",
+  "schemaVersion": 1,
+  "suites": {
+    "bridge": {
+      "errors": 0,
+      "failingTests": [],
+      "failures": 0,
+      "outcome": "success",
+      "skipped": 0,
+      "tests": 1336
+    },
+    "focused": {
+      "errors": 0,
+      "failingTests": [],
+      "failures": 0,
+      "outcome": "success",
+      "skipped": 0,
+      "tests": 22
+    },
+    "scoped": {
+      "errors": 0,
+      "failingTests": [],
+      "failures": 0,
+      "outcome": "success",
+      "skipped": 0,
+      "tests": 609
+    }
+  }
+}

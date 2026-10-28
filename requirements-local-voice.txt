@@ -1,0 +1,3 @@
+# Isolated local speech runtime. Install only into data/local_voice/.venv.
+faster-whisper==1.2.1
+kokoro-onnx==0.5.0

@@ -1,0 +1,2 @@
+[console_scripts]
+nova-gcp-ops = nova_gcp_ops.server:main

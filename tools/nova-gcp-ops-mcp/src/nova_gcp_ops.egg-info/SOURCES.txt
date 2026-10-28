@@ -1,0 +1,10 @@
+pyproject.toml
+src/nova_gcp_ops/__init__.py
+src/nova_gcp_ops/server.py
+src/nova_gcp_ops.egg-info/PKG-INFO
+src/nova_gcp_ops.egg-info/SOURCES.txt
+src/nova_gcp_ops.egg-info/dependency_links.txt
+src/nova_gcp_ops.egg-info/entry_points.txt
+src/nova_gcp_ops.egg-info/requires.txt
+src/nova_gcp_ops.egg-info/top_level.txt
+tests/test_server.py

@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-14T20:07:17Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-14T20:07:14.435764+00:00",
+    "created_at": "2026-10-14T20:03:51.656243+00:00",
+    "error": "",
+    "job_id": "cc-20261014T200351Z-f42f6dbd12",
+    "message": "",
+    "ok": true,
+    "result": "COMPLETED\n\n- Authentication: Success\n- Query: Success\n- Total open: 11\n- NOVA Classic: 5\n- Nova Wave: 2\n- Billing: 4\n- Configured limit: 200\n- Truncated: No\n- Operational blocker: None",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-14T20:03:51.674780+00:00",
+    "status": "completed",
+    "terminal": true
+  },
+  "job_id": "cc-20261014T200351Z-f42f6dbd12",
+  "relay_status": "completed",
+  "status": "completed",
+  "submitted_at": "2026-10-14T20:03:43Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-200315",
+  "version": 1
+}

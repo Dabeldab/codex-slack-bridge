@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-14T18:37:33Z",
+  "error": "Remote end closed connection without response",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-14T18:33:14Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-183246",
+  "version": 1
+}

@@ -1,0 +1,51 @@
+forced_login_method = "chatgpt"
+cli_auth_credentials_store = "file"
+approval_policy = "never"
+approvals_reviewer = "user"
+
+[analytics]
+enabled = false
+
+[feedback]
+enabled = false
+
+[otel]
+exporter = "none"
+metrics_exporter = "none"
+trace_exporter = "none"
+log_user_prompt = false
+
+[projects."/srv/nova/workspaces/taylor"]
+trust_level = "trusted"
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+default_tools_approval_mode = "approve"
+
+[mcp_servers.gcp_github_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-cloud-broker", "--", "/opt/nova/bin/run-cloud-ops-broker", "coding_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"
+
+[mcp_servers.salesforce_coding_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-salesforce-broker", "--", "/opt/nova/bin/run-salesforce-broker", "coding_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 1200
+default_tools_approval_mode = "approve"
+
+[mcp_servers.maxio_coding_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-maxio-broker", "--", "/opt/nova/bin/run-maxio-broker", "coding_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"
+
+[mcp_servers.zoom_coding_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-zoom-broker", "--", "/opt/nova/bin/run-zoom-broker", "coding_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"

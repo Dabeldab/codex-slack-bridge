@@ -1,0 +1,453 @@
+<!-- AgentChat/coding_agent 2026-07-14T12:20:00-04:00: make Drawing Board a task-first operator Kanban with a usable editor. -->
+<!-- AgentChat/direct_codex 2026-07-14T15:31:01-04:00: replace duplicate agent replies with a compact update indicator. -->
+<!-- AgentChat/direct_codex 2026-07-11T08:43:00-04:00: attach voice calls to agent chats and add natural overlay dismissal. -->
+<!-- AgentChat/coding_agent 2026-07-10T02:31:44Z -->
+<!doctype html>
+<!-- AgentChat/coding_agent 2026-07-10T13:05:00-04:00 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nova Ops Command Center</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <section class="brand-block" aria-label="Nova Ops">
+        <div class="brand-mark">N</div>
+        <div>
+          <h1>NOVA OPS</h1>
+          <p>COMMAND CENTER</p>
+        </div>
+      </section>
+
+      <nav class="nav-tabs" aria-label="Workspace views">
+        <button class="nav-tab active" data-view-button="kanban">KANBAN BOARD</button>
+        <button class="nav-tab" data-view-button="drawing-board">DRAWING BOARD</button>
+        <button class="nav-tab" data-view-button="analytics">ANALYTICS</button>
+        <button class="nav-tab" data-view-button="activity">ACTIVITY FEED</button>
+      </nav>
+
+      
+
+      <section class="operator-strip" aria-label="Operator status">
+        <span class="runtime-security-badge" id="runtimeSecurityBadge" hidden>SHADOW · READ ONLY</span>
+        <span id="operatorIdentity">Authenticated operator</span>
+        <span id="snapshotTime">Loading Salesforce snapshot</span>
+        <button class="operator-logout" id="operatorLogout" type="button" hidden>Sign out</button>
+      </section>
+    </header>
+
+    <section class="runtime-alert" id="runtimeAlert" role="status" aria-live="assertive" hidden>
+      <strong>LIVE NOVA RUNTIME UNAVAILABLE</strong>
+      <span id="runtimeAlertMessage">The board is showing its last verified Salesforce cache.</span>
+    </section>
+
+    <aside class="left-rail" id="leftRail" aria-label="Queue status">
+      <section class="ops-panel quick-stats">
+        <header>
+          <h2>QUICK STATS</h2>
+          <button id="ticketRefresh" type="button">SYNC</button>
+        </header>
+        <div><span class="stat-icon blue"></span><span>Open Tickets</span><strong id="openCount">0</strong></div>
+        <div><span class="stat-icon green"></span><span>In Progress</span><strong id="progressCount">0</strong></div>
+        <div><span class="stat-icon purple"></span><span>Needs Review</span><strong id="reviewCount">0</strong></div>
+        <div><span class="stat-icon red"></span><span>Stale 3+ Days</span><strong id="staleCount">0</strong></div>
+        <p id="ticketSyncStatus">Static ticket snapshot loaded.</p>
+      </section>
+
+      <section class="ops-panel agent-list">
+        <h2>AGENT STATUS</h2>
+        <div id="agentList"></div>
+      </section>
+
+      <section class="ops-panel schedule-panel">
+        <header>
+          <h2>MEETINGS</h2>
+          <button id="scheduleRefresh" type="button">SYNC</button>
+        </header>
+        <div class="meeting-list" id="meetingList">
+          <p>No meeting scan loaded.</p>
+        </div>
+      </section>
+    </aside>
+
+    <button class="left-rail-toggle" id="leftRailToggle" type="button" aria-expanded="true" aria-controls="leftRail" aria-label="Hide left panel" title="Hide left panel">
+      <span aria-hidden="true"></span>
+    </button>
+
+    <section class="workbench">
+      <section class="view-surface active" data-view="kanban">
+        <section class="office-stage" aria-label="Agent office">
+          <img class="office-map" src="./assets/office-map/nova-ops-office-map.png" alt="">
+          <svg class="movement-paths" id="movementPaths" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polyline id="route-alex" class="route-line route-alex" points=""></polyline>
+            <polyline id="route-jamie" class="route-line route-jamie" points=""></polyline>
+            <polyline id="route-taylor" class="route-line route-taylor" points=""></polyline>
+          </svg>
+          <div class="station-pulse station-alex"></div>
+          <div class="station-pulse station-jamie"></div>
+          <div class="station-pulse station-taylor"></div>
+          <div class="station-pulse station-center"></div>
+
+          <button class="agent-sprite alex-agent" data-agent="alex" data-state="working" aria-label="Drop ticket on Alex">
+            <span class="agent-status-icon" aria-hidden="true">?</span>
+            <span class="agent-label">ALEX<small>Tech Support · Tickets</small></span>
+            <img src="./assets/forge-office-agents/office-agent-1.png" alt="">
+          </button>
+          <button class="agent-sprite jamie-agent" data-agent="jamie" data-state="working" aria-label="Drop ticket on Jamie">
+            <span class="agent-status-icon" aria-hidden="true">?</span>
+            <span class="agent-label">JAMIE<small>Tech Support · Billing</small></span>
+            <img src="./assets/forge-office-agents/office-agent-2.png" alt="">
+          </button>
+          <button class="agent-sprite taylor-agent" data-agent="taylor" data-state="working" aria-label="Drop ticket on Taylor">
+            <span class="agent-status-icon" aria-hidden="true">?</span>
+            <span class="agent-label">TAYLOR<small>Tech Support · Engineering</small></span>
+            <img src="./assets/forge-office-agents/office-agent-3.png" alt="">
+          </button>
+
+          <div class="agent-sprite you-agent" data-state="idle">
+            <span class="agent-label">Darius<small>Team Lead</small></span>
+            <img src="./assets/team-lead-desk/team-lead-1.png" alt="">
+          </div>
+          <img class="office-prop ice-cream-cart" src="./assets/office-props/ice-cream-cart.png" alt="">
+          <div class="office-legend" aria-hidden="true">
+            <span><i class="legend-work"></i>Working at desk</span>
+            <span><i class="legend-wait"></i>Waiting on Darius</span>
+            <span><i class="legend-done"></i>Delivered and returned</span>
+          </div>
+        </section>
+
+        <div class="ticket-resize-handle" id="ticketResizeHandle" role="separator" aria-label="Resize ticket board" aria-orientation="horizontal" tabindex="0">
+          <span></span>
+        </div>
+
+        <section class="kanban-board" id="kanbanBoard" aria-label="Ticket lanes"></section>
+      </section>
+
+      <section class="view-surface email-view" data-view="email">
+        <div class="email-page ops-panel">
+          <header class="email-page-header">
+            <div>
+              <h2>Email Watch</h2>
+              <p id="emailPageStatus">No email scan loaded.</p>
+            </div>
+            <div class="email-page-actions">
+              <button id="emailPageRefresh" type="button">SCAN</button>
+            </div>
+          </header>
+          <div class="email-page-summary" id="emailPageSummary">Taylor can scan inbox context and recommend body-only replies.</div>
+          <div class="email-watch-list email-page-list" id="emailPageList"></div>
+        </div>
+      </section>
+
+      <section class="view-surface drawing-board-view" data-view="drawing-board">
+        <div class="drawing-board-shell">
+          <header class="drawing-board-header">
+            <div>
+              <span class="drawing-board-kicker">YOUR TASK BOARD</span>
+              <h2>Follow-ups, reminders, and agent-assisted work in one place.</h2>
+              <p>Track work assigned in email or meetings, check off personal reminders, or send a detailed brief to an agent.</p>
+            </div>
+            <div class="drawing-board-actions">
+              <button id="drawingBoardNew" type="button">NEW TASK</button>
+              <button id="drawingBoardBrief" type="button">BOARD SUMMARY</button>
+              <button id="drawingBoardDigest" type="button">ASK TAYLOR TO PRIORITIZE</button>
+              <button id="drawingBoardRefresh" type="button">SYNC</button>
+            </div>
+          </header>
+
+          <section class="drawing-board-telemetry" aria-label="Drawing board summary">
+            <div><span>OPEN TASKS</span><strong id="drawingActiveCount">0</strong></div>
+            <div><span>NEEDS DETAILS</span><strong id="drawingDraftCount">0</strong></div>
+            <div><span>DUE SOON</span><strong id="drawingDueCount">0</strong></div>
+            <div><span>STALE</span><strong id="drawingStaleCount">0</strong></div>
+            <div><span>WAITING</span><strong id="drawingWaitingCount">0</strong></div>
+            <div><span>DONE</span><strong id="drawingProofCount">0</strong></div>
+          </section>
+
+          <form class="drawing-board-create" id="drawingBoardCreate" hidden>
+            <div class="drawing-form-title">
+              <div>
+                <strong id="drawingBoardFormTitle">Add a task</strong>
+                <span>Personal tasks can be checked off directly. Agent-assisted tasks include a detailed brief before dispatch.</span>
+              </div>
+              <button id="drawingBoardCreateClose" type="button" aria-label="Close task form">Close</button>
+            </div>
+            <label>Task type
+              <select id="drawingTaskMode">
+                <option value="personal">My task / reminder</option>
+                <option value="agent">Agent-assisted task</option>
+              </select>
+            </label>
+            <label class="drawing-field-wide">Task<input id="drawingTaskTitle" required maxlength="240" placeholder="Complete team one-on-ones"></label>
+            <label class="drawing-field-wide">Notes<textarea id="drawingTaskRequest" rows="3" placeholder="Useful context or what you need to remember"></textarea></label>
+            <label>Due<input id="drawingTaskDue" type="datetime-local"></label>
+            <label>Priority
+              <select id="drawingTaskPriority">
+                <option value="normal">Normal</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+            <label class="drawing-field-wide">Source<input id="drawingTaskSource" maxlength="2000" placeholder="Email link, meeting, ticket, or note (optional)"></label>
+            <label>Owner<input id="drawingTaskOwner" maxlength="120" value="Darius"></label>
+            <details class="drawing-advanced-fields drawing-field-wide" id="drawingAdvancedFields">
+              <summary>Agent brief details</summary>
+              <div class="drawing-advanced-grid">
+                <label>Agent
+                  <select id="drawingTaskAgent">
+                    <option value="">Choose responsibility</option>
+                    <option value="tickets_agent">Alex - Tickets</option>
+                    <option value="billing_agent">Jamie - Billing</option>
+                    <option value="coding_agent">Taylor - Engineering</option>
+
+                  </select>
+                </label>
+                <label class="drawing-field-wide">Concrete outcome<textarea id="drawingTaskOutcome" rows="3" placeholder="The deliverable or decision the agent must produce"></textarea></label>
+                <label class="drawing-field-wide">Immediate next action<textarea id="drawingTaskNext" rows="3" placeholder="The first exact action the agent can take"></textarea></label>
+                <label class="drawing-field-wide">Agent's expected action<textarea id="drawingTaskAssigneeAction" rows="3" placeholder="What the agent must do and return"></textarea></label>
+                <label class="drawing-field-wide">Completion criteria<textarea id="drawingTaskCriteria" rows="3" placeholder="What must be true before this is done?"></textarea></label>
+              </div>
+            </details>
+            <div class="drawing-form-actions drawing-field-wide">
+              <button id="drawingBoardCancel" type="button">CANCEL</button>
+              <button class="drawing-create-submit" id="drawingBoardSaveBrief" type="submit">ADD TASK</button>
+            </div>
+          </form>
+
+          <section class="drawing-board-briefing" id="drawingBoardBriefing" hidden>
+            <header><strong>BOARD SUMMARY</strong><button id="drawingBoardBriefClose" type="button">Close</button></header>
+            <div id="drawingBoardBriefContent"></div>
+          </section>
+
+          <div class="drawing-board-columns" id="drawingBoardColumns" aria-live="polite"></div>
+          <p class="drawing-board-status" id="drawingBoardStatus">Drawing Board has not been loaded.</p>
+        </div>
+      </section>
+
+      <section class="view-surface voice-room-view" data-view="voice-room">
+        <div class="voice-room-shell" id="voiceRoomShell" data-voice-state="idle">
+          <header class="voice-room-header">
+            <div>
+              <span class="voice-room-kicker">REALTIME AGENT CHANNEL</span>
+              <h2>Voice Room</h2>
+              <p>Talk naturally with the agent you called from chat. Each agent keeps the same voice every time.</p>
+            </div>
+            <div class="voice-room-state" id="voiceRoomState" role="status" aria-live="polite">
+              <span class="voice-state-light" aria-hidden="true"></span>
+              <span><small>ROOM STATE</small><strong id="voiceRoomStateLabel">IDLE</strong></span>
+            </div>
+          </header>
+
+          <section class="voice-room-console" aria-label="Voice room controls">
+            <div class="voice-orb-stage">
+              <div class="voice-orb" aria-hidden="true">
+                <span class="voice-orb-core"></span>
+                <span class="voice-orb-ring voice-orb-ring-one"></span>
+                <span class="voice-orb-ring voice-orb-ring-two"></span>
+              </div>
+              <div class="voice-waveform" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <strong id="voiceRoomPrompt">Ready when you are</strong>
+              <p id="voiceRoomDetail">Open an agent chat and press Call. Nothing is listening yet.</p>
+            </div>
+
+            <div class="voice-room-controls">
+              <div class="voice-agent-identity" id="voiceRoomAgentIdentity" data-agent="none">
+                <span class="voice-agent-avatar" id="voiceRoomAgentAvatar" aria-hidden="true">—</span>
+                <span><small>ACTIVE AGENT</small><strong id="voiceRoomAgentName">No call selected</strong></span>
+                <span><small>ATTACHED VOICE</small><strong id="voiceRoomAgentVoice">Open chat to call</strong></span>
+              </div>
+              <div class="voice-room-action-row">
+                <button class="voice-control-button" id="voiceRoomMute" type="button" disabled aria-pressed="false">
+                  <span aria-hidden="true">MIC</span><strong>MUTE</strong>
+                </button>
+                <button class="voice-control-button voice-end-button" id="voiceRoomEnd" type="button" disabled>
+                  <span aria-hidden="true">END</span><strong>LEAVE</strong>
+                </button>
+              </div>
+              <p class="voice-room-privacy" id="voiceRoomPrivacy"><span aria-hidden="true"></span> Local mode sends audio only to services on this computer. It never falls back to OpenAI, ElevenLabs, or Microsoft voices.</p>
+            </div>
+          </section>
+
+          <section class="voice-room-streams">
+            <div class="voice-transcript-panel">
+              <header>
+                <div><span>LIVE TRANSCRIPT</span><strong>Conversation</strong></div>
+                <button id="voiceRoomClear" type="button">CLEAR</button>
+              </header>
+              <div class="voice-transcript" id="voiceRoomTranscript" aria-live="polite">
+                <div class="voice-empty-state">
+                  <strong>No conversation yet</strong>
+                  <span>Your transcript will appear here after you start a call from agent chat.</span>
+                </div>
+              </div>
+            </div>
+            <div class="voice-event-panel">
+              <header><div><span>SESSION TELEMETRY</span><strong>Connection events</strong></div></header>
+              <div class="voice-event-feed" id="voiceRoomEvents" aria-live="polite">
+                <div class="voice-event-row info"><time>READY</time><span>Voice Room is idle. Microphone is off.</span></div>
+              </div>
+            </div>
+          </section>
+
+          <audio id="voiceRoomAudio" autoplay></audio>
+        </div>
+      </section>
+
+      <section class="view-surface analytics-view" data-view="analytics">
+        <div class="placeholder-page">
+          <header class="analytics-header">
+            <div>
+              <h2>Analytics</h2>
+              <p id="kpiStatus">KPI dashboard cache has not been loaded.</p>
+            </div>
+            <button id="kpiRefresh" type="button">SYNC KPI</button>
+          </header>
+          <div class="analytics-summary" id="analyticsSummary">The browser reads a compact local KPI cache so Google dashboard refreshes run in the background.</div>
+          <div class="metric-grid" id="analyticsMetrics"></div>
+          <section class="usage-analytics" aria-labelledby="usageAnalyticsTitle">
+            <header>
+              <div>
+                <h3 id="usageAnalyticsTitle">Codex token usage</h3>
+                <p id="usageAnalyticsStatus">Loading durable task usage.</p>
+              </div>
+              <button id="usageRefresh" type="button">REFRESH USAGE</button>
+            </header>
+            <div class="metric-grid usage-metric-grid" id="usageMetrics"></div>
+            <div class="usage-table-wrap">
+              <table class="usage-table">
+                <thead><tr><th>Task</th><th>Ticket</th><th>Agent</th><th>Total tokens</th><th>Input</th><th>Output</th><th>Est. cost</th><th>Finished</th></tr></thead>
+                <tbody id="usageRows"><tr><td colspan="8">No Codex task usage recorded yet.</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+          <div class="kpi-section-grid" id="kpiSections"></div>
+        </div>
+      </section>
+
+      <section class="view-surface activity-view" data-view="activity">
+        <div class="activity-page">
+          <header>
+            <h2>Agent Activity Feed</h2>
+            <p id="activityStatus">Loading current command-center work.</p>
+          </header>
+          <div class="activity-grid" id="activityGrid"></div>
+        </div>
+      </section>
+    </section>
+
+    <aside class="right-panel" aria-label="Ticket detail">
+      <section class="detail-panel ops-panel">
+        <header>
+          <div>
+            <h2 id="detailTitle">Select a ticket</h2>
+            <p id="detailSubtitle">Open Salesforce snapshot</p>
+          </div>
+          <div class="detail-actions">
+            <button id="detailClearSelection" type="button">Clear</button>
+            <a id="detailLink" href="#" target="_blank" rel="noreferrer">Salesforce</a>
+          </div>
+        </header>
+        <dl class="detail-grid">
+          <div><dt>Account</dt><dd id="detailAccount">-</dd></div>
+          <div><dt>Days Active</dt><dd id="detailAge">-</dd></div>
+          <div><dt>Main Issue</dt><dd id="detailMainIssue">-</dd></div>
+          <div><dt>Technical Issue</dt><dd id="detailTechIssue">-</dd></div>
+          <div><dt>Opened By</dt><dd id="detailOpenedBy">-</dd></div>
+          <div><dt>Owner</dt><dd id="detailOwner">-</dd></div>
+        </dl>
+        <section class="notes-panel">
+          <h3>Technical Notes</h3>
+          <pre id="detailNotes">Hover a card's notes or select a ticket to view the full technical notes.</pre>
+        </section>
+        <form class="dispatch-panel" id="dispatchPanel">
+          <header>
+            <div>
+              <h3>Agent Dispatch</h3>
+              <p id="dispatchStatus">Select a ticket and agent.</p>
+              <p class="agent-update-summary" id="agentRepliesStatus" aria-live="polite" hidden></p>
+            </div>
+            <div class="dispatch-context-pill">
+              <strong id="dispatchTicketNumber">No ticket</strong>
+              <button id="dispatchClearTicket" type="button" title="Clear selected ticket context">Clear</button>
+            </div>
+          </header>
+          <div class="dispatch-mode-toggle" role="group" aria-label="Dispatch context">
+            <button class="active" type="button" data-dispatch-mode="ticket">Ticket</button>
+            <button type="button" data-dispatch-mode="task">General task</button>
+          </div>
+          <input class="dispatch-task-title" id="dispatchTaskTitle" maxlength="160" placeholder="Quality review or other concrete task title" hidden>
+          <div class="dispatch-agent-grid" aria-label="Dispatch agent">
+            <button type="button" data-dispatch-agent="alex">Alex</button>
+            <button type="button" data-dispatch-agent="jamie">Jamie</button>
+            <button type="button" data-dispatch-agent="taylor">Taylor</button>
+
+          </div>
+          <textarea id="dispatchInstruction" rows="3" placeholder="Instruction, customer context, or ticket update"></textarea>
+          <div class="dispatch-submit-row">
+            <button class="dispatch-submit" id="dispatchSubmit" type="submit" disabled>Send to Agent</button>
+            <div class="dispatch-review-actions" id="reviewPacketActions" aria-label="Review packet actions" hidden>
+              <span class="review-packet-status" id="reviewPacketStatus">Review packet selected.</span>
+              <button id="reviewPacketContinue" type="button">Follow-up</button>
+              <button id="reviewPacketClose" type="button">Resolve</button>
+              <button id="reviewPacketAbandon" type="button">Abandon</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="email-drawer ops-panel" id="emailDrawer" aria-label="Ops email watch" aria-hidden="true">
+        <header>
+          <div>
+            <h2>Ops Mail Watch</h2>
+            <p id="emailWatchStatus">No email scan loaded.</p>
+          </div>
+          <div class="email-actions">
+            <button id="emailRefresh" type="button">SCAN</button>
+            <button id="emailDrawerClose" type="button">Close</button>
+          </div>
+        </header>
+        <div class="email-summary" id="emailSummary">Taylor can scan inbox context and recommend body-only replies.</div>
+        <div class="email-watch-list" id="emailWatchList"></div>
+      </section>
+    </aside>
+
+    <section class="agent-chat-drawer ops-panel" id="agentChatDrawer" aria-label="Direct agent chat" aria-hidden="true" hidden>
+      <header>
+        <div>
+          <h2 id="agentChatTitle">Agent Chat</h2>
+          <p id="agentChatStatus">Direct/general messages only.</p>
+        </div>
+        <div class="agent-chat-header-actions">
+          <button class="agent-chat-call" id="agentChatCall" type="button"><span aria-hidden="true">CALL</span><strong>Call</strong></button>
+          <button id="agentChatClose" type="button">Close</button>
+        </div>
+      </header>
+      <div class="agent-chat-messages" id="agentChatMessages"></div>
+      <form class="agent-chat-form" id="agentChatForm">
+        <div class="agent-chat-attachments" id="agentChatAttachments" aria-live="polite"></div>
+        <div class="agent-chat-composer-row">
+          <div class="agent-chat-input-wrap">
+            <textarea id="agentChatInput" rows="3" placeholder="Message this agent directly. Paste screenshots or attach supporting files."></textarea>
+            <button id="agentChatAttach" type="button">Attach files</button>
+            <input id="agentChatFileInput" type="file" multiple hidden accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.bmp,.tif,.tiff,.heic,.heif,.txt,.csv,.tsv,.json,.md,.eml,.docx,.xlsx,.xlsm,.xls,.pptx">
+            <span class="agent-chat-paste-hint"><kbd>Ctrl</kbd> + <kbd>V</kbd> paste images · attach up to 5 files</span>
+          </div>
+          <button id="agentChatSend" type="submit" disabled>Send</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="floating-tooltip" id="notesTooltip" role="tooltip"></div>
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+  </main>
+
+  <script src="./ticket-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

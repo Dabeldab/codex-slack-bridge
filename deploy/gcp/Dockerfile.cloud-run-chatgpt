@@ -1,0 +1,91 @@
+FROM python:3.13-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    BRIDGE_CONFIG=/app/config/agents.cloud-run-chatgpt.yaml \
+    COMMAND_CENTER_HOST=0.0.0.0 \
+    COMMAND_CENTER_PORT=8080 \
+    COMMAND_CENTER_GOOGLE_AUTH_ENABLED=1 \
+    NOVA_AGENT_RUNTIME_MODE=primary \
+    CODEX_HOME=/home/nova/.codex
+
+WORKDIR /app
+
+# Local Codex CLI is the autonomous primary lane (the 3 production agents run
+# codex_cli). Node 22 + @openai/codex give us the CLI; unixodbc-dev +
+# build-essential are needed to build pyodbc for scoped-operations-mcp's
+# Salesforce/Maxio access. The ChatGPT Work/GitHub relay remains available as
+# the ad-hoc/fallback lane and its secrets are still mounted. Keep the CLI
+# compatible with the authenticated Desktop CLI that supplies staged auth.json.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates git curl gnupg build-essential unixodbc unixodbc-dev \
+    && curl --fail --silent --show-error \
+        https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb \
+        --output /tmp/packages-microsoft-prod.deb \
+    && dpkg --install /tmp/packages-microsoft-prod.deb \
+    && rm --force /tmp/packages-microsoft-prod.deb \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18 \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g @openai/codex@0.162.1 \
+    && codex_path="$(command -v codex)" \
+    && test -x "$codex_path" \
+    && if [ "$codex_path" != "/usr/local/bin/codex" ]; then ln -sf "$codex_path" /usr/local/bin/codex; fi \
+    && test -x /usr/local/bin/codex \
+    && codex_module_root="$(npm root -g)" \
+    && test -d "$codex_module_root/@openai/codex" \
+    && chmod a+rx "$codex_module_root" "$codex_module_root/@openai" \
+    && chmod -R a+rX "$codex_module_root/@openai/codex" \
+    && node --version \
+    && npm --version \
+    && codex --version \
+    # The agent config pins codex_executable to /usr/local/bin/codex, but
+    # `npm install -g` on the NodeSource Node 22 repo places the binary at
+    # /usr/bin/codex. Symlink the canonical path so the config always resolves,
+    # regardless of which node bin dir the installer chose.
+    && ln -sf "$(command -v codex)" /usr/local/bin/codex \
+    && ls -l /usr/local/bin/codex \
+    && /usr/local/bin/codex --version \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY pyproject.toml ./
+COPY src ./src
+COPY config ./config
+COPY profiles ./profiles
+COPY docs ./docs
+COPY skills ./skills
+COPY knowledge_base ./knowledge_base
+COPY deploy ./deploy
+COPY kanban-command-center ./kanban-command-center
+COPY tools/scoped-operations-mcp ./tools/scoped-operations-mcp
+COPY tools/rescue-console-mcp ./tools/rescue-console-mcp
+
+# The readiness probe runs as nova, not root. Verify its executable path in
+# the image build so an npm/global-bin permission problem cannot reach
+# production as an endless dashboard refresh.
+RUN python -m pip install --no-cache-dir . ./tools/scoped-operations-mcp ./tools/rescue-console-mcp \
+    && useradd --create-home --uid 10001 --shell /usr/sbin/nologin nova \
+    && mkdir -p \
+        /tmp/nova-cloud-run \
+        /tmp/nova/workspaces \
+        /tmp/nova-cloud-run/workspaces/taylor \
+        /tmp/nova-cloud-run/workspaces/jamie \
+        /tmp/nova-cloud-run/attachments/command-center \
+        /tmp/nova-cloud-run/workspaces/alex/command-center-output/ticket-refresh \
+        /tmp/nova-cloud-run/workspaces/alex/command-center-output/weekly-report \
+        /tmp/nova-cloud-run/command_center \
+        /tmp/nova-cloud-run/zoom \
+    && mkdir -p /home/nova/.codex \
+    && chown -R nova:nova /app /tmp/nova-cloud-run /tmp/nova /home/nova \
+    && su -s /bin/sh nova -c 'CODEX_HOME=/home/nova/.codex /usr/local/bin/codex --version'
+
+USER 10001:10001
+
+EXPOSE 8080
+
+CMD ["python", "-m", "codex_slack_bridge.cloud_run_entrypoint"]

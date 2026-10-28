@@ -1,0 +1,34 @@
+1) I want you guys to delete my account and erase all history from your system, can you call me when this is done?
+We cannot delete the data for you ourselves, You do have the ability to reset your entire account through the manager’s screen though Under Accounting > Reset Account.
+2) I need to remove the previous owner from the account, we split and he is no longer apart of the business.
+I understand you want to change ownership of the account, what I’ll do for you is get you in contact with your account manager here at Nova and they will be able to better assist you with this matter. (Create an open ticket)
+3. I want to close my account. If I do, will I still have all of my data stored forever?
+We do guarantee that your data will be stored for 3 months after which it will may deleted from our servers if necessary. However you can export your data from Nova into excel files that way you have it stored on your computer.
+4) I'm going to start selling some new products that i know one of your customers have, his name is “so and so” can you add those to my account?
+I do not have the ability to do this without “so and so’s” authorization. I would be glad to get in contact with them to check if they will approve this.
+5) I want to delete data from a specific time period. Can you guys do that for me?
+We are not allowed to delete your personal data, You do have the ability to delete Invoices in bulk through Nova I can show you how.
+6) I want to authorize Nova on a new computer, the account is … can you do that?
+Sure I can assist you with that, Please verify the answer security question on your account.  (Alternate: verify last 4 digits of card or 6 digit code sent to email)
+7) I want to make sure someone doesn't make changes without my permission can I
+Setup a security question for my account?
+Yes we can. You can choose from these available questions. (Request questions from Darius)
+8) I want to close a location. Can you help me?
+(Always try to walk the customer through doing this first if they are near a computer)       If not near a computer assist with closing the location through Billing Automation, They will have to provide their login info and must have owner permissions to close a location.
+9) I made a mistake and deleted the invoices. Can you guys restore them?
+Once data is deleted we do not have the ability to restore the invoice.
+10) I just got into work. I'm trying to open Nova but it says no locations in this region. Why
+can’t I get into Nova please help!?
+Let me pull your company name and I’ll check on the reason why this is happening.
+Pull up the account and check the status where active or not.
+Check the NovaPOS orders in Salesforce to see when the location in question has been closed and the reason. Also take note if someone had been trying to contact them previously regarding the decline in the activity history section.
+If the location has been closed due to decline, do not let the person on the phone/live support know unless they are the owner.
+If the location was closed intentionally let the person know to contact their manager to see what they should do.
+If the location was closed due to decline them know...
+I see that your account/location is inactive due to _______ I can get the location reactivated but I will need a new card in order to do that. Would you like to update the card now?
+11) I can’t authorize my account in Nova please help I need to make sales.
+(you check salesforce and see the account was deleted)
+It appears the accounts data was deleted due to being inactive for an extended period of time, unfortunately it wouldn’t be possible to authorize this account any longer.
+12) My account was deleted why did you guys do that I never asked anyone to delete my data I still need it, can you put it back?
+It may be possible to have your data restored but it may require a data restore fee if it is possible. *Confirm with Darius to see if it is possible*
+Let the customer know that the data can be restored and will have to be charged a data restore fee, the fee will be $20 X number of locations. Once the fee is charged we will put in the request to rebuild and restore the data on the account.

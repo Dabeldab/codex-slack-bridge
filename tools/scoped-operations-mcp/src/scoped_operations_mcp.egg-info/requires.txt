@@ -1,0 +1,15 @@
+cryptography<47,>=43
+google-auth<3,>=2.30
+mcp[cli]==1.28.1
+openpyxl<4,>=3.1
+pyodbc<6,>=5
+python-dotenv<2,>=1.0
+requests<3,>=2.31
+
+[:platform_system == "Windows"]
+pywin32>=306
+
+[test]
+pytest<10,>=8
+pytest-asyncio<1,>=0.24
+pyyaml<7,>=6

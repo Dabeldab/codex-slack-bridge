@@ -1,0 +1,67 @@
+[
+  {
+    "name": "simple-general-question-stays-light",
+    "agent": "direct_codex",
+    "task": "Explain the difference between a process and a thread.",
+    "expected_skills": ["security"],
+    "forbidden_skills": ["zoom_workplace", "gcp_github", "browser_windows_control"],
+    "max_subagents": 0
+  },
+  {
+    "name": "gmail-triage-loads-email-skill-and-capability",
+    "agent": "coding_agent",
+    "task": "Review the Gmail inbox and identify messages that need a reply.",
+    "expected_skills": ["security", "email_watch"],
+    "expected_capabilities": ["gmail"],
+    "forbidden_skills": ["zoom_workplace"],
+    "max_subagents": 1
+  },
+  {
+    "name": "maxio-work-selects-chargify-capability",
+    "agent": "billing_agent",
+    "task": "Read the Maxio subscription and verify its component allocations.",
+    "expected_skills": ["security", "maxio_operations"],
+    "expected_capabilities": ["chargify"],
+    "forbidden_capabilities": ["zoom"],
+    "max_subagents": 1
+  },
+  {
+    "name": "gcp-deployment-loads-only-relevant-operations",
+    "agent": "coding_agent",
+    "task": "Deploy the repository service to GCP and independently verify the revision health.",
+    "expected_skills": ["security", "gcp_github"],
+    "expected_capabilities": ["gcp"],
+    "forbidden_skills": ["email_watch", "zoom_workplace", "nova_knowledge"],
+    "forbidden_capabilities": ["nova_sql"],
+    "max_subagents": 2
+  },
+  {
+    "name": "future-reminder-loads-prospective-memory",
+    "agent": "direct_codex",
+    "task": "Remind me next Monday at 10 AM to review the billing integration.",
+    "expected_skills": ["security", "prospective-tasks"],
+    "forbidden_skills": ["verify-cross-system-write"],
+    "max_subagents": 0
+  },
+  {
+    "name": "explicit-correction-loads-memory-curator",
+    "agent": "direct_codex",
+    "task": "Remember this correction and supersede the old memory: use Topic, not System.",
+    "expected_skills": ["security", "curate-agent-memory"],
+    "max_subagents": 1
+  },
+  {
+    "name": "account-match-loads-identity-resolution",
+    "agent": "billing_agent",
+    "task": "Resolve the Salesforce account and Maxio subscription cross-system identity before billing changes.",
+    "expected_skills": ["security", "resolve-cross-system-identity"],
+    "max_subagents": 2
+  },
+  {
+    "name": "uncertain-write-loads-verification-runbook",
+    "agent": "billing_agent",
+    "task": "The Maxio update timed out. Read back the target and verify the cross-system write before retrying.",
+    "expected_skills": ["security", "verify-cross-system-write"],
+    "max_subagents": 2
+  }
+]

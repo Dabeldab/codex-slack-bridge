@@ -1,0 +1,21 @@
+AgentChat/coding_agent 2026-07-09T04:40:00Z
+
+Use the provided Nova Ops sprite sheet and complete kanban image as visual references for the Nova Ops command center style and office-agent characters. Generate a production sprite sheet, not a UI mockup.
+
+Exact output: a 2 rows x 3 columns grid of six separate static character sprites, equal invisible cells, no visible grid lines, no labels, no text, no UI, no speech bubbles. Background must be 100% flat solid #FF00FF magenta across the entire image, with no gradients and no scenery.
+
+Art style: crisp modern pixel art, 3/4 top-down view from slightly above, full body visible, readable dark outlines, small chibi office workers like the reference, cyberpunk support command center palette, clean 32x48-style game sprites scaled up for generation.
+
+Characters by cell, left to right, top row then bottom row:
+1. Support agent Alex: blue support jacket, dark hair, headset, holding a white ticket paper close to body.
+2. Billing agent Jamie: green billing jacket, brown hair, small invoice clipboard held close to body.
+3. Ops agent Taylor: purple ops jacket, medium hair, holding a clipboard close to body.
+4. Claude, the cool-guy agent: teal and green jacket, headset, holding a small tablet close to body.
+5. Team lead: seated compactly at a tiny command chair with small monitor glow, dark hair and glasses, hands near keyboard, body still readable as a sprite.
+6. Spare assistant: compact friendly office support bot with small monitor face and headset, matching the same pixel-art scale.
+
+Containment rules: each character must stay centered inside its cell, same sprite scale and visual weight across all six cells, generous magenta margin on all four sides of each cell, no body part or held object crosses a cell edge. No shadows that blend into the magenta. No labels, letters, numbers, card text, logos, badges with text, or UI panels.
+
+Codex 2026-07-09T20:10:00-04:00
+
+Claude active sprite override: office-agent-4.png was edited in place so Claude reads as a Black cool-guy agent wearing a dark hat while keeping the original pose, tablet, teal outfit, pixel-art scale, and transparent background. Original Claude sprite preserved as office-agent-4-original.png for revert.

@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "api": "success",
+    "relay": "success"
+  },
+  "checkedAtUtc": "2026-10-19T20:21:45.869423+00:00",
+  "discoveryTruncated": false,
+  "documentedServiceReads": [
+    {
+      "httpStatus": 403,
+      "requiredPermission": "run.services.get",
+      "service": "nova-github-agent-relay",
+      "status": "permission_denied"
+    },
+    {
+      "httpStatus": 403,
+      "requiredPermission": "run.services.get",
+      "service": "nova-command-center-shadow",
+      "status": "permission_denied"
+    }
+  ],
+  "identity": "nova-github-relay-invoker@gen-lang-client-0051653266.iam.gserviceaccount.com",
+  "readOnly": true,
+  "relayHealth": {
+    "httpStatus": 200,
+    "runtimeMode": "primary",
+    "status": "ok",
+    "upstreamHealthy": true
+  },
+  "runId": "39318646899",
+  "schemaVersion": 1,
+  "serviceDiscovery": {
+    "httpStatus": 403,
+    "requiredPermission": "run.services.list",
+    "status": "permission_denied"
+  },
+  "services": [],
+  "servingRevisions": [],
+  "sourceSha": "fd5d94f40f30893ddf1f6cff4ff66b9306066787"
+}

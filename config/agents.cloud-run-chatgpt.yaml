@@ -1,0 +1,148 @@
+# Cloud Run Command Center runtime. Codex CLI is the primary reasoning lane;
+# ChatGPT Work remains an explicit relay alternative. Slack Socket Mode stays
+# off; the deterministic ticket watcher is the only enabled background poller.
+# No Cloud SQL: state lives under /tmp and is ephemeral per instance.
+
+extends: agents.chatgpt-runtime.yaml
+
+defaults:
+  active_agents: [coding_agent, billing_agent, tickets_agent]
+  # The personal Gmail inbox is retired in production: no token is mounted and
+  # every mailbox watcher is off, so agents must not be told they can use it.
+  disabled_capability_surfaces: [gmail]
+  disabled_skills: [email_watch]
+  # Durable recall + read-only playbook loop (Firestore-backed).
+  resolution_memory_enabled: true
+  runtime_mode: primary
+  workspace_root: "/tmp/nova/workspaces"
+  state_db: "/tmp/nova-cloud-run/bridge.sqlite3"
+  max_workers: 3
+  command_center_host: "0.0.0.0"
+  command_center_port: 8080
+  command_center_url: "http://127.0.0.1:8080"
+  command_center_auth_enabled: true
+  command_center_google_auth_enabled: true
+  command_center_session_token_path: "/tmp/nova-cloud-run/session.token"
+  agent_capability_contract_path: "/app/config/agent-capabilities.yaml"
+
+  # Cloud Run is CPU-throttled between requests. A periodic subprocess probe
+  # can be frozen while idle and then incorrectly expire on the next request.
+  # Keep the fail-closed admission check, but run it on demand instead.
+  command_center_provider_readiness_periodic_enabled: false
+  command_center_provider_readiness_probe_timeout_seconds: 20
+
+  agent_runtime_shared_sessions: false
+  persistent_agent_sessions: false
+  agent_runtime_session_store_path: "/tmp/nova-cloud-run/sessions.jsonl"
+  agent_runtime_lock_root: "/tmp/nova-cloud-run/locks"
+  agent_sandbox_root: "/tmp/nova-cloud-run/sandboxes"
+  agent_sandbox_cleanup_log_path: "/tmp/nova-cloud-run/cleanup.jsonl"
+  capability_state_path: "/tmp/nova-cloud-run/capabilities.json"
+  agent_runtime_restart_request_path: "/tmp/nova-cloud-run/restart_request.json"
+  command_center_data_root: "/tmp/nova-cloud-run/command_center"
+  command_center_pause_manifest_path: "/tmp/nova-cloud-run/command_center/restart_manifest.json"
+
+  # Signed with the same key the VM runtime uses (mounted read-only from
+  # Secret Manager) rather than generating a fresh signing key per Cloud Run
+  # instance start.
+  operator_message_signing_key_path: "/run/secrets/operator-message-signing-key"
+
+  credential_vault_path: ""
+  credential_vault_tool: ""
+  google_drive_adc_path: ""
+  google_drive_oauth_client_path: ""
+  google_drive_tool: ""
+  gcloud_ops_tool: ""
+  edge_browser_tool: ""
+
+  memory_enabled: false
+  memory_sqlite_path: "/tmp/nova-cloud-run/memory.sqlite3"
+  desktop_vector_memory_path: "/tmp/nova-cloud-run/memory_vectors.json"
+  memory_lancedb_path: "/tmp/nova-cloud-run/lancedb"
+  cognitive_memory_enabled: false
+  cognitive_memory_sqlite_path: "/tmp/nova-cloud-run/cognitive_memory.sqlite3"
+  learning_registry_enabled: false
+  learning_registry_sqlite_path: "/tmp/nova-cloud-run/learning_registry.sqlite3"
+  prospective_enabled: false
+  prospective_sqlite_path: "/tmp/nova-cloud-run/prospective.sqlite3"
+  drawing_board_digest_enabled: false
+  drawing_board_sqlite_path: "/tmp/nova-cloud-run/drawing_board.sqlite3"
+  voice_room_enabled: false
+  local_voice_room_enabled: false
+
+  # Slack Socket Mode is off for this revision (SLACK_SOCKET_MODE_ENABLED=0 env
+  # var short-circuits it in cloud_run_entrypoint.py). These stay false too so
+  # nothing tries to poll or heartbeat if that ever changes independently.
+  polling_enabled: false
+  slack_heartbeat_enabled: false
+  automation_window_enabled: true
+  automation_window_timezone: "America/New_York"
+  automation_window_local_start: "08:00"
+  automation_window_local_end: "21:00"
+
+  # Background ops watchers: only the deterministic ticket refresh runs in
+  # Cloud Run. It composes typed Salesforce reads in-process (no VM executors,
+  # no LLM token spend) and writes the board to the durable Firestore store, so
+  # the kanban survives scale-to-zero. Every other ops watcher stays off here --
+  # email intake, schedule, KPI, Singapore FTP, and the weekly Yaron report are
+  # driven by the desktop Hermes crons instead, which avoids double-execution.
+  ops_inbox_ledger_enabled: false
+  ops_support_email_intake_enabled: false
+  ops_email_watch_enabled: false
+  ops_schedule_watch_enabled: false
+  ops_ticket_refresh_enabled: true
+  ops_ticket_refresh_interval_seconds: 900
+  ops_ticket_refresh_on_startup_enabled: true
+  ops_ticket_recon_enabled: true
+  ops_ticket_recon_max_per_run: 2
+  ops_ticket_recon_job_timeout_seconds: 1500
+  ops_ticket_recon_retry_seconds: 7200
+  ops_salesforce_delta_enabled: false
+  ops_kpi_dashboard_enabled: false
+  ops_propelr_nmi_enabled: false
+  ops_singapore_ftp_enabled: false
+  ops_weekly_yaron_report_enabled: false
+  ops_weekly_support_quality_enabled: false
+  ops_zoom_chat_monitor_enabled: false
+
+  ops_gmail_oauth_token_path: "/tmp/nova-cloud-run/gmail/token.json"
+  ops_email_send_journal_path: "/tmp/nova-cloud-run/command_center/email_send_journal.json"
+  ops_inbox_ledger_path: "/tmp/nova-cloud-run/command_center/inbox_work.sqlite3"
+  ops_salesforce_work_ledger_path: "/tmp/nova-cloud-run/command_center/salesforce_work.sqlite3"
+  ops_singapore_ftp_state_dir: "/tmp/nova-cloud-run/singapore"
+  ops_singapore_ftp_server_config_path: "/tmp/nova-cloud-run/singapore/servers.json"
+  ops_singapore_ftp_ops_env_path: "/tmp/nova-cloud-run/singapore/ops.env"
+  ops_singapore_ftp_result_path: "/tmp/nova-cloud-run/singapore/ops_singapore_ftp.json"
+  ops_weekly_support_quality_output_path: "/tmp/nova-cloud-run/command_center/ops_weekly_support_quality.json"
+  ops_zoom_chat_monitor_path: "/tmp/nova-cloud-run/zoom/zoom_chat_monitor.json"
+  ops_ticket_refresh_output_root: "/tmp/nova-cloud-run/workspaces/alex/command-center-output/ticket-refresh"
+  ops_weekly_yaron_report_output_path: "/tmp/nova-cloud-run/workspaces/alex/command-center-output/weekly-report/ops_weekly_yaron_report.json"
+
+  slack_file_download_dir: "/tmp/nova-cloud-run/slack-files"
+  slack_file_output_dir: "/tmp/nova-cloud-run/generated"
+  shared_chat_log_path: "/tmp/nova-cloud-run/shared-chat/events.jsonl"
+  artifact_index_path: "/tmp/nova-cloud-run/artifacts/index.jsonl"
+  verified_route_store_path: "/tmp/nova-cloud-run/verified-routes.sqlite3"
+  pipeline_cache_root: "/tmp/nova-cloud-run/pipeline-cache"
+  agent_chat_attachment_dir: "/tmp/nova-cloud-run/attachments/command-center"
+
+  agent_file_return_allowed_roots:
+    - "/tmp/nova-cloud-run"
+  slack_file_upload_allowed_roots:
+    - "/tmp/nova-cloud-run"
+
+agents:
+  coding_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/taylor"
+    mcp_config_path: "/app/config/codex-mcp/taylor.toml"
+    codex_mcp_config_path: "/app/config/codex-mcp/taylor.toml"
+
+  tickets_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/alex"
+    mcp_config_path: "/app/config/codex-mcp/alex.toml"
+    codex_mcp_config_path: "/app/config/codex-mcp/alex.toml"
+
+  billing_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/jamie"
+    mcp_config_path: "/app/config/codex-mcp/jamie.toml"
+    codex_mcp_config_path: "/app/config/codex-mcp/jamie.toml"

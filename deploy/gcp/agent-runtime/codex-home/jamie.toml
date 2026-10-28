@@ -1,0 +1,44 @@
+forced_login_method = "chatgpt"
+cli_auth_credentials_store = "file"
+approval_policy = "never"
+approvals_reviewer = "user"
+
+[analytics]
+enabled = false
+
+[feedback]
+enabled = false
+
+[otel]
+exporter = "none"
+metrics_exporter = "none"
+trace_exporter = "none"
+log_user_prompt = false
+
+[projects."/srv/nova/workspaces/jamie"]
+trust_level = "trusted"
+
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+default_tools_approval_mode = "approve"
+
+[mcp_servers.salesforce_billing_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-salesforce-broker", "--", "/opt/nova/bin/run-salesforce-broker", "billing_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"
+
+[mcp_servers.maxio_billing_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-maxio-broker", "--", "/opt/nova/bin/run-maxio-broker", "billing_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"
+
+[mcp_servers.zoom_billing_ops]
+command = "/usr/bin/sudo"
+args = ["-n", "-H", "-u", "nova-zoom-broker", "--", "/opt/nova/bin/run-zoom-broker", "billing_agent"]
+startup_timeout_sec = 30
+tool_timeout_sec = 180
+default_tools_approval_mode = "approve"

@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-19T20:22:25Z",
+  "error": "Unknown command center agent: direct_codex",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-19T20:22:24Z",
+  "task_id": "chatgpt-approved-runtime-diagnosis-20261019-02",
+  "version": 1
+}

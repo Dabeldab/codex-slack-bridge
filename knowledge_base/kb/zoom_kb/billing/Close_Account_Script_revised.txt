@@ -1,0 +1,15 @@
+Close Account Script:
+Customer: Hi I would like to cancel my account/put my account on hold.
+Nova Response: Sure I can assist you with that. Please let me know your account name and your name so that I can pull your account.
+Customer: My name is….. My company name is ……………………………..
+Nova Response:  Thanks for that information. Did you want to close all locations on the account as of today or will it be closing at a later date?
+Customer Response A: No, I will be closing the account at the end of next week.
+Nova Response A: Ok, unfortunately we are not able to schedule the cancellation in advance. We will need you to call back the day that you will need to have the account closed. I’ll put a note on the account that you will be calling in on that later date to close the account.
+Customer Response B: Yes, the locations are already closed.
+Nova Response B: Ok, In order to start the process I would just need to verify the last 4 digits of the billing card used on this account and the reason the account is closing.
+Alternate types of ownership verification:
+please send an email to billing@novapointofsale.com stating the account name, and reason for closing the account and the date the account is closing.
+Call the PRIMARY CONTACT if they are not the one requesting and confirm if the action is approved
+Nova Response: Thanks. I will go ahead and put in the request to have the account closed/put on hold, It should be processed within the next 1-2 hours and you will not be billed any further. Is there anything else that I can assist you with at the moment?
+*(Open a Customer Care ticket with the request to close the account and mention the reason for closing and that the owner was verified)*
+*If a customer requests to put the Account on “HOLD”, no need to fight them or give a long explanation. Let them know you will put it on hold for them and follow the same process. Closing an account does not delete the data, it will still be available with our 3 month guarantee. After 3 months we do not guarantee data and it can be purged if necessary.

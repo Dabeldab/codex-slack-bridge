@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "task_id": "chatgpt-salesforce-ticket-read-probe-20261006-001",
+  "agent": "alex",
+  "title": "Verify live Salesforce ticket read",
+  "instruction": "Perform a read-only live Salesforce ticket-board verification using Alex's approved Salesforce support tools.\nUse the existing salesforce_ticket_list_open operation (or the exact approved equivalent) to read the live open ticket set.\nDo not mutate Salesforce or any other system.\nDo not return ticket subjects, descriptions, Chatter, emails, customer/account/contact/location names, phone numbers, email addresses, Salesforce IDs, ticket numbers, or other customer-identifying data.\nReturn only a sanitized operational summary containing:\n1. whether Salesforce authentication/connectivity succeeded;\n2. whether the open-ticket query completed successfully;\n3. total number of open tickets returned;\n4. counts grouped only by record type label (NOVA Classic, Nova Wave, Billing);\n5. the configured row ceiling/limit and whether the response appears truncated at that ceiling;\n6. whether the result proves Alex's Salesforce support MCP is functional;\n7. any connector/auth/query error text with secrets and customer data removed.\nDo not inspect individual ticket content beyond what is necessary for the bounded list operation.\nDo not expose credentials, environment values, tokens, secret paths, or customer data in the response.",
+  "timeout_seconds": 900
+}

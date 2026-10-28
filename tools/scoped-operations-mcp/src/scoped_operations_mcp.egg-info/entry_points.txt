@@ -1,0 +1,6 @@
+[console_scripts]
+cloud-ops-scoped-mcp = scoped_operations_mcp.cloud_ops_server:main
+maxio-scoped-mcp = scoped_operations_mcp.maxio_server:main
+rory-operator-services-mcp = scoped_operations_mcp.operator_services_server:main
+salesforce-scoped-mcp = scoped_operations_mcp.salesforce_server:main
+zoom-scoped-mcp = scoped_operations_mcp.zoom_server:main

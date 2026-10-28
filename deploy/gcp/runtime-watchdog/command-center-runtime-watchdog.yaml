@@ -1,0 +1,486 @@
+main:
+  steps:
+    - initialize:
+        assign:
+          - project: ${sys.get_env("NOVA_WATCHDOG_PROJECT_ID")}
+          - region: ${sys.get_env("NOVA_WATCHDOG_REGION")}
+          - zone: ${sys.get_env("NOVA_WATCHDOG_ZONE")}
+          - instanceName: ${sys.get_env("NOVA_WATCHDOG_INSTANCE")}
+          - holdLabel: ${sys.get_env("NOVA_WATCHDOG_HOLD_LABEL")}
+          - gatewayServiceName: ${sys.get_env("NOVA_WATCHDOG_GATEWAY_SERVICE")}
+          - upstreamSecretName: ${sys.get_env("NOVA_WATCHDOG_UPSTREAM_SECRET")}
+          - watchdogServiceAccount: ${sys.get_env("NOVA_WATCHDOG_SERVICE_ACCOUNT")}
+          - executionId: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
+          - vmAction: "none"
+          - gatewayAction: "none"
+    - read_instance:
+        call: googleapis.compute.v1.instances.get
+        args:
+          project: ${project}
+          zone: ${zone}
+          instance: ${instanceName}
+        result: instance
+    - read_hold_label:
+        assign:
+          - holdRaw: ${default(map.get(instance.labels, holdLabel), "0")}
+          - holdUntil: 0
+    - parse_hold_label:
+        try:
+          steps:
+            - convert_hold_label:
+                assign:
+                  - holdUntil: ${int(holdRaw)}
+        except:
+          as: parseError
+          steps:
+            - ignore_malformed_hold:
+                assign:
+                  - holdUntil: 0
+    - choose_vm_action:
+        switch:
+          - condition: ${holdUntil > sys.now()}
+            next: maintenance_hold
+          - condition: ${instance.status == "RUNNING"}
+            next: read_manifest_metadata
+          - condition: ${instance.status == "PROVISIONING" or instance.status == "STAGING" or instance.status == "REPAIRING"}
+            next: startup_in_progress
+          - condition: ${instance.status == "STOPPING" or instance.status == "SUSPENDING"}
+            next: transition_in_progress
+          - condition: ${instance.status != "TERMINATED"}
+            next: unsupported_state
+        next: start_instance
+    - startup_in_progress:
+        return:
+          ok: true
+          action: "startup_in_progress"
+          instance: ${instanceName}
+          status: ${instance.status}
+          checkedAt: ${time.format(sys.now())}
+    - transition_in_progress:
+        return:
+          ok: true
+          action: "transition_in_progress"
+          instance: ${instanceName}
+          status: ${instance.status}
+          checkedAt: ${time.format(sys.now())}
+    - unsupported_state:
+        return:
+          ok: false
+          action: "unsupported_state"
+          instance: ${instanceName}
+          status: ${instance.status}
+          checkedAt: ${time.format(sys.now())}
+    - maintenance_hold:
+        return:
+          ok: true
+          action: "maintenance_hold"
+          instance: ${instanceName}
+          status: ${instance.status}
+          holdUntilEpoch: ${holdUntil}
+          holdUntil: ${time.format(holdUntil)}
+          checkedAt: ${time.format(sys.now())}
+    - start_instance:
+        call: http.post
+        args:
+          url: ${"https://compute.googleapis.com/compute/v1/projects/" + project + "/zones/" + zone + "/instances/" + instanceName + "/start?requestId=" + executionId}
+          auth:
+            type: OAuth2
+        result: startRequest
+    - wait_for_initial_state_change:
+        call: sys.sleep
+        args:
+          seconds: 10
+    - read_after_start:
+        call: googleapis.compute.v1.instances.get
+        args:
+          project: ${project}
+          zone: ${zone}
+          instance: ${instanceName}
+        result: instanceAfter
+    - choose_post_start_action:
+        switch:
+          - condition: ${instanceAfter.status == "RUNNING"}
+            next: record_started_instance
+        next: report_start_in_progress
+    - record_started_instance:
+        assign:
+          - instance: ${instanceAfter}
+          - vmAction: "start_requested"
+        next: read_manifest_metadata
+    - report_start_in_progress:
+        return:
+          ok: ${instanceAfter.status == "PROVISIONING" or instanceAfter.status == "STAGING"}
+          action: "start_requested"
+          instance: ${instanceName}
+          beforeStatus: ${instance.status}
+          afterStatus: ${instanceAfter.status}
+          operation: ${default(map.get(startRequest.body, "name"), "")}
+          requestId: ${executionId}
+          checkedAt: ${time.format(sys.now())}
+    - read_manifest_metadata:
+        assign:
+          - manifestRaw: ""
+          - manifestMetadataCount: 0
+    - find_manifest_metadata:
+        for:
+          value: metadataItem
+          in: ${default(map.get(instance, ["metadata", "items"]), [])}
+          steps:
+            - capture_manifest_metadata:
+                assign:
+                  - manifestMetadataCount: ${manifestMetadataCount + if(default(map.get(metadataItem, "key"), "") == "nova-secret-manifest", 1, 0)}
+                  - manifestRaw: ${if(default(map.get(metadataItem, "key"), "") == "nova-secret-manifest", default(map.get(metadataItem, "value"), ""), manifestRaw)}
+    - validate_manifest_metadata:
+        switch:
+          - condition: ${manifestMetadataCount != 1 or manifestRaw == ""}
+            next: invalid_manifest_metadata
+    - decode_manifest:
+        try:
+          steps:
+            - decode_manifest_json:
+                assign:
+                  - manifest: ${json.decode(manifestRaw)}
+        except:
+          as: manifestDecodeError
+          steps:
+            - report_invalid_manifest_json:
+                call: reportFailure
+                args:
+                  executionId: ${executionId}
+                  instanceName: ${instanceName}
+                  serviceName: ${gatewayServiceName}
+                  reason: "The VM nova-secret-manifest is not valid JSON."
+    - validate_manifest_project:
+        switch:
+          - condition: ${default(map.get(manifest, "project_id"), "") != project}
+            next: invalid_manifest_project
+    - initialize_manifest_target:
+        assign:
+          - targetVersion: ""
+          - targetEntryCount: 0
+    - find_manifest_target:
+        for:
+          value: secretEntry
+          in: ${default(map.get(manifest, "secrets"), [])}
+          steps:
+            - capture_manifest_target:
+                assign:
+                  - targetEntryCount: ${targetEntryCount + if(default(map.get(secretEntry, "id"), "") == upstreamSecretName, 1, 0)}
+                  - targetVersion: ${if(default(map.get(secretEntry, "id"), "") == upstreamSecretName, string(default(map.get(secretEntry, "version"), "")), targetVersion)}
+    - validate_manifest_target:
+        switch:
+          - condition: ${targetEntryCount != 1 or not text.match_regex(targetVersion, "^[1-9][0-9]*$")}
+            next: invalid_manifest_target
+    - read_target_secret_metadata:
+        call: googleapis.secretmanager.v1.projects.secrets.versions.get
+        args:
+          name: ${"projects/" + project + "/secrets/" + upstreamSecretName + "/versions/" + targetVersion}
+        result: targetSecretVersion
+    - validate_target_secret_state:
+        switch:
+          - condition: ${default(map.get(targetSecretVersion, "state"), "") != "ENABLED"}
+            next: disabled_manifest_target
+    - read_gateway_service:
+        call: googleapis.run.v2.projects.locations.services.get
+        args:
+          name: ${"projects/" + project + "/locations/" + region + "/services/" + gatewayServiceName}
+        result: gatewayService
+    - validate_gateway_identity:
+        switch:
+          - condition: ${default(map.get(gatewayService, "name"), "") != "projects/" + project + "/locations/" + region + "/services/" + gatewayServiceName}
+            next: invalid_gateway_identity
+          - condition: ${default(map.get(gatewayService, "iapEnabled"), false) != true}
+            next: invalid_gateway_iap
+          - condition: ${default(map.get(gatewayService, "reconciling"), false) == true}
+            next: gateway_reconciliation_in_progress
+    - inspect_gateway_service:
+        call: inspectGatewayService
+        args:
+          service: ${gatewayService}
+          upstreamSecretName: ${upstreamSecretName}
+          targetVersion: ${targetVersion}
+        result: gatewayInspection
+    - validate_gateway_mount:
+        switch:
+          - condition: ${gatewayInspection.matchingItemCount < 1}
+            next: missing_gateway_mount
+    - choose_gateway_repair:
+        switch:
+          - condition: ${gatewayInspection.pinDiffers}
+            next: patch_gateway_secret_pin
+        next: validate_gateway_ready
+    - patch_gateway_secret_pin:
+        call: googleapis.run.v2.projects.locations.services.patch
+        args:
+          name: ${gatewayService.name}
+          allowMissing: false
+          updateMask: "template.volumes"
+          body:
+            name: ${gatewayService.name}
+            etag: ${gatewayService.etag}
+            template:
+              volumes: ${gatewayInspection.patchedVolumes}
+          connector_params:
+            timeout: 300
+            polling_policy:
+              initial_delay: 1
+              multiplier: 1.5
+              max_delay: 10
+        result: gatewayRepairOperation
+    - record_gateway_repair:
+        assign:
+          - gatewayAction: "repaired_secret_pin"
+    - read_gateway_after_repair:
+        call: googleapis.run.v2.projects.locations.services.get
+        args:
+          name: ${"projects/" + project + "/locations/" + region + "/services/" + gatewayServiceName}
+        result: gatewayService
+    - inspect_gateway_after_repair:
+        call: inspectGatewayService
+        args:
+          service: ${gatewayService}
+          upstreamSecretName: ${upstreamSecretName}
+          targetVersion: ${targetVersion}
+        result: gatewayInspection
+    - validate_gateway_repair:
+        switch:
+          - condition: ${gatewayInspection.matchingItemCount < 1 or gatewayInspection.pinDiffers}
+            next: gateway_repair_readback_failed
+    - validate_gateway_ready:
+        switch:
+          - condition: ${not gatewayInspection.ready}
+            next: gateway_not_ready
+    - prepare_health_claims:
+        assign:
+          - issuedAt: ${int(sys.now())}
+          - healthUrl: ${gatewayService.uri + "/healthz"}
+          - healthClaims:
+              iss: ${watchdogServiceAccount}
+              sub: ${watchdogServiceAccount}
+              aud: ${gatewayService.uri + "/healthz"}
+              iat: ${issuedAt}
+              exp: ${issuedAt + 300}
+    - sign_health_jwt:
+        call: http.post
+        args:
+          url: ${"https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/" + text.url_encode(watchdogServiceAccount) + ":signJwt"}
+          auth:
+            type: OAuth2
+          body:
+            payload: ${json.encode_to_string(healthClaims)}
+        result: signedHealthJwt
+    - validate_signed_health_jwt:
+        switch:
+          - condition: ${default(map.get(signedHealthJwt.body, "signedJwt"), "") == ""}
+            next: health_jwt_signing_failed
+    - call_end_to_end_health:
+        try:
+          call: http.get
+          args:
+            url: ${healthUrl}
+            timeout: 20
+            headers:
+              Authorization: ${"Bearer " + signedHealthJwt.body.signedJwt}
+          result: healthResponse
+        except:
+          as: healthError
+          steps:
+            - report_health_request_failure:
+                call: reportFailure
+                args:
+                  executionId: ${executionId}
+                  instanceName: ${instanceName}
+                  serviceName: ${gatewayServiceName}
+                  reason: "The public end-to-end Command Center health request failed."
+    - validate_end_to_end_health:
+        switch:
+          - condition: ${healthResponse.code != 200 or default(map.get(healthResponse.body, "ok"), false) != true}
+            next: unhealthy_gateway_response
+    - report_success:
+        return:
+          ok: true
+          action: ${gatewayAction}
+          vmAction: ${vmAction}
+          gatewayAction: ${gatewayAction}
+          instance: ${instanceName}
+          instanceStatus: ${instance.status}
+          gatewayService: ${gatewayServiceName}
+          gatewayRevision: ${gatewayService.latestReadyRevision}
+          upstreamSecret: ${upstreamSecretName}
+          targetVersion: ${targetVersion}
+          mountedVersions: ${gatewayInspection.mountedVersions}
+          healthStatus: ${healthResponse.code}
+          checkedAt: ${time.format(sys.now())}
+    - invalid_manifest_metadata:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The VM must contain exactly one non-empty nova-secret-manifest metadata item."
+    - invalid_manifest_project:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The VM nova-secret-manifest project does not match the watchdog project."
+    - invalid_manifest_target:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The VM manifest must contain exactly one numeric upstream-token version."
+    - disabled_manifest_target:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: ${"The VM manifest's exact upstream-token version " + targetVersion + " is not ENABLED; the watchdog will not enable or replace it."}
+    - invalid_gateway_identity:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "Cloud Run returned a different gateway service resource."
+    - invalid_gateway_iap:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The Command Center Cloud Run service is not protected by IAP."
+    - gateway_reconciliation_in_progress:
+        return:
+          ok: true
+          action: "gateway_reconciliation_in_progress"
+          instance: ${instanceName}
+          gatewayService: ${gatewayServiceName}
+          checkedAt: ${time.format(sys.now())}
+    - missing_gateway_mount:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The exact upstream-token Secret Manager mount is absent from Cloud Run."
+    - gateway_repair_readback_failed:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "Cloud Run repair readback did not show the exact VM-manifest token version on every matching mount."
+    - gateway_not_ready:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "Cloud Run is not reconciled, ready, and serving 100 percent of traffic from its latest revision."
+    - health_jwt_signing_failed:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "IAM Credentials did not return a signed JWT for the IAP health request."
+    - unhealthy_gateway_response:
+        call: reportFailure
+        args:
+          executionId: ${executionId}
+          instanceName: ${instanceName}
+          serviceName: ${gatewayServiceName}
+          reason: "The public end-to-end Command Center health endpoint did not return ok=true."
+
+inspectGatewayService:
+  params:
+    - service
+    - upstreamSecretName
+    - targetVersion
+  steps:
+    - initialize:
+        assign:
+          - matchingItemCount: 0
+          - mountedVersions: []
+          - pinDiffers: false
+          - patchedVolumes: []
+          - latestTrafficPercent: 0
+          - otherTrafficPercent: 0
+          - latestReadyRevision: ${string(default(map.get(service, "latestReadyRevision"), ""))}
+    - rebuild_volumes:
+        for:
+          value: volume
+          in: ${default(map.get(service, ["template", "volumes"]), [])}
+          steps:
+            - initialize_volume:
+                assign:
+                  - targetSecretVolume: ${default(map.get(volume, ["secret", "secret"]), "") == upstreamSecretName}
+                  - rebuiltItems: []
+            - preserve_non_target_volume:
+                switch:
+                  - condition: ${not targetSecretVolume}
+                    steps:
+                      - append_non_target_volume:
+                          assign:
+                            - patchedVolumes: ${list.concat(patchedVolumes, volume)}
+                      - continue_volume_scan:
+                          next: continue
+            - rebuild_target_secret_items:
+                for:
+                  value: secretItem
+                  in: ${default(map.get(volume, ["secret", "items"]), [])}
+                  steps:
+                    - capture_target_secret_item:
+                        assign:
+                          - matchingItemCount: ${matchingItemCount + 1}
+                          - mountedVersions: ${list.concat(mountedVersions, string(default(map.get(secretItem, "version"), "")))}
+                          - pinDiffers: ${pinDiffers or string(default(map.get(secretItem, "version"), "")) != targetVersion}
+                          - rebuiltItems: '${list.concat(rebuiltItems, map.merge(secretItem, {"version": targetVersion}))}'
+            - append_volume:
+                assign:
+                  - patchedVolumes: '${list.concat(patchedVolumes, map.merge(volume, {"secret": map.merge(volume.secret, {"items": rebuiltItems})}))}'
+    - inspect_traffic:
+        for:
+          value: trafficStatus
+          in: ${default(map.get(service, "trafficStatuses"), [])}
+          steps:
+            - add_traffic:
+                assign:
+                  - latestTarget: ${default(map.get(trafficStatus, "type"), "") == "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST" or default(map.get(trafficStatus, "revision"), "") == latestReadyRevision}
+                  - latestTrafficPercent: ${latestTrafficPercent + if(latestTarget, int(default(map.get(trafficStatus, "percent"), 0)), 0)}
+                  - otherTrafficPercent: ${otherTrafficPercent + if(latestTarget, 0, int(default(map.get(trafficStatus, "percent"), 0)))}
+    - return_inspection:
+        return:
+          matchingItemCount: ${matchingItemCount}
+          mountedVersions: ${mountedVersions}
+          pinDiffers: ${pinDiffers}
+          patchedVolumes: ${patchedVolumes}
+          latestTrafficPercent: ${latestTrafficPercent}
+          otherTrafficPercent: ${otherTrafficPercent}
+          ready: ${default(map.get(service, "reconciling"), false) == false and string(default(map.get(service, "generation"), "")) == string(default(map.get(service, "observedGeneration"), "")) and latestReadyRevision != "" and latestReadyRevision == string(default(map.get(service, "latestCreatedRevision"), "")) and default(map.get(service, ["terminalCondition", "state"]), "") == "CONDITION_SUCCEEDED" and latestTrafficPercent == 100 and otherTrafficPercent == 0}
+
+reportFailure:
+  params:
+    - executionId
+    - instanceName
+    - serviceName
+    - reason
+  steps:
+    - log_failure:
+        call: sys.log
+        args:
+          severity: "ALERT"
+          json:
+            component: "nova-command-center-watchdog"
+            executionId: ${executionId}
+            instance: ${instanceName}
+            gatewayService: ${serviceName}
+            reason: ${reason}
+    - raise_failure:
+        raise:
+          code: "NOVA_COMMAND_CENTER_WATCHDOG_FAILURE"
+          message: ${reason}

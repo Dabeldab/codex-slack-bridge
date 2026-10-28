@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-13T15:07:56Z",
+  "error": "relay HTTP 409: agent_provider_unready: codex_cli/probe_unavailable",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-13T15:07:55Z",
+  "task_id": "alex-codex-cli-smoke-20261013-150721",
+  "version": 1
+}

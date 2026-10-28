@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "task_id": "alex-codex-cli-live-recon-20261014-191903",
+  "agent": "alex",
+  "title": "Post-repair read-only live support recon",
+  "instruction": "Perform a bounded read-only support-lane readiness check. Use the approved Salesforce support MCP tool salesforce_ticket_list_open to query the current open ticket queue and return only sanitized aggregate diagnostics: authentication success or failure, query success or failure, total open count, counts by approved record-type label, configured result limit, truncation status, and whether any operational blocker remains. Do not hand this task to another agent. Do not include customer names, ticket numbers, Salesforce IDs, emails, descriptions, raw rows, credentials, or other private data. Do not mutate Salesforce, Nova SQL, Rescue, email, or any provider.",
+  "reasoning_provider": "codex_cli",
+  "timeout_seconds": 900,
+  "created_at": "2026-10-14T19:19:03Z"
+}

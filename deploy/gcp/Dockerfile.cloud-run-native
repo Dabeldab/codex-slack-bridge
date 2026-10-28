@@ -1,0 +1,44 @@
+FROM python:3.13-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    BRIDGE_CONFIG=/app/config/agents.cloud-native.yaml \
+    COMMAND_CENTER_HOST=0.0.0.0 \
+    COMMAND_CENTER_PORT=8080 \
+    COMMAND_CENTER_DISABLE_WATCHERS=0 \
+    COMMAND_CENTER_GOOGLE_AUTH_ENABLED=1 \
+    NOVA_AGENT_RUNTIME_MODE=primary
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates git curl gnupg \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g @openai/codex@0.144.4 \
+    && node --version \
+    && npm --version \
+    && codex --version \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY pyproject.toml ./
+COPY src ./src
+COPY config ./config
+COPY docs ./docs
+COPY deploy ./deploy
+COPY kanban-command-center ./kanban-command-center
+
+RUN python -m pip install --no-cache-dir . \
+    && useradd --create-home --uid 10001 --shell /usr/sbin/nologin nova \
+    && mkdir -p /tmp/nova-cloud-run /tmp/nova/workspaces /tmp/nova-cloud-run/attachments/command-center \
+    && chown -R nova:nova /app /tmp/nova-cloud-run /tmp/nova
+
+USER 10001:10001
+
+EXPOSE 8080
+
+CMD ["python", "-m", "codex_slack_bridge.cloud_run_entrypoint"]

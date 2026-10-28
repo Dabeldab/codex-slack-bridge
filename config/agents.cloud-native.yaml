@@ -1,0 +1,133 @@
+# Cloud Run native runtime.
+# One service owns Command Center HTTP and the Slack Socket Mode worker.
+# Durable job/event state is moved to Cloud SQL by the cloud_run_entrypoint shim.
+# Local files under /tmp are treated as caches/scratch only.
+
+extends: agents.gcp-runtime.yaml
+
+defaults:
+  runtime_mode: primary
+  workspace_root: "/tmp/nova/workspaces"
+  state_db: "/tmp/nova-cloud-run/bridge.sqlite3"
+  max_workers: 3
+  command_center_host: "0.0.0.0"
+  command_center_port: 8080
+  command_center_url: "http://127.0.0.1:8080"
+  command_center_auth_enabled: true
+  command_center_google_auth_enabled: true
+  command_center_data_root: "/tmp/nova-cloud-run/command_center"
+  command_center_pause_manifest_path: "/tmp/nova-cloud-run/command_center/restart_manifest.json"
+  command_center_session_token_path: "/tmp/nova-cloud-run/session.token"
+  agent_capability_contract_path: "/app/config/agent-capabilities.yaml"
+
+  agent_runtime_shared_sessions: false
+  persistent_agent_sessions: false
+  agent_runtime_session_store_path: "/tmp/nova-cloud-run/sessions.jsonl"
+  agent_runtime_lock_root: "/tmp/nova-cloud-run/locks"
+  agent_sandbox_root: "/tmp/nova-cloud-run/sandboxes"
+  agent_sandbox_cleanup_log_path: "/tmp/nova-cloud-run/cleanup.jsonl"
+
+  credential_vault_path: ""
+  credential_vault_tool: ""
+  google_drive_adc_path: ""
+  google_drive_oauth_client_path: ""
+  google_drive_tool: ""
+  gcloud_ops_tool: ""
+  edge_browser_tool: ""
+
+  memory_enabled: false
+  cognitive_memory_enabled: false
+  learning_registry_enabled: false
+  prospective_enabled: false
+  drawing_board_digest_enabled: false
+  voice_room_enabled: false
+  local_voice_room_enabled: false
+
+  ops_inbox_ledger_enabled: false
+  ops_support_email_intake_enabled: false
+  ops_email_watch_enabled: false
+  ops_schedule_watch_enabled: false
+  ops_ticket_refresh_enabled: false
+  ops_salesforce_delta_enabled: false
+  ops_kpi_dashboard_enabled: false
+  ops_propelr_nmi_enabled: false
+  ops_singapore_ftp_enabled: false
+  ops_weekly_yaron_report_enabled: false
+  ops_weekly_support_quality_enabled: false
+  ops_zoom_chat_monitor_enabled: false
+  drawing_board_digest_enabled: false
+
+  polling_enabled: true
+  slack_heartbeat_enabled: true
+  automation_window_enabled: true
+  automation_window_timezone: "America/New_York"
+  automation_window_local_start: "08:00"
+  automation_window_local_end: "19:00"
+
+  slack_file_download_dir: "/tmp/nova-cloud-run/slack-files"
+  slack_file_output_dir: "/tmp/nova-cloud-run/generated"
+  shared_chat_log_path: "/tmp/nova-cloud-run/shared-chat/events.jsonl"
+  artifact_index_path: "/tmp/nova-cloud-run/artifacts/index.jsonl"
+  verified_route_store_path: "/tmp/nova-cloud-run/verified-routes.sqlite3"
+  pipeline_cache_root: "/tmp/nova-cloud-run/pipeline-cache"
+  agent_chat_attachment_dir: "/tmp/nova-cloud-run/attachments/command-center"
+
+  agent_file_return_allowed_roots:
+    - "/tmp/nova-cloud-run"
+  slack_file_upload_allowed_roots:
+    - "/tmp/nova-cloud-run"
+
+agents:
+  direct_codex:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/rory"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/rory.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false
+
+  raw_codex:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/raw"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/raw.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false
+
+  coding_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/taylor"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/taylor.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false
+
+  tickets_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/alex"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/alex.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false
+
+  billing_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/jamie"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/jamie.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false
+
+  claude_agent:
+    workspace_root: "/tmp/nova-cloud-run/workspaces/claude"
+    codex_executable: "/usr/local/bin/codex"
+    codex_command_prefix: []
+    codex_mcp_config_path: "/app/config/codex-mcp/claude.toml"
+    runtime_file_group: "nova"
+    persistent_agent_sessions: false
+    agent_runtime_shared_sessions: false

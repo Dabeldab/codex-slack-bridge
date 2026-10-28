@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-10-16T20:48:09Z",
+  "error": "private Command Center is unavailable",
+  "job": {},
+  "relay_status": "error",
+  "status": "relay_error",
+  "submitted_at": "2026-10-16T20:47:51Z",
+  "task_id": "chatgpt-branch-cleanup-access-audit-20261016-203501",
+  "version": 1
+}

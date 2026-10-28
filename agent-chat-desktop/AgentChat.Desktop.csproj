@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Speech" Version="10.0.9" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+  <!-- AgentChat/coding_agent 2026-07-08T03:53:03.9232176Z: package Kenney-derived pixel status frames. -->
+  <ItemGroup>
+    <None Include="Assets\pixel-agent\blocked.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\complete.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\idle.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\searching.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\waiting-approval.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\working.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Assets\pixel-agent\KENNEY_PIXEL_AGENT_MANIFEST.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rescue-console-mcp"
+version = "0.1.0"
+description = "Portable read-only LogMeIn Rescue API MCP for Nova support."
+requires-python = ">=3.11"
+dependencies = [
+  "mcp[cli]==1.28.1",
+  "python-dotenv>=1.0,<2",
+  "requests>=2.31,<3",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8,<10",
+  "pytest-asyncio>=0.24,<1",
+]
+
+[project.scripts]
+rescue-console-mcp = "rescue_console_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

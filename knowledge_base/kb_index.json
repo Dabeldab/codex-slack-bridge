@@ -1,0 +1,2095 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "path": "kb/support_playbooks/bad_examples_customer_care_20260709.md",
+      "title": "Bad Customer Care Training Examples",
+      "lane": "general",
+      "class": "primary_playbook",
+      "priority": 100,
+      "keywords": [
+        "bad",
+        "examples",
+        "customer",
+        "care",
+        "20260709",
+        "training"
+      ]
+    },
+    {
+      "path": "kb/support_playbooks/customer_care_resolution_playbook_20260709.md",
+      "title": "Customer Care Resolution Playbook",
+      "lane": "general",
+      "class": "primary_playbook",
+      "priority": 100,
+      "keywords": [
+        "customer",
+        "care",
+        "resolution",
+        "playbook",
+        "20260709"
+      ]
+    },
+    {
+      "path": "kb/support_playbooks/good_examples_customer_care_20260709.md",
+      "title": "Good Customer Care Training Examples",
+      "lane": "general",
+      "class": "primary_playbook",
+      "priority": 100,
+      "keywords": [
+        "good",
+        "examples",
+        "customer",
+        "care",
+        "20260709",
+        "training"
+      ]
+    },
+    {
+      "path": "kb/general/nova_database/nova_enums.md",
+      "title": "Nova Database Enum Reference",
+      "lane": "general",
+      "class": "primary_reference",
+      "priority": 95,
+      "keywords": [
+        "enums",
+        "database",
+        "enum",
+        "reference"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/general_nova/general-nova-ai-knowledge-source-v-1__cmp1ew28i24qjsy071ggrbw2i.md",
+      "title": "General Nova AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "cmp1ew28i24qjsy071ggrbw2i"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-barcode-scanner-ai-knowledge-source-v-1__cmp1bi06p003zrc07x64okr85.md",
+      "title": "Hardware Barcode Scanner AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "barcode",
+        "scanner",
+        "cmp1bi06p003zrc07x64okr85"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-card-terminals-ai-knowledge-source-v-1__cmp1bi2vn23yhsy07sjxi5p5r.md",
+      "title": "Hardware Card Terminals AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "card",
+        "terminals",
+        "cmp1bi2vn23yhsy07sjxi5p5r"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-cash-drawer-ai-knowledge-source-v-1__cmp1bi5vo0040rc07g8xpxays.md",
+      "title": "Hardware Cash Drawer AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "cash",
+        "drawer",
+        "cmp1bi5vo0040rc07g8xpxays"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-general-ai-knowledge-source-v-1__cmp1bhn8z003urc07c7w34taw.md",
+      "title": "Hardware General AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "cmp1bhn8z003urc07c7w34taw"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-label-printers-ai-knowledge-source-v-1__cmp1bhqn323ydsy07zjr68lzy.md",
+      "title": "Hardware Label Printers AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "label",
+        "printers",
+        "cmp1bhqn323ydsy07zjr68lzy"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-star-printers-ai-knowledge-source-v-1__cmp1bhws323yfsy07hm2284bk.md",
+      "title": "Hardware Star Printers AI Knowledge Source V 1",
+      "lane": "general",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "hardware",
+        "star",
+        "printers",
+        "cmp1bhws323yfsy07hm2284bk"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/accounting-how-to__cmpzmcwvu02pfov077ibjdptc.md",
+      "title": "Accounting How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "accounting",
+        "cmpzmcwvu02pfov077ibjdptc"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/customers-how-to__cmpzmcy1202pgov075at2xpwz.md",
+      "title": "Customers How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "customers",
+        "cmpzmcy1202pgov075at2xpwz"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/inventory-how-to__cmpzmd17x0kh0qm07kg0n0h8t.md",
+      "title": "Inventory How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "inventory",
+        "cmpzmd17x0kh0qm07kg0n0h8t"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/locations-how-to__cmpzmd1tx0kh1qm07xaj2xhyn.md",
+      "title": "Locations How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "locations",
+        "cmpzmd1tx0kh1qm07xaj2xhyn"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/products-how-to__cmpzmd40o08fhrz073710n7yi.md",
+      "title": "Products How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "products",
+        "cmpzmd40o08fhrz073710n7yi"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/products__cmpzm7cmm08f7rz07ogp3b00o.md",
+      "title": "Products",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "products",
+        "cmpzm7cmm08f7rz07ogp3b00o"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/readme__cmpzmdkv902plov07obsn2qpd.md",
+      "title": "Readme",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "readme",
+        "cmpzmdkv902plov07obsn2qpd"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/users-how-to__cmpzmdh7g0kh3qm07iavj68rz.md",
+      "title": "Users How To",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "users",
+        "cmpzmdh7g0kh3qm07iavj68rz"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_management/users__cmpzm7f2s0kgkqm07nozxjqw5.md",
+      "title": "Users",
+      "lane": "nova_classic",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "users",
+        "cmpzm7f2s0kgkqm07nozxjqw5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_storefront/nova-storefront-kb__cmp4pd8hb0by4rc07i4dozgi5.md",
+      "title": "Nova Storefront KB",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "cmp4pd8hb0by4rc07i4dozgi5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_storefront/nova-storefront-qa-training__cmp4pd8az056br207awverfsv.md",
+      "title": "Nova Storefront QA Training",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "training",
+        "cmp4pd8az056br207awverfsv"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_storefront/nova-wave-create-new-appointment-type__loja6mt2q3ue67vx241cx8kd.md",
+      "title": "Nova Wave create new appointment type",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "create",
+        "new",
+        "appointment",
+        "type",
+        "loja6mt2q3ue67vx241cx8kd"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_storefront/nova-wave-storefront-module-and-button-map__v5dgedpdeuur55ekmiv4icyf.md",
+      "title": "Nova Wave Storefront module and button map",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "module",
+        "button",
+        "map",
+        "v5dgedpdeuur55ekmiv4icyf"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/products-settings-ai-knowledge-v-8__cmnqomqm802xco6075plfycm3.md",
+      "title": "Products Settings AI Knowledge V 8",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "products",
+        "cmnqomqm802xco6075plfycm3"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/users-change-logs-ai-knowledge-v-3__cmp4lp97r03qjr2078tqyersp.md",
+      "title": "Users Change Logs AI Knowledge V 3",
+      "lane": "nova_wave",
+      "class": "detailed_kb",
+      "priority": 80,
+      "keywords": [
+        "users",
+        "change",
+        "logs",
+        "cmp4lp97r03qjr2078tqyersp"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/barcode-is-not-scanning-after-the-recent-account-change__cml162mpe04cquj07awu6eq3w.md",
+      "title": "Barcode is not scanning after the recent account change",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "barcode",
+        "not",
+        "scanning",
+        "after",
+        "recent",
+        "account",
+        "change",
+        "cml162mpe04cquj07awu6eq3w"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/called-to-close-account__cml162mpc049quj07wa7pacba.md",
+      "title": "Called to close account.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "called",
+        "close",
+        "account",
+        "cml162mpc049quj07wa7pacba"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-i-be-alerted-when-appointments-end__cml162mpe04dnuj07c2vqxzsu.md",
+      "title": "Can I be alerted when appointments end?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "alerted",
+        "when",
+        "appointments",
+        "end",
+        "cml162mpe04dnuj07c2vqxzsu"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-we-see-the-notes-of-the-invoices-on-reports__cml162mpd04cmuj07l20vx0g5.md",
+      "title": "Can we see the notes of the invoices on reports?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "see",
+        "notes",
+        "invoices",
+        "reports",
+        "cml162mpd04cmuj07l20vx0g5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-we-separate-the-user-s-hours-in-salary-report-by-location__cml162mpe04cvuj077xw8wgb7.md",
+      "title": "Can we separate the user's hours in salary report by location?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "separate",
+        "user",
+        "hours",
+        "salary",
+        "report",
+        "location",
+        "cml162mpe04cvuj077xw8wgb7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-you-help-me-close-the-account-and-our-location-introstem__cml162mpd04bxuj0727cseytn.md",
+      "title": "Can you help me close the account and our location Introstem.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "you",
+        "help",
+        "close",
+        "account",
+        "our",
+        "location",
+        "introstem",
+        "cml162mpd04bxuj0727cseytn"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-you-help-me-install-the-classic-version-please__cml162mpe04d4uj077s9ip3b4.md",
+      "title": "Can you help me install the classic version, please?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "you",
+        "help",
+        "install",
+        "please",
+        "cml162mpe04d4uj077s9ip3b4"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/can-you-help-me-switch-the-nova-app-back-to-classic__cml162mpc049nuj07e9d7gjsh.md",
+      "title": "Can you help me switch the Nova app back to Classic?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "you",
+        "help",
+        "switch",
+        "app",
+        "back",
+        "cml162mpc049nuj07e9d7gjsh"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/cannot-open-the-cashier__cml162mpc04aruj07kivw6b6f.md",
+      "title": "Cannot open the cashier",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "cannot",
+        "open",
+        "cashier",
+        "cml162mpc04aruj07kivw6b6f"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/cant-complete-the-layaway__cml162mpe04ehuj07zwzl9qp2.md",
+      "title": "Cant complete the layaway",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "cant",
+        "complete",
+        "layaway",
+        "cml162mpe04ehuj07zwzl9qp2"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/cant-open-the-nova__cml162mpd04asuj07wk24fwaq.md",
+      "title": "Cant open the nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "cant",
+        "open",
+        "cml162mpd04asuj07wk24fwaq"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/cant-open-the-nova__cml162mpd04c4uj07hr5kej8b.md",
+      "title": "Cant open the Nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "cant",
+        "open",
+        "cml162mpd04c4uj07hr5kej8b"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/core_concepts_nova/2-a-core-concepts-for-ai-agent-v-2__cmo7whj5z097nnp07m47jrmlt.md",
+      "title": "2 A Core Concepts For AI Agent V 2",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "core",
+        "concepts",
+        "agent",
+        "cmo7whj5z097nnp07m47jrmlt"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/does-nova-integrate-with-shopify__cml162mpd04axuj0747dub1q5.md",
+      "title": "Does Nova integrate with Shopify?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "does",
+        "integrate",
+        "shopify",
+        "cml162mpd04axuj0747dub1q5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/eod-shows-totals-of-amount__cml162mpe04cwuj07fkmhm90z.md",
+      "title": "EOD shows totals of [AMOUNT]",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "eod",
+        "shows",
+        "totals",
+        "amount",
+        "cml162mpe04cwuj07fkmhm90z"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/general_nova/general-knowledge__cmp8q0poa01p6sy07em2k5sjq.md",
+      "title": "General Knowledge",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "cmp8q0poa01p6sy07em2k5sjq"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/general_nova/general-zoom-agent__cmp8q0pbu00j0r207acrlkzgd.md",
+      "title": "General Zoom Agent",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "zoom",
+        "agent",
+        "cmp8q0pbu00j0r207acrlkzgd"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/general_nova/nova-openapi-support-kb__re71ou1jy7t68lwmhitp63ce.md",
+      "title": "Nova Openapi Support Kb",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "openapi",
+        "support",
+        "re71ou1jy7t68lwmhitp63ce"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-can-i-give-my-employees-access-to-the-mobile-app__cml162mpd04bjuj0766oa2tup.md",
+      "title": "How can I give my employees access to the mobile app?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "give",
+        "employees",
+        "access",
+        "mobile",
+        "app",
+        "cml162mpd04bjuj0766oa2tup"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-can-i-move-a-location-into-a-different-region__cml162mpe04eauj07429v1fs6.md",
+      "title": "How can I move a location into a different region",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "move",
+        "location",
+        "into",
+        "different",
+        "region",
+        "cml162mpe04eauj07429v1fs6"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-can-i-see-only-one-location-in-the-dashboard__cml162mpc04aiuj07u4iwsn36.md",
+      "title": "How can i see only one location in the dashboard.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "see",
+        "only",
+        "one",
+        "location",
+        "dashboard",
+        "cml162mpc04aiuj07u4iwsn36"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-do-i-stop-the-printer-from-printing-after-every-sale__cml162mpc04a3uj07vpnwzec9.md",
+      "title": "How do I stop the printer from printing after every sale?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "stop",
+        "printer",
+        "printing",
+        "after",
+        "every",
+        "sale",
+        "cml162mpc04a3uj07vpnwzec9"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-add-someone-to-the-minimum-price-approval-code-alert__cml162mpc04a6uj07536vs7eo.md",
+      "title": "How to add someone to the minimum price approval code alert",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "add",
+        "someone",
+        "minimum",
+        "price",
+        "approval",
+        "code",
+        "alert",
+        "cml162mpc04a6uj07536vs7eo"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-delete-users__cml162mpe04e3uj07lkqoonms.md",
+      "title": "how to delete users",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "delete",
+        "users",
+        "cml162mpe04e3uj07lkqoonms"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-download-the-crm-to-excel__cml162mpe04eguj07tvrd14ut.md",
+      "title": "How to download the crm to excel",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "download",
+        "crm",
+        "excel",
+        "cml162mpe04eguj07tvrd14ut"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-get-2-printouts__cml162mpd04c5uj07kwzd0wzg.md",
+      "title": "How to get 2 printouts",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "get",
+        "printouts",
+        "cml162mpd04c5uj07kwzd0wzg"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-add-this-account-on-the-new-pc__cml162mpd04bmuj07gisqw423.md",
+      "title": "How to resolve: Add this account on the new PC.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "add",
+        "account",
+        "new",
+        "cml162mpd04bmuj07gisqw423"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-authorize-pc__cml162mpe04dpuj07wkv9n1ya.md",
+      "title": "How to resolve: Authorize pc",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "authorize",
+        "cml162mpe04dpuj07wkv9n1ya"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-authorize-the-account-to-pc__cml162mpd04cluj07q3ugivuo.md",
+      "title": "How to resolve: Authorize the account to pc",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "authorize",
+        "account",
+        "cml162mpd04cluj07q3ugivuo"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-authorized-this-account-on-a-new-pc__cml162mpd04ccuj07uv4prlct.md",
+      "title": "How to resolve: Authorized this account on a new PC.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "authorized",
+        "account",
+        "new",
+        "cml162mpd04ccuj07uv4prlct"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-getting-mistakes-with-numbers__cml162mpe04e2uj07phrb55ij.md",
+      "title": "How to resolve: Getting mistakes with numbers",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "getting",
+        "mistakes",
+        "numbers",
+        "cml162mpe04e2uj07phrb55ij"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-he-was-unable-to-install-nova-on-his-new-pc__cml162mpd04c0uj07e906eycr.md",
+      "title": "How to resolve: He was unable to install Nova on his new PC.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "was",
+        "unable",
+        "install",
+        "his",
+        "new",
+        "cml162mpd04c0uj07e906eycr"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-help-install-nova-on-my-pc__cml162mpf04eouj07w14nvu0c.md",
+      "title": "How to resolve: Help install Nova on my PC.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "help",
+        "install",
+        "cml162mpf04eouj07w14nvu0c"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-help-me-i-cannot-log-in-to-the-nova-mobile-app__cml162mpc049ruj07537oc2fg.md",
+      "title": "How to resolve: Help me; I cannot log in to the Nova Mobile App.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "help",
+        "cannot",
+        "log",
+        "mobile",
+        "app",
+        "cml162mpc049ruj07537oc2fg"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-i-cannot-see-my-kits-on-the-sales-screen__cml162mpc04afuj07iifgymfd.md",
+      "title": "How to resolve: I cannot see my kits on the sales screen",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "cannot",
+        "see",
+        "kits",
+        "sales",
+        "screen",
+        "cml162mpc04afuj07iifgymfd"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-nova-wont-let-me-login__cml162mpf04f5uj07yrflevyo.md",
+      "title": "How to resolve: Nova wont let me login.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "wont",
+        "let",
+        "login",
+        "cml162mpf04f5uj07yrflevyo"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-please-add-avinichi-product__cml162mpe04diuj07lqyv2vj9.md",
+      "title": "How to resolve: Please add Avinichi product",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "please",
+        "add",
+        "avinichi",
+        "product",
+        "cml162mpe04diuj07lqyv2vj9"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-please-authorize-pc__cml162mpe04dvuj07tydkttxw.md",
+      "title": "How to resolve: Please authorize pc",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "please",
+        "authorize",
+        "cml162mpe04dvuj07tydkttxw"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-please-close-id2-and-id-3-end-of-the-season__cml162mpe04d5uj07wlmhbqd7.md",
+      "title": "How to resolve: Please close ID2 and ID 3 end of the season",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "please",
+        "close",
+        "id2",
+        "end",
+        "season",
+        "cml162mpe04d5uj07wlmhbqd7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-please-close-the-jw-location__cml162mpd04cjuj071yj2xkam.md",
+      "title": "How to resolve: Please close the JW location",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "please",
+        "close",
+        "location",
+        "cml162mpd04cjuj071yj2xkam"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-printer-issues__cml162mpc04aquj07ej41j14j.md",
+      "title": "How to resolve: Printer issues",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "printer",
+        "issues",
+        "cml162mpc04aquj07ej41j14j"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-printer-printing-not-good-on-big-invoices__cml162mpf04eluj07zmb8a6pg.md",
+      "title": "How to resolve: Printer printing not good on big invoices",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "printer",
+        "printing",
+        "not",
+        "good",
+        "big",
+        "invoices",
+        "cml162mpf04eluj07zmb8a6pg"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-printing-comes-out-blank__cml162mpd04bvuj07maief1u1.md",
+      "title": "How to resolve: printing comes out blank",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "printing",
+        "comes",
+        "out",
+        "blank",
+        "cml162mpd04bvuj07maief1u1"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-q-i-need-to-add-account-to-my-new-pc__cml162mpd04bouj07z6yvel47.md",
+      "title": "How to resolve: Q- I need to add account to my new PC.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "need",
+        "add",
+        "account",
+        "new",
+        "cml162mpd04bouj07z6yvel47"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-q-product-not-showing-up-on-sales-screen__cml162mpf04f6uj07fa8wl8z9.md",
+      "title": "How to resolve: Q. Product not showing up on sales screen.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "product",
+        "not",
+        "showing",
+        "sales",
+        "screen",
+        "cml162mpf04f6uj07fa8wl8z9"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-the-nova-not-printing-2-printouts__cml162mpe04eeuj0766zk1krl.md",
+      "title": "How to resolve: The nova not printing 2 printouts",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "not",
+        "printing",
+        "printouts",
+        "cml162mpe04eeuj0766zk1krl"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-resolve-unable-to-access-a-user-profile-in-new-nova__cml162mpe04ekuj07trqi6ak5.md",
+      "title": "How to resolve: unable to access a user profile in New Nova.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "resolve",
+        "unable",
+        "access",
+        "user",
+        "profile",
+        "new",
+        "cml162mpe04ekuj07trqi6ak5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-see-the-products-reports-and-the-users-reports__cml162mpd04cnuj07dphdxrin.md",
+      "title": "How to see the products reports and the users reports",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "see",
+        "products",
+        "reports",
+        "users",
+        "cml162mpd04cnuj07dphdxrin"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-set-the-alerts-for-under-minimum__cml162mpe04d1uj07d6878i6g.md",
+      "title": "How to set the alerts for under minimum",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "set",
+        "alerts",
+        "under",
+        "minimum",
+        "cml162mpe04d1uj07d6878i6g"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-set-the-tax-rae__cml162mpd04ckuj07930rbgbp.md",
+      "title": "How to set the tax rae",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "set",
+        "tax",
+        "rae",
+        "cml162mpd04ckuj07930rbgbp"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/how-to-take-off-the-location-password__cml162mpd04atuj077e8d5ezy.md",
+      "title": "How to take off the location password",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "take",
+        "off",
+        "location",
+        "password",
+        "cml162mpd04atuj077e8d5ezy"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-am-not-able-to-log-in-to-nova-can-you-help__cml162mpe04ejuj07nnjcay1y.md",
+      "title": "I am not able to log in to Nova. Can you help?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "not",
+        "able",
+        "log",
+        "can",
+        "you",
+        "help",
+        "cml162mpe04ejuj07nnjcay1y"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-am-not-able-to-sign-into-the-mobile-app__cml162mpd04c9uj070ulpxeid.md",
+      "title": "I am not able to sign into the mobile app",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "not",
+        "able",
+        "sign",
+        "into",
+        "mobile",
+        "app",
+        "cml162mpd04c9uj070ulpxeid"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-am-unable-to-edit-an-invoice-in-nova-can-you-help__cml162mpe04e6uj07rtb5wwd6.md",
+      "title": "I am unable to edit an invoice in Nova. Can you help?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "unable",
+        "edit",
+        "invoice",
+        "can",
+        "you",
+        "help",
+        "cml162mpe04e6uj07rtb5wwd6"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-am-unable-to-locate-nova-on-my-pc-can-you-help-me__cml162mpe04d6uj071dtpjkff.md",
+      "title": "I am unable to locate Nova on my PC. Can you help me?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "unable",
+        "locate",
+        "can",
+        "you",
+        "help",
+        "cml162mpe04d6uj071dtpjkff"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-can-t-access-nova__cml162mpe04ctuj07vgpbez5c.md",
+      "title": "I can't access Nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "can",
+        "access",
+        "cml162mpe04ctuj07vgpbez5c"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-get-an-error-message-when-i-try-to-email-an-invoice__cml162mpf04fbuj07x6idhr08.md",
+      "title": "I get an error message when I try to email an invoice",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "get",
+        "error",
+        "message",
+        "when",
+        "try",
+        "email",
+        "invoice",
+        "cml162mpf04fbuj07x6idhr08"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-m-having-trouble-logging-into-my-account__cml162mpe04cxuj07ckp9gbop.md",
+      "title": "I'm having trouble logging into my account",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "having",
+        "trouble",
+        "logging",
+        "into",
+        "account",
+        "cml162mpe04cxuj07ckp9gbop"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-classic-nova__cml162mpe04dquj07zov48o27.md",
+      "title": "I need Classic Nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "cml162mpe04dquj07zov48o27"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-help-can-you-help-me-connect-to-the-new-account__cml162mpe04couj07krv156wt.md",
+      "title": "I need help can you help me connect to the new account",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "help",
+        "can",
+        "you",
+        "connect",
+        "new",
+        "account",
+        "cml162mpe04couj07krv156wt"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-help-downloading-and-signing-into-nova__cml162mpe04d8uj07o7cvp4ob.md",
+      "title": "I need help downloading and signing into Nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "help",
+        "downloading",
+        "signing",
+        "into",
+        "cml162mpe04d8uj07o7cvp4ob"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-help-with-adding-products-to-nova__cml162mpe04e0uj07yxfjr8yg.md",
+      "title": "I need help with adding products to Nova",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "help",
+        "adding",
+        "products",
+        "cml162mpe04e0uj07yxfjr8yg"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-to-download-and-sign-into-nova-on-a-new-pc__cml162mpd04bquj0740lml0fc.md",
+      "title": "I need to download and sign into Nova on a new PC",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "download",
+        "sign",
+        "into",
+        "new",
+        "cml162mpd04bquj0740lml0fc"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-to-print-an-employees-sales-and-commission__cml162mpc04a2uj072hzgf8wh.md",
+      "title": "I need to print an employees sales and commission",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "print",
+        "employees",
+        "sales",
+        "commission",
+        "cml162mpc04a2uj072hzgf8wh"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-need-to-sign-into-this-account__cml162mpf04f9uj07hxqs5u77.md",
+      "title": "I need to sign into this account",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "need",
+        "sign",
+        "into",
+        "account",
+        "cml162mpf04f9uj07hxqs5u77"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-want-a-report-of-our-inventory-from-oct-nov-and-dec__cml162mpe04e9uj07ya9ns0gi.md",
+      "title": "I want a report of our inventory from Oct, Nov and Dec.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "want",
+        "report",
+        "our",
+        "inventory",
+        "oct",
+        "nov",
+        "dec",
+        "cml162mpe04e9uj07ya9ns0gi"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-want-to-add-the-okc-account__cml162mpe04cpuj07l1vy34ga.md",
+      "title": "I want to add the OKC account",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "want",
+        "add",
+        "okc",
+        "account",
+        "cml162mpe04cpuj07l1vy34ga"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-want-to-cancel-the-subscription-to-one-of-the-stores-only__cml162mpd04bkuj07g0b6ygt7.md",
+      "title": "I want to cancel the subscription to one of the stores only.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "want",
+        "cancel",
+        "subscription",
+        "one",
+        "stores",
+        "only",
+        "cml162mpd04bkuj07g0b6ygt7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-want-to-change-the-tax-rate__cml162mpe04d7uj077kliuh3r.md",
+      "title": "I want to change the tax rate.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "want",
+        "change",
+        "tax",
+        "rate",
+        "cml162mpe04d7uj077kliuh3r"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-want-to-create-an-invoice-and-change-the-date__cml162mpe04dauj073c4ltcc4.md",
+      "title": "I want to create an invoice and change the date",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "want",
+        "create",
+        "invoice",
+        "change",
+        "date",
+        "cml162mpe04dauj073c4ltcc4"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/i-would-like-to-check-out-2-users-they-are-unable-to-sign-in__cml162mpe04d2uj078zcqbqri.md",
+      "title": "I would like to check out 2 users, they are unable to sign in",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "would",
+        "like",
+        "check",
+        "out",
+        "users",
+        "they",
+        "are",
+        "unable",
+        "sign",
+        "cml162mpe04d2uj078zcqbqri"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/location-is-inactive-i-already-made-a-payment__cml162mpc04a4uj072j92fbt7.md",
+      "title": "Location is inactive. I already made a payment.",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "location",
+        "inactive",
+        "already",
+        "made",
+        "payment",
+        "cml162mpc04a4uj072j92fbt7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/my-drawer-is-not-working-can-you-help-me__cml162mpe04efuj07xymp152o.md",
+      "title": "My drawer is not working. Can you help me?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "drawer",
+        "not",
+        "working",
+        "can",
+        "you",
+        "help",
+        "cml162mpe04efuj07xymp152o"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/nova_first_time_setup/nova-first-time-setup-kb__cmp8tytag02s1sy07j9e9kgf4.md",
+      "title": "Nova First Time Setup KB",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "first",
+        "time",
+        "setup",
+        "cmp8tytag02s1sy07j9e9kgf4"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/our-register-won-t-open-it-keeps-saying-cash-drawer-error__cml162mpe04dmuj07iw6qs7em.md",
+      "title": "Our Register won't open it keeps saying cash drawer error",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "our",
+        "register",
+        "won",
+        "open",
+        "keeps",
+        "saying",
+        "cash",
+        "drawer",
+        "error",
+        "cml162mpe04dmuj07iw6qs7em"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/the-account-is-closed-but-i-need-to-look-at-our-data__cml162mpc04aouj07aruba0vu.md",
+      "title": "The account is closed but I need to look at our data",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "account",
+        "closed",
+        "but",
+        "need",
+        "look",
+        "our",
+        "data",
+        "cml162mpc04aouj07aruba0vu"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/where-can-i-create-a-new-user__cml162mpe04druj07kdxv7mtr.md",
+      "title": "Where can I create a new user?",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "where",
+        "can",
+        "create",
+        "new",
+        "user",
+        "cml162mpe04druj07kdxv7mtr"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/where-can-i-see-sales-made-in-cash__cml162mpf04f7uj07j1ckix9z.md",
+      "title": "Where can I see sales made in cash",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "where",
+        "can",
+        "see",
+        "sales",
+        "made",
+        "cash",
+        "cml162mpf04f7uj07j1ckix9z"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/why-i-cant-enter-products-in-the-app__cml162mpe04eduj07xvrub8nf.md",
+      "title": "Why i cant enter products in the app",
+      "lane": "general",
+      "class": "quick_answer",
+      "priority": 65,
+      "keywords": [
+        "why",
+        "cant",
+        "enter",
+        "products",
+        "app",
+        "cml162mpe04eduj07xvrub8nf"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/billing/Close_Account_Script_revised.txt",
+      "title": "Close Account Script revised",
+      "lane": "billing",
+      "class": "historical_billing_reference",
+      "priority": 55,
+      "keywords": [
+        "close",
+        "account",
+        "script",
+        "revised"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/billing/Payment_Gateways_and_Processors.txt",
+      "title": "Payment Gateways and Processors",
+      "lane": "billing",
+      "class": "historical_billing_reference",
+      "priority": 55,
+      "keywords": [
+        "payment",
+        "gateways",
+        "processors"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/billing/Sensitive_Questions.txt",
+      "title": "Sensitive Questions",
+      "lane": "billing",
+      "class": "historical_billing_reference",
+      "priority": 55,
+      "keywords": [
+        "sensitive",
+        "questions"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/billing/i-need-to-change-the-billing-info-for-the-monthly-payments__cml162mpc04aluj0774behyc1.md",
+      "title": "I need to change the billing info for the monthly payments",
+      "lane": "billing",
+      "class": "historical_billing_reference",
+      "priority": 55,
+      "keywords": [
+        "need",
+        "change",
+        "billing",
+        "info",
+        "monthly",
+        "payments",
+        "cml162mpc04aluj0774behyc1"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/general_nova/general-nova-ai-faq-v-1__cmp1ew23q01i7rc07z7xjq4lf.md",
+      "title": "General Nova AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "cmp1ew23q01i7rc07z7xjq4lf"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-barcode-scanner-ai-faq-v-1__cmp1bhx2k003yrc07qy0hgbi0.md",
+      "title": "Hardware Barcode Scanner AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "barcode",
+        "scanner",
+        "cmp1bhx2k003yrc07qy0hgbi0"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-barcode-scanner-tilde-prefix-ai-faq-v-1__cmp2sne392dvrsy07uubsfy12.md",
+      "title": "Hardware Barcode Scanner Tilde Prefix AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "barcode",
+        "scanner",
+        "tilde",
+        "prefix",
+        "cmp2sne392dvrsy07uubsfy12"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-card-terminals-ai-faq-v-1__cmp1bi1n423ygsy07uamqo46n.md",
+      "title": "Hardware Card Terminals AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "card",
+        "terminals",
+        "cmp1bi1n423ygsy07uamqo46n"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-cash-drawer-ai-faq-v-1__cmp1bi4sw0lawr20763xsz2hj.md",
+      "title": "Hardware Cash Drawer AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "cash",
+        "drawer",
+        "cmp1bi4sw0lawr20763xsz2hj"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-epson-and-other-printers-ai-faq-v-1__cmp1bi80s23yisy07lkbbpyg7.md",
+      "title": "Hardware Epson And Other Printers AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "epson",
+        "other",
+        "printers",
+        "cmp1bi80s23yisy07lkbbpyg7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-fingerprint-scanners-ai-faq-v-1__cmp1bhhwu003rrc072j3mw03w.md",
+      "title": "Hardware Fingerprint Scanners AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "fingerprint",
+        "scanners",
+        "cmp1bhhwu003rrc072j3mw03w"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-general-ai-faq-v-1__cmp1bhkul003trc07vbcugp2m.md",
+      "title": "Hardware General AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "cmp1bhkul003trc07vbcugp2m"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-label-printers-ai-faq-v-1__cmp1bhnsl003vrc075d8zgbba.md",
+      "title": "Hardware Label Printers AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "label",
+        "printers",
+        "cmp1bhnsl003vrc075d8zgbba"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-receipt-printers-general-ai-faq-v-1__cmp1bhqsc003wrc07rl70keeq.md",
+      "title": "Hardware Receipt Printers General AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "receipt",
+        "printers",
+        "cmp1bhqsc003wrc07rl70keeq"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/hardware/hardware-star-printers-ai-faq-v-1__cmp1bhu5n003xrc07movcjcp3.md",
+      "title": "Hardware Star Printers AI FAQ V 1",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "hardware",
+        "star",
+        "printers",
+        "cmp1bhu5n003xrc07movcjcp3"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/general/nova_first_time_setup/nova-first-time-setup-faq__cmp8tytft02c5r207phlxg8nc.md",
+      "title": "Nova First Time Setup FAQ",
+      "lane": "general",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "first",
+        "time",
+        "setup",
+        "cmp8tytft02c5r207phlxg8nc"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_download/nova-classic-download-faq__cmp8vlur202r1r207m1bi1ukx.md",
+      "title": "Nova Classic Download FAQ",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "download",
+        "cmp8vlur202r1r207m1bi1ukx"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_faq_kbs/nova-classic-inventory-ai-faq-v-1__cmpzmatth0kgxqm07tmyyqxpt.md",
+      "title": "Nova Classic Inventory AI FAQ V 1",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "inventory",
+        "cmpzmatth0kgxqm07tmyyqxpt"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_faq_kbs/nova-classic-invoices-ai-faq-v-1__cmpzmaw3r08f9rz070xt8qwv5.md",
+      "title": "Nova Classic Invoices AI FAQ V 1",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "invoices",
+        "cmpzmaw3r08f9rz070xt8qwv5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_faq_kbs/nova-classic-locations-ai-faq-v-1__cmpzmawn908farz07dspdobpu.md",
+      "title": "Nova Classic Locations AI FAQ V 1",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "locations",
+        "cmpzmawn908farz07dspdobpu"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_faq_kbs/nova-classic-products-ai-faq-v-1__cmpzmayv808fbrz07iij2uwy7.md",
+      "title": "Nova Classic Products AI FAQ V 1",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "products",
+        "cmpzmayv808fbrz07iij2uwy7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_faq_kbs/nova-classic-sale-screen-ai-faq-v-1__cmpzmb22i08fdrz07u9dogy90.md",
+      "title": "Nova Classic Sale Screen AI FAQ V 1",
+      "lane": "nova_classic",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "sale",
+        "screen",
+        "cmpzmb22i08fdrz07u9dogy90"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_wave_download/nova-wave-download-faq__cmp8vkjw902zmsy07qv4we4ms.md",
+      "title": "Nova Wave Download FAQ",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "download",
+        "cmp8vkjw902zmsy07qv4we4ms"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/accounting-expenses-ai-faq-v-2__cmp4k8ghl02xir207dlgkcl4u.md",
+      "title": "Accounting Expenses AI FAQ V 2",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "accounting",
+        "expenses",
+        "cmp4k8ghl02xir207dlgkcl4u"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/customers-management-merged-faq__cmp8r3rku03gnrc079z871a9j.md",
+      "title": "Customers Management Merged FAQ",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "customers",
+        "management",
+        "cmp8r3rku03gnrc079z871a9j"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/general-nova-reports-ai-faq-v-1-1__cmojb23ft04jesy0795mntnc7.md",
+      "title": "General Nova Reports AI FAQ V 1 1",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "reports",
+        "cmojb23ft04jesy0795mntnc7"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/locations-settings-ai-faq-v-1__cmnnticba00o0r407ydj7kyrx.md",
+      "title": "Locations Settings AI FAQ V 1",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "locations",
+        "cmnnticba00o0r407ydj7kyrx"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/products-coupons-ai-faq-v-3__cmo7bf7xh17q1pp07a5jvtlbj.md",
+      "title": "Products Coupons AI FAQ V 3",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "products",
+        "coupons",
+        "cmo7bf7xh17q1pp07a5jvtlbj"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/products-price-lists-ai-faq-v-2__cmo7bf7ya00funp07ybt5jk77.md",
+      "title": "Products Price Lists AI FAQ V 2",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "products",
+        "price",
+        "lists",
+        "cmo7bf7ya00funp07ybt5jk77"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/products-settings-ai-faq-v-9__cmnqomqz808ohs1073k9otl1k.md",
+      "title": "Products Settings AI FAQ V 9",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "products",
+        "cmnqomqz808ohs1073k9otl1k"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/users-change-logs-ai-faq-v-3__cmp4lp9640580sy07c0uzoe9i.md",
+      "title": "Users Change Logs AI FAQ V 3",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "users",
+        "change",
+        "logs",
+        "cmp4lp9640580sy07c0uzoe9i"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/users-settings-ai-faq-v-15__cmoafzggx003usc075wgtn4pn.md",
+      "title": "Users Settings AI FAQ V 15",
+      "lane": "nova_wave",
+      "class": "faq_secondary",
+      "priority": 55,
+      "keywords": [
+        "users",
+        "cmoafzggx003usc075wgtn4pn"
+      ]
+    },
+    {
+      "path": "kb/README.md",
+      "title": "Knowledge Sources",
+      "lane": "general",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "readme",
+        "sources"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_classic_download/nova-classic-download-kb__cmp8vlvaq041irc07q67960w6.md",
+      "title": "Nova Classic Download KB",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "download",
+        "cmp8vlvaq041irc07q67960w6"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-customers-and-loyalty__cmpzmiise08forz077ip24awr.md",
+      "title": "New Nova / NextGen > Customers and Loyalty",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "customers",
+        "loyalty",
+        "cmpzmiise08forz077ip24awr"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-dashboard__cmpzmil4c08fprz073kpqjo1k.md",
+      "title": "New Nova / NextGen > Dashboard",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "dashboard",
+        "cmpzmil4c08fprz073kpqjo1k"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-inventory-and-products__cmpzmi38q0khgqm070i11on4u.md",
+      "title": "New Nova / NextGen > Inventory and Products",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "inventory",
+        "products",
+        "cmpzmi38q0khgqm070i11on4u"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-inventory-change-log__cmpzmi0kd02pqov07xvqomznd.md",
+      "title": "New Nova / NextGen > Inventory Change Log",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "inventory",
+        "change",
+        "log",
+        "cmpzmi0kd02pqov07xvqomznd"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-inventory-counts__cmpzmi04e0kheqm07418wlumx.md",
+      "title": "New Nova / NextGen > Inventory Counts",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "inventory",
+        "counts",
+        "cmpzmi04e0kheqm07418wlumx"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-inventory-report__cmpzmi6800khhqm07iy8oa23h.md",
+      "title": "New Nova / NextGen > Inventory Report",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "inventory",
+        "report",
+        "cmpzmi6800khhqm07iy8oa23h"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-invoices__cmpzmi6sz08firz07qc9dmjby.md",
+      "title": "New Nova / NextGen > Invoices",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "invoices",
+        "cmpzmi6sz08firz07qc9dmjby"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-print-labels__cmpzmi95n08fjrz07qts5z3lw.md",
+      "title": "New Nova / NextGen > Print Labels",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "print",
+        "labels",
+        "cmpzmi95n08fjrz07qts5z3lw"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-product-import-and-export__cmpzmi32f0khfqm07ld17qomx.md",
+      "title": "New Nova / NextGen > Product Import and Export",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "product",
+        "import",
+        "export",
+        "cmpzmi32f0khfqm07ld17qomx"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-screen-locator-index__cmpzmic2108fkrz07qj90u2t5.md",
+      "title": "New Nova / NextGen > Screen Locator Index",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "screen",
+        "locator",
+        "index",
+        "cmpzmic2108fkrz07qj90u2t5"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-users-and-access__cmpzmiezb08fmrz07tmsibtim.md",
+      "title": "New Nova / NextGen > Users and Access",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "users",
+        "access",
+        "cmpzmiezb08fmrz07tmsibtim"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-users-and-invoices__cmpzmifuv08fnrz07l6xjicph.md",
+      "title": "New Nova / NextGen > Users and Invoices",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "users",
+        "invoices",
+        "cmpzmifuv08fnrz07l6xjicph"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_classic/nova_nextgen/new-nova-nextgen-workflow-index__cmpzmiht80khmqm073wleq3mo.md",
+      "title": "New Nova / NextGen > Workflow Index",
+      "lane": "nova_classic",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "new",
+        "nextgen",
+        "workflow",
+        "index",
+        "cmpzmiht80khmqm073wleq3mo"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/nova_wave_download/nova-wave-download-kb__cmp8vkrvg02r0r207iwo2vqbu.md",
+      "title": "Nova Wave Download KB",
+      "lane": "nova_wave",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "download",
+        "cmp8vkrvg02r0r207iwo2vqbu"
+      ]
+    },
+    {
+      "path": "kb/zoom_kb/nova_wave/wave_backoffice_settings/customers-management-merged-kb__cmp8sa2zy03v9rc07apavpwar.md",
+      "title": "Customers Management Merged KB",
+      "lane": "nova_wave",
+      "class": "reference",
+      "priority": 50,
+      "keywords": [
+        "customers",
+        "management",
+        "cmp8sa2zy03v9rc07apavpwar"
+      ]
+    }
+  ]
+}

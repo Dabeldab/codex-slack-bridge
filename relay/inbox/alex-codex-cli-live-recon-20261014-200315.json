@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "task_id": "alex-codex-cli-live-recon-20261014-200315",
+  "agent": "alex",
+  "title": "Final live Salesforce support readiness",
+  "instruction": "Perform a bounded read-only support-lane readiness check. Invoke salesforce_ticket_list_open with limit 200 through the approved salesforce_support_ops MCP; if MCP registration is unavailable, use the provided job-scoped broker CLI fallback for that same server and tool. Return only sanitized aggregate diagnostics: authentication success or failure, query success or failure, total open count, counts by approved record-type label, configured result limit, truncation status, and whether any operational blocker remains. Do not hand this task to another agent. Do not include customer names, ticket numbers, Salesforce IDs, emails, descriptions, raw rows, credentials, or other private data. Do not mutate Salesforce, Nova SQL, Rescue, email, or any provider.",
+  "reasoning_provider": "codex_cli",
+  "timeout_seconds": 900,
+  "created_at": "2026-10-14T20:03:15Z"
+}

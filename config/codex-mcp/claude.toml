@@ -1,0 +1,3 @@
+# Thor/claude compatibility lane stays inside the application capability contract.
+approval_policy = "never"
+sandbox_mode = "read-only"

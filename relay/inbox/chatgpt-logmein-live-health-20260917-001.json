@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "task_id": "chatgpt-logmein-live-health-20260917-001",
+  "agent": "rory",
+  "title": "Inspect LogMeIn connector live health",
+  "instruction": "Perform a read-only live health inspection of the LogMeIn Auto Tickets production runtime in Google Cloud project gen-lang-client-0051653266, region us-central1. Focus on the Cloud Run Job named logmein-connector and the related logmein-connector Cloud Run service/build artifacts when relevant. Inspect current job configuration, latest executions, execution/task status, image/revision/digest or deploy metadata where available, and narrowly filtered recent WARNING/ERROR logs. Verify whether the job currently has 2 GiB memory and 900-second task timeout. Verify whether the deployed runtime appears to include current logmein-connector main commit 9a065c9c8b29039748b624bb29e5aa7434e3bcd7 if that can be established safely. Look specifically for Codex errors, invalid_json_schema, Rescue POLLRATEEXCEEDED, task timeouts, memory/OOM events, Salesforce ticket creation failures, pending chatlog retry problems, and deployment drift between the service and job. Do not reveal secret values, environment variable values, OAuth/token contents, database credentials, customer names, phone numbers, or chat transcript text. Do not mutate, deploy, restart, update IAM, change environment variables, or change any cloud resource. Return a concise operational report with exact execution ids/timestamps where useful, confirmed errors, likely causes clearly separated from facts, and recommended next actions. If a code defect is evident, identify the relevant repository file/function but do not modify it in this task.",
+  "timeout_seconds": 900
+}

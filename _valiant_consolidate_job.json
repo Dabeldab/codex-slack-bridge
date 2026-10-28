@@ -1,0 +1,105 @@
+{
+  "account": "Valiant",
+  "database": "POS_Valiant",
+  "table": "Inventory",
+  "goal": "consolidate 2 locations into one; origin ends at 0; no duplicate (LocationID,ProductID)",
+  "baseline": {
+    "L4_total_qty": 9040,
+    "L7_total_qty": 1010968
+  },
+  "directions": {
+    "A_4_to_7": {
+      "from": "4 (Valiant Paris Women's)",
+      "to": "7 (Valiant Men's)",
+      "writes": [
+        {
+          "key": "valiant-consolidate-a-merge-7",
+          "desc": "merge: add loc4 qty into loc7 rows for shared products",
+          "sql": "UPDATE t7 SET t7.Quantity = t7.Quantity + t4.Quantity FROM dbo.Inventory t7 JOIN dbo.Inventory t4 ON t4.ProductID = t7.ProductID AND t4.LocationID = 4 WHERE t7.LocationID = 7",
+          "expected_rows": 7902,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 7",
+          "expected_verify": 1012967,
+          "previewHash": "4ae594bb33a25d8047d0fdcea5d7128396dbb4efccc08b4ffa1ac6177909c50d"
+        },
+        {
+          "key": "valiant-consolidate-a-zero-4",
+          "desc": "zero out loc4 rows for merged products (origin to 0)",
+          "sql": "UPDATE dbo.Inventory SET Quantity = 0 WHERE LocationID = 4 AND EXISTS (SELECT 1 FROM dbo.Inventory i7 WHERE i7.LocationID = 7 AND i7.ProductID = dbo.Inventory.ProductID)",
+          "expected_rows": 7902,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 4",
+          "expected_verify": 7041,
+          "previewHash": "79c3fc6075562e07278e257157816aba10203f1b3b990bee4b47bd7bb5861aa6"
+        },
+        {
+          "key": "valiant-consolidate-a-flip-1",
+          "desc": "flip loc4-only rows (bucket %2=0) to loc7",
+          "sql": "UPDATE dbo.Inventory SET LocationID = 7 WHERE LocationID = 4 AND (InventoryID % 2 = 0) AND NOT EXISTS (SELECT 1 FROM dbo.Inventory iX WHERE iX.LocationID = 7 AND iX.ProductID = dbo.Inventory.ProductID AND iX.InventoryID <> dbo.Inventory.InventoryID)",
+          "expected_rows": 8277,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 4",
+          "expected_verify": 3501,
+          "previewHash": "ad99777d2315eeed73113bd9ccaaf0706cabed90fe98ec954e312a77dbb1aa3b"
+        },
+        {
+          "key": "valiant-consolidate-a-flip-2",
+          "desc": "flip loc4-only rows (bucket %2=1) to loc7",
+          "sql": "UPDATE dbo.Inventory SET LocationID = 7 WHERE LocationID = 4 AND (InventoryID % 2 = 1) AND NOT EXISTS (SELECT 1 FROM dbo.Inventory iX WHERE iX.LocationID = 7 AND iX.ProductID = dbo.Inventory.ProductID AND iX.InventoryID <> dbo.Inventory.InventoryID)",
+          "expected_rows": 8231,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 4",
+          "expected_verify": 0,
+          "previewHash": "6ee8d812be5e1992985a0ffa8dead485eb89a97584cfd935d868be60c606fdb3"
+        }
+      ]
+    },
+    "B_7_to_4": {
+      "from": "7 (Valiant Men's)",
+      "to": "4 (Valiant Paris Women's)",
+      "writes": [
+        {
+          "key": "valiant-consolidate-b-merge-4",
+          "desc": "merge: add loc7 qty into loc4 rows for shared products",
+          "sql": "UPDATE t4 SET t4.Quantity = t4.Quantity + t7.Quantity FROM dbo.Inventory t4 JOIN dbo.Inventory t7 ON t7.ProductID = t4.ProductID AND t7.LocationID = 7 WHERE t4.LocationID = 4",
+          "expected_rows": 7902,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 4",
+          "expected_verify": 1011133,
+          "previewHash": "5027c3e5f0a8bb117af726f348255a8dd4e58b331039824dd312a2f6c472ec6a"
+        },
+        {
+          "key": "valiant-consolidate-b-zero-7",
+          "desc": "zero out loc7 rows for merged products (origin to 0)",
+          "sql": "UPDATE dbo.Inventory SET Quantity = 0 WHERE LocationID = 7 AND EXISTS (SELECT 1 FROM dbo.Inventory i4 WHERE i4.LocationID = 4 AND i4.ProductID = dbo.Inventory.ProductID)",
+          "expected_rows": 7902,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 7",
+          "expected_verify": 8875,
+          "previewHash": "6a09cef296db207157e8853e6890c583f51f24820d5195b882967ed7bfb19cd2"
+        },
+        {
+          "key": "valiant-consolidate-b-flip-1",
+          "desc": "flip loc7-only rows (bucket %3=0) to loc4",
+          "sql": "UPDATE dbo.Inventory SET LocationID = 4 WHERE LocationID = 7 AND (InventoryID % 3 = 0) AND NOT EXISTS (SELECT 1 FROM dbo.Inventory iX WHERE iX.LocationID = 4 AND iX.ProductID = dbo.Inventory.ProductID AND iX.InventoryID <> dbo.Inventory.InventoryID)",
+          "expected_rows": 8807,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 7",
+          "expected_verify": 5983,
+          "previewHash": "364b3a2d2ace0b24c4e89103e9bf972e3f1431ca63797ac4e0527f506f6952ed"
+        },
+        {
+          "key": "valiant-consolidate-b-flip-2",
+          "desc": "flip loc7-only rows (bucket %3=1) to loc4",
+          "sql": "UPDATE dbo.Inventory SET LocationID = 4 WHERE LocationID = 7 AND (InventoryID % 3 = 1) AND NOT EXISTS (SELECT 1 FROM dbo.Inventory iX WHERE iX.LocationID = 4 AND iX.ProductID = dbo.Inventory.ProductID AND iX.InventoryID <> dbo.Inventory.InventoryID)",
+          "expected_rows": 8808,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 7",
+          "expected_verify": 2877,
+          "previewHash": "47e8c75a9df7393c2865e5ba1568d3fe558e09cd9b83107ead70173bae508f80"
+        },
+        {
+          "key": "valiant-consolidate-b-flip-3",
+          "desc": "flip loc7-only rows (bucket %3=2) to loc4",
+          "sql": "UPDATE dbo.Inventory SET LocationID = 4 WHERE LocationID = 7 AND (InventoryID % 3 = 2) AND NOT EXISTS (SELECT 1 FROM dbo.Inventory iX WHERE iX.LocationID = 4 AND iX.ProductID = dbo.Inventory.ProductID AND iX.InventoryID <> dbo.Inventory.InventoryID)",
+          "expected_rows": 8807,
+          "verify_sql": "SELECT ISNULL(SUM(Quantity),0) FROM Inventory WHERE LocationID = 7",
+          "expected_verify": 0,
+          "previewHash": "a0e79b53a1dc9fa02cc5d3516b9ba2ac454da564bd3c4f859fb6d8b6ac604362"
+        }
+      ]
+    }
+  }
+}

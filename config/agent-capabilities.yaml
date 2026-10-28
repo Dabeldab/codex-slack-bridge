@@ -1,0 +1,414 @@
+# AgentChat/direct_codex 2026-08-01T13:50:00Z: enable only tracked Thor support-quality repair handoffs to Taylor.
+# AgentChat/coding_agent 2026-08-03T22:55:08Z: add the fixed guarded Nova location reactivation route.
+# AgentChat/coding_agent 2026-08-06T12:00:00Z: add the fixed Instyle Runway production merge route.
+# AgentChat/direct_codex 2026-07-24T13:45:00Z: enable the typed weekly Yaron
+# metrics and exact-recipient send in the support lane.
+schema_version: 2
+
+global:
+  # Both verified and untrusted child processes receive scrubbed environments;
+  # typed brokers/connectors retain the credentials needed for approved work.
+  child_secret_mode: scrub
+  forbidden_operations:
+    - salesforce.delete_record
+    - maxio.delete_record
+    - chargify.delete_record
+  # The authenticated operator-only Rory lane may execute an exact operator
+  # request through its isolated provider broker. These global names continue
+  # to constrain every delegated/automatic lane.
+  operator_exemptions: [direct_codex]
+  delegation_rule: reduce_only
+  # Only the operator-only Rory lane may administer capability contracts, and
+  # only when the authenticated operator explicitly requests the exact change.
+  # Delegated, scheduled, background, and specialist self-service changes remain
+  # forbidden.
+  agent_may_change_access: operator_only
+  capability_source: authenticated_mcp_registry
+  forbidden_surfaces:
+    - rescue.write
+    - salesforce.apex
+    - salesforce.delete
+    - salesforce.flow
+    - salesforce.metadata
+    - salesforce.permissions
+    - salesforce.settings
+    - salesforce.tooling
+    - salesforce.user_admin
+    - salesforce.workflow
+    - salesforce.arbitrary_rest
+    - salesforce.arbitrary_soql
+    - nova_sql.unapproved_write
+
+lanes:
+  direct_codex:
+    provider: codex_cli
+    allowed_providers: [codex_cli, chatgpt_work_relay]
+    purpose: operator_only_unrestricted_supervisor_and_remote_operations
+    mcp_allowlist: [node_repl, openaiDeveloperDocs, gcp_github_ops, rory_operator_ops, salesforce_operator_ops, zoom_operator_ops]
+    read_surfaces: [routing_metadata, all_agent_health, all_agent_readiness, all_agent_jobs, all_agent_results, public_documentation, local_workspace, gcp, github, salesforce, maxio, chargify, logmein_rescue, zoom, gmail, google_drive, google_docs, google_sheets]
+    write_surfaces: [command_center_all_agent_control, local_workspace, agent_tooling_repository, agent_runtime, gcp, github, salesforce, maxio, chargify, logmein_rescue, zoom, gmail, google_drive, google_docs, google_sheets]
+    operations: [workspace.inspect, workspace.edit, artifact.file_receive, artifact.report_edit_local, artifact.file_return_verified, provider.native_read, provider.native_write, provider.native_delete, provider.native_admin, agent.supervisor.inspect_all, agent.supervisor.dispatch_all, agent.supervisor.recover_all, agent.capability.inspect, agent.capability.change_authorized, agent.tool.repair_operator_originated_gap, agent.tool.create_authorized, agent.tool.test_authorized, agent.tool.publish_authorized, agent.runtime.deploy_authorized, gcp.project_owner, github.operator_token, salesforce.operator, salesforce.account_360.read, salesforce.location_lifecycle_order.preview_no_approval, salesforce.location_lifecycle_order.create_and_verify_no_approval, salesforce.ticket_attachment.status_read, salesforce.ticket_attachment.upload_verified, salesforce.email_template.inventory, salesforce.ticket_email.preview_approved_template, salesforce.ticket_email.send_approved_template, salesforce.ticket_email.preview_company_credentials_347370, salesforce.ticket_email.send_company_credentials_347370, maxio_chargify.operator, logmein_rescue.operator, zoom.operator, zoom.contact_center.support_queue_metrics.read, gmail.operator, google_drive.operator, google_docs.operator, google_sheets.operator]
+    limitations: [operator_only_ingress, no_inbound_agent_handoffs, no_subagents, exclusive_runtime_identity, brokered_credentials_only, exact_operator_request_required, mutation_idempotency_and_readback_required, salesforce_lifecycle_orders_require_typed_classifier, operator_authorized_capability_changes_only, no_delegated_capability_changes, thor_handoffs_support_quality_only]
+    delegates_to: [coding_agent, tickets_agent, billing_agent, claude_agent]
+
+  raw_codex:
+    provider: codex_cli_direct
+    purpose: incident_only_break_glass
+    mcp_allowlist: []
+    read_surfaces: [incident_scoped]
+    write_surfaces: [incident_scoped]
+    operations: [incident.break_glass, artifact.file_receive, artifact.report_edit_local, artifact.file_return_verified]
+    limitations: [incident_only, no_persistent_access, no_gcp_mutations, no_secret_payload_read, no_github_protected_branch_write, no_github_workflow_write, no_github_merge, no_github_admin, no_capability_changes]
+    break_glass_required: true
+    ephemeral_required: true
+    delegates_to: []
+
+  coding_agent:
+    provider: codex_cli
+    allowed_providers: [codex_cli, chatgpt_work_relay]
+    purpose: engineering_cloud_and_platform_operations
+    mcp_allowlist: [node_repl, openaiDeveloperDocs, gcp_github_ops, salesforce_coding_ops, maxio_coding_ops, zoom_coding_ops]
+    read_surfaces: [github, gcp, gmail, local_repositories, maxio, nova_sql, salesforce_scoped, zoom]
+    write_surfaces: [github_guarded_branch, gmail, local_repositories, maxio_approved, nova_sql_approved, salesforce_scoped, zoom_approved]
+    operations:
+      - artifact.file_receive
+      - artifact.report_edit_local
+      - artifact.file_return_verified
+      - salesforce.lookup
+      - salesforce.account_360.read
+      - salesforce.ticket.read
+      - salesforce.support_email_ticket.create_verified
+      - salesforce.ticket.update
+      - salesforce.ticket.resolve
+      - salesforce.ticket_chatter.post_verified
+      - salesforce.ticket_chatter.reply_verified
+      - salesforce.ticket_internal_request.post_tagged_verified
+      - salesforce.ticket_email.read_log
+      - salesforce.email_template.inventory
+      - salesforce.ticket_email.preview_approved_template
+      - salesforce.ticket_email.send_approved_template
+      - salesforce.ticket_contact_email.update_linked_verified
+      - salesforce.ticket_attachment.status_read
+      - salesforce.ticket_attachment.upload_verified
+      - salesforce.location_lifecycle_order.preview_no_approval
+      - salesforce.location_lifecycle_order.create_and_verify_no_approval
+      - salesforce.billing_account.read
+      - salesforce.billing_account.locations_read
+      - salesforce.billing_account.orders_read
+      - salesforce.billing_account.flat_rate_update
+      - salesforce.location.bill_amount_update_verified
+      - salesforce.account_fake_classification.preview
+      - salesforce.account_fake_classification.apply_verified
+      - salesforce.billing_location_alignment.preview
+      - salesforce.billing_location_alignment.apply_verified
+      - salesforce.billing_structure.read
+      - salesforce.billing_structure_alignment.preview
+      - salesforce.billing_structure_alignment.apply_verified
+      - nova_billing.locations.read_authoritative
+      - github.read
+      - github.publish_guarded_branch
+      - github.open_pull_request
+      - gcp.read
+      - gmail.read
+      - gmail.authorized_write
+      - maxio.read
+      - maxio.tax_report
+      - maxio.approved_write
+      - maxio.subscription_creation.preview_future_no_initial_charge
+      - maxio.subscription_creation.apply_future_no_initial_charge_verified
+      - maxio.location_custom_fields.read
+      - maxio.location_custom_fields.preview
+      - maxio.location_custom_fields.apply_verified
+      - maxio.subscription_location_metadata.read
+      - maxio.subscription_location_mapping.preview
+      - maxio.subscription_location_mapping.apply_verified
+      - maxio.component_payment_recovery.preview_isolated_allocation
+      - maxio.component_payment_recovery.apply_no_credit_full_charge_dunning_verified
+      - nova_sql.read
+      - nova_sql.preflight
+      - nova_sql.bounded_select
+      - nova_sql.invoice_spare.deep_read
+      - nova_sql.data_move.bounded_cross_account_read
+      - nova_sql.approved_write
+      - nova_sql.data_move.guarded_set_based_write
+      - nova_sql.account_copy.preview
+      - nova_sql.account_copy.status
+      - nova_sql.account_copy.execute
+      - nova_sql.guarded_update
+      - nova_sql.guarded_insert
+      - nova_sql.temporary_table
+      - nova_sql.table_restore.preview
+      - nova_sql.table_restore.execute
+      - nova_sql.locations_feature_columns.preview
+      - nova_sql.locations_feature_columns.execute
+      - nova_sql.kit_upgrade.preview
+      - nova_sql.kit_upgrade.execute
+      - nova_sql.location_region.update_verified
+      - nova_sql.location_reactivation.update_verified
+      - nova_sql.location_layaway.enable_verified
+      - nova_sql.instyle_demo_sync.preview
+      - nova_sql.instyle_demo_sync.status
+      - nova_sql.instyle_demo_sync.execute
+      - nova_sql.instyle_runway_merge.preview
+      - nova_sql.instyle_runway_merge.status
+      - nova_sql.instyle_runway_merge.execute
+      - nova_sql.oklahoma_hawaii_catalog_replace.preview
+      - nova_sql.oklahoma_hawaii_catalog_replace.status
+      - nova_sql.oklahoma_hawaii_catalog_replace.execute
+      - nova_sql.tool_implementation.author
+      - nova_sql.tool_implementation.test
+      - nova_sql.tool_implementation.publish_for_review
+      - nova_sql.tool_promotion.preview_guarded
+      - nova_sql.tool_promotion.merge_guarded
+      - nova_sql.runtime_release.preview_pinned
+      - nova_sql.runtime_release.apply_successful_build
+      - zoom.read
+      - zoom.contact_center.support_queue_metrics.read
+      - zoom.authorized_write
+      - zoom.team_chat.resolve_julio_or_wiko_request
+      - zoom.team_chat.send_julio_or_wiko_request_verified
+    limitations: [support_ticket_record_types_only, no_generic_salesforce_ticket_create, no_generic_salesforce_order_write, no_generic_salesforce_location_write, billing_alignment_writes_require_existing_billing_ticket, salesforce_email_sender_server_owned_by_registry, no_company_credentials_email_route, employee_requests_salesforce_first, zoom_request_dm_julio_wiko_only, no_salesforce_admin, no_unapproved_provider_write, no_unbounded_sql_read, no_delete_sql, fixed_oklahoma_hawaii_catalog_replace_is_only_delete_exception, no_drop_sql, no_arbitrary_sql_alter, only_typed_reviewed_sql_operations, mandatory_sql_target_backup, no_arbitrary_capability_changes, no_credential_or_lane_scope_changes, operator_request_required_for_release, guarded_sql_tool_promotion_only]
+    delegates_to: [tickets_agent, billing_agent]
+
+  claude_agent:
+    provider: codex_cli
+    allowed_providers: [codex_cli, chatgpt_work_relay]
+    purpose: support_quality_audit_and_weekly_meeting_agenda
+    mcp_allowlist: [rescue_console, zoom_quality_ops, salesforce_ticket_reads, google_drive_support_reads]
+    read_surfaces: [zoom_support_quality_readonly, zoom_team_chat_history, zoom_docs_archives, zoom_meeting_notes, rescue_readonly, salesforce_ticket_readonly, salesforce_report_totals_readonly, google_drive_support_readonly, google_docs_support_readonly, google_sheets_support_readonly, sanitized_prior_quality_summaries]
+    write_surfaces: [zoom_explicit_operator_message, zoom_fixed_ghostbusters_overview]
+    operations:
+      - artifact.file_receive
+      - artifact.report_edit_local
+      - artifact.file_return_verified
+      - zoom.quality.voice_engagements.read
+      - zoom.contact_center.support_queue_metrics.read
+      - zoom.quality.agent_performance.read
+      - zoom.quality.recordings.read
+      - zoom.quality.transcript.read_transient
+      - zoom.team_chat.channels.read
+      - zoom.team_chat.history.read
+      - zoom.docs.archives.read
+      - zoom.docs.archive_content.read_transient
+      - zoom.team_chat.explicit_recipient.resolve
+      - zoom.team_chat.explicit_operator_message.send_verified
+      - zoom.ghostbusters_overview.read
+      - zoom.ghostbusters_overview.update_public_verified
+      - rescue.auth.status
+      - rescue.sessions.read
+      - rescue.performance.read
+      - rescue.chatlogs.read
+      - salesforce.lookup
+      - salesforce.account_360.read
+      - salesforce.ticket.list_open
+      - salesforce.weekly_ticket_totals.read
+      - salesforce.ticket.read
+      - salesforce.ticket.feed.read
+      - salesforce.ticket.email_log.read
+      - google_drive.support_files.list
+      - google_drive.support_file.read
+      - google_docs.support_document.read
+      - google_sheets.support_values.read
+      - support_quality.gateway_ticket_projection.consume
+      - support_quality.result.return_for_gateway_validation
+      - support_quality.tooling_or_registry_repair.handoff_tracked
+    limitations:
+      - no_anthropic_provider
+      - no_gmail
+      - no_ticket_work
+      - no_review_packets
+      - no_customer_messages
+      - no_zoom_admin
+      - zoom_send_requires_explicit_operator_request
+      - overview_public_content_only
+      - overview_fixed_document_only
+      - no_rescue_mutation
+      - no_raw_transcript_persistence
+      - no_provider_credentials
+      - no_google_workspace_mutation
+      - no_capability_changes
+      - thor_handoffs_support_quality_only
+      - support_quality_results_to_command_center_only
+    delegates_to: [coding_agent]
+
+  tickets_agent:
+    provider: codex_cli
+    allowed_providers: [codex_cli, chatgpt_work_relay]
+    purpose: support_tickets_and_customer_operations
+    mcp_allowlist: [openaiDeveloperDocs, rescue_console, salesforce_support_ops, zoom_support_ops]
+    read_surfaces: [salesforce_scoped, rescue_readonly, gmail, knowledge_base, nova_sql, zoom_support]
+    write_surfaces: [salesforce_scoped, gmail, approved_customer_messages, zoom_verified_julio_wiko_request, zoom_verified_yaron_weekly_report]
+    operations:
+      - artifact.file_receive
+      - artifact.report_edit_local
+      - artifact.file_return_verified
+      - rescue.auth.status
+      - rescue.sessions.read
+      - rescue.performance.read
+      - rescue.chatlogs.read
+      - salesforce.lookup
+      - salesforce.account_360.read
+      - salesforce.ticket.read
+      - salesforce.ticket_board.read_all_record_types
+      - salesforce.weekly_ticket_totals.read
+      - salesforce.ticket.create
+      - salesforce.ticket.update
+      - salesforce.ticket.resolve
+      - salesforce.ticket_chatter.post_verified
+      - salesforce.ticket_chatter.reply_verified
+      - salesforce.ticket_internal_request.post_tagged_verified
+      - salesforce.ticket_email.read_log
+      - salesforce.email_template.inventory
+      - salesforce.ticket_email.preview_approved_template
+      - salesforce.ticket_email.send_approved_template
+      - salesforce.ticket_email.preview_company_credentials_347370
+      - salesforce.ticket_email.send_company_credentials_347370
+      - salesforce.ticket_contact_email.update_linked_verified
+      - salesforce.ticket_attachment.status_read
+      - salesforce.ticket_attachment.upload_verified
+      - salesforce.ticket_pdf.status_read
+      - salesforce.ticket_pdf.upload_verified
+      - gmail.read
+      - gmail.authorized_write
+      - nova_sql.read
+      - nova_sql.preflight
+      - nova_sql.bounded_select
+      - nova_sql.invoice_spare.deep_read
+      - zoom.support_read
+      - zoom.contact_center.support_queue_metrics.read
+      - zoom.team_chat.resolve_julio_or_wiko_request
+      - zoom.contact_center.support_queue_metrics.read
+      - zoom.team_chat.send_julio_or_wiko_request_verified
+      - zoom.weekly_support_metrics_read
+      - zoom.weekly_yaron_report_send_verified
+    limitations: [support_ticket_write_record_types_only, billing_ticket_read_only_for_board_projection, salesforce_email_support_sender_only, employee_requests_salesforce_first, zoom_request_dm_julio_wiko_only, no_salesforce_order_write, no_salesforce_location_write, no_rescue_writes, no_salesforce_admin, no_unapproved_provider_write, no_unbounded_sql_read, no_nova_sql_writes, route_sql_mutations_to_coding_agent, no_zoom_admin, no_capability_changes]
+    delegates_to: [coding_agent, billing_agent]
+
+  billing_agent:
+    # AgentChat/coding_agent 2026-08-03T23:30:00Z
+    provider: codex_cli
+    allowed_providers: [codex_cli, chatgpt_work_relay]
+    purpose: billing_and_finance_safe_customer_operations
+    mcp_allowlist: [openaiDeveloperDocs, salesforce_billing_ops, maxio_billing_ops, zoom_billing_ops]
+    read_surfaces: [maxio, chargify, nova_billing, salesforce_scoped, gmail, nova_sql, zoom_recipient_lookup]
+    write_surfaces: [maxio_approved, chargify_approved, nova_billing_approved, salesforce_scoped, approved_customer_messages, zoom_verified_julio_wiko_request]
+    operations:
+      - artifact.file_receive
+      - artifact.report_edit_local
+      - artifact.file_return_verified
+      - salesforce.lookup
+      - salesforce.account_360.read
+      - salesforce.ticket.read
+      - salesforce.ticket.create
+      - salesforce.ticket.update
+      - salesforce.ticket_payment_card_redaction.preview
+      - salesforce.ticket_payment_card_redaction.apply_verified
+      - salesforce.ticket.resolve
+      - salesforce.ticket_chatter.post_verified
+      - salesforce.ticket_chatter.reply_verified
+      - salesforce.ticket_internal_request.post_tagged_verified
+      - salesforce.location.bill_amount_update_verified
+      - salesforce.billing_account.read
+      - salesforce.billing_account.locations_read
+      - salesforce.billing_account.orders_read
+      - salesforce.billing_account.flat_rate_update
+      - salesforce.billing_account.flat_rate_clear_expected
+      - salesforce.location.integrated_gateway_update_verified
+      - salesforce.account_fake_classification.preview
+      - salesforce.account_fake_classification.apply_verified
+      - salesforce.billing_location_alignment.preview
+      - salesforce.billing_location_alignment.apply_verified
+      - salesforce.billing_structure.read
+      - salesforce.billing_structure_alignment.preview
+      - salesforce.billing_structure_alignment.apply_verified
+      - nova_billing.locations.read_authoritative
+      - salesforce.account_closure.preview
+      - salesforce.account_closure.apply_verified
+      - salesforce.account_cancellation_order.preview
+      - salesforce.account_cancellation_order.create_and_verify_provider_disposition
+      - salesforce.location_cancellation_order.preview
+      - salesforce.location_cancellation_order.create_per_subscription_and_verify_provider_disposition
+      - salesforce.location_lifecycle_order.preview_no_approval
+      - salesforce.location_lifecycle_order.create_and_verify_no_approval
+      - salesforce.account_cancellation_chatter.post_verified
+      - salesforce.account_cancellation_pdf.status_read
+      - salesforce.account_cancellation_pdf.upload_verified
+      - salesforce.billing_closure_email_ticket.create_verified
+      - salesforce.account_cancellation_email_attachment.status_read
+      - salesforce.account_cancellation_email_attachment.upload_verified
+      - salesforce.account_cancellation_confirmation_email.send_primary_contact_verified
+      - salesforce.ticket_email.read_log
+      - salesforce.email_template.inventory
+      - salesforce.ticket_email.preview_approved_template
+      - salesforce.ticket_email.send_approved_template
+      - salesforce.ticket_email.send_credit_confirmation_template
+      - salesforce.ticket_email.send_refund_confirmation_template
+      - salesforce.ticket_contact_email.update_linked_verified
+      - salesforce.ticket_attachment.status_read
+      - salesforce.ticket_attachment.upload_verified
+      - salesforce.ticket_pdf.status_read
+      - salesforce.ticket_pdf.upload_verified
+      - maxio.read
+      - maxio.tax_report
+      - maxio.approved_write
+      - maxio.component_allocation.preview
+      - maxio.component_allocation.apply_no_financial_effect
+      - maxio.location_allocation_reconciliation.read_complete
+      - maxio.subscription_account_balances.read
+      - maxio.manual_service_credit.preview
+      - maxio.manual_service_credit.apply_verified
+      - maxio.subscription_coupon.preview
+      - maxio.subscription_coupon.apply_verified
+      - maxio.subscription_product_change.preview_same_family_no_proration
+      - maxio.subscription_product_change.apply_verified_preserve_billing_state
+      - maxio.nova_integrated_products.read_four_providers
+      - maxio.nova_integrated_promo_credit.preview_isolated_location
+      - maxio.nova_integrated_promo_credit.apply_three_months_verified
+      - maxio.component_payment_recovery.preview_isolated_allocation
+      - maxio.component_payment_recovery.apply_no_credit_full_charge_dunning_verified
+      - maxio.invoice_refund.preview
+      - maxio.invoice_refund.apply_once_verified
+      - maxio.subscription_creation.preview_future_no_initial_charge
+      - maxio.subscription_creation.apply_future_no_initial_charge_verified
+      - maxio.location_custom_fields.read
+      - maxio.location_custom_fields.preview
+      - maxio.location_custom_fields.apply_verified
+      - maxio.subscription_location_metadata.read
+      - maxio.subscription_location_mapping.preview
+      - maxio.subscription_location_mapping.apply_verified
+      - maxio.subscription_cancellation.preview
+      - maxio.subscription_cancellation.apply_immediate_zero_balance
+      - maxio.subscription_payment_profile_assignment.preview_exact_customer
+      - maxio.subscription_payment_profile_assignment.apply_verified
+      - maxio.payment_profile_update_request.preview_secure_email
+      - maxio.payment_profile_update_request.apply_once
+      - maxio.subscription_reactivation.preview_exact_charge
+      - maxio.subscription_reactivation.apply_once_charge_and_payment_verified_fail_closed
+      - maxio.subscription_no_charge_reactivation.preview_exact_credit_and_future_bill_date
+      - maxio.subscription_no_charge_reactivation.apply_credit_resume_schedule_verified
+      - rainfall.account.lookup
+      - rainfall.billing_location.add
+      - rainfall.billing_location.close
+      - rainfall.billing_location.reactivate
+      - rainfall.billing_location.activate_trial
+      - rainfall.billing_location.rate_normalize
+      - rainfall.payment_profile.read_and_assign
+      - rainfall.payment.retry
+      - rainfall.invoice.read_and_deliver
+      - rainfall.subscription.cancel
+      - rainfall.account.cancel
+      - rainfall.salesforce_lifecycle_order.sync_without_approval
+      - rainfall.salesforce_account_and_location.sync
+      - nova_billing.read
+      - nova_billing.approved_write
+      - gmail.read
+      - gmail.authorized_write
+      - nova_sql.read
+      - nova_sql.preflight
+      - nova_sql.bounded_select
+      - nova_sql.invoice_spare.deep_read
+      - zoom.team_chat.resolve_julio_or_wiko_request
+      - zoom.team_chat.send_julio_or_wiko_request_verified
+    limitations: [billing_ticket_record_types_plus_typed_cross_lane_account_cancellation_only, salesforce_email_billing_sender_only, no_company_credentials_email_route, employee_requests_salesforce_first, zoom_request_dm_julio_wiko_only, no_salesforce_admin, no_unapproved_provider_write, no_raw_payment_data_processing, no_unbounded_sql_read, no_nova_sql_writes, route_sql_mutations_to_coding_agent, no_capability_changes]
+    approval_gated_operations: [refund, credit, rate_change, subscription_change, subscription_cancellation, account_closure, ticket_closure, customer_send]
+    delegates_to: [coding_agent, tickets_agent]

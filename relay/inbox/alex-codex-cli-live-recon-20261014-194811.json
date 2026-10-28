@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "task_id": "alex-codex-cli-live-recon-20261014-194811",
+  "agent": "alex",
+  "title": "Verified scoped Salesforce support recon",
+  "instruction": "Perform a bounded read-only support-lane readiness check. You must invoke the approved MCP tool salesforce_support_ops.salesforce_ticket_list_open with limit 200. Return only sanitized aggregate diagnostics: authentication success or failure, query success or failure, total open count, counts by approved record-type label, configured result limit, truncation status, and whether any operational blocker remains. Do not hand this task to another agent. Do not include customer names, ticket numbers, Salesforce IDs, emails, descriptions, raw rows, credentials, or other private data. Do not mutate Salesforce, Nova SQL, Rescue, email, or any provider.",
+  "reasoning_provider": "codex_cli",
+  "timeout_seconds": 900,
+  "created_at": "2026-10-14T19:48:11Z"
+}

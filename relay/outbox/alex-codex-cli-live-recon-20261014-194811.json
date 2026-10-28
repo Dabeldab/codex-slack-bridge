@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-14T19:52:38Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-14T19:52:35.943470+00:00",
+    "created_at": "2026-10-14T19:48:38.759508+00:00",
+    "error": "",
+    "job_id": "cc-20261014T194838Z-9d5b565332",
+    "message": "",
+    "ok": true,
+    "result": "COMPLETED_WITH_ISSUES\nThe coding_agent handoff job cc-20261014T195120Z-6e4f4db804 finished and returned its verified downstream result to the originating request.\n\nDownstream result:\n- Authentication: failure\n- Query: failure\n- Total open count: unavailable\n- Counts by approved record-type label: unavailable\n- Configured result limit: 200\n- Truncation status: unknown\n- Operational blocker: yes — approved Salesforce support connector unavailable",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-14T19:48:38.764857+00:00",
+    "status": "completed_with_issues",
+    "terminal": true
+  },
+  "job_id": "cc-20261014T194838Z-9d5b565332",
+  "relay_status": "completed",
+  "status": "completed_with_issues",
+  "submitted_at": "2026-10-14T19:48:38Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-194811",
+  "version": 1
+}

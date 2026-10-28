@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "task_id": "alex-postdeploy-readonly-20261020-70dffde-01",
+  "agent": "alex",
+  "title": "Post-deployment Salesforce read-only readiness",
+  "instruction": "Post-deployment READ-ONLY acceptance check for Alex/tickets_agent using Codex CLI. Via approved salesforce_support_ops MCP invoke salesforce_ticket_list_open with limit 25. If native MCP registration is unavailable, use only the existing job-scoped approved broker CLI fallback and report which mode was used. Optionally check nova_sql_capabilities metadata without querying any customer database. Return only sanitized authentication/query success or failure, aggregate open count, limit/truncation, broker mode, SQL capabilities ready/unavailable, and final status. No customer names, account info, ticket identifiers, descriptions, emails, private rows, secrets, log dumps, connection strings, or raw evidence in GitHub. Do not mutate Salesforce, Nova SQL, GCP, files, email, or any provider; do not delegate. Begin COMPLETED only if the Salesforce query truly succeeded, otherwise BLOCKED, and indicate why with safe classification.",
+  "reasoning_provider": "codex_cli",
+  "timeout_seconds": 600,
+  "created_at": "2026-10-20T02:22:01.610Z"
+}

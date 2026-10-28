@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-14T19:21:17Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-14T19:21:14.669579+00:00",
+    "created_at": "2026-10-14T19:19:31.654661+00:00",
+    "error": "",
+    "job_id": "cc-20261014T191931Z-ab15b0a5a2",
+    "message": "",
+    "ok": true,
+    "result": "COMPLETED_WITH_ISSUES\n\n- Authentication: failed before authentication\n- Query: failed—the approved Salesforce queue tool is unavailable in this runtime\n- Total open count: unavailable\n- Counts by record type: unavailable\n- Configured result limit: unavailable\n- Truncation status: undetermined\n- Operational blocker: yes; restore the approved Salesforce MCP tool, then rerun the recon\n\nNo data was mutated or exposed.",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-14T19:19:31.660139+00:00",
+    "status": "completed_with_issues",
+    "terminal": true
+  },
+  "job_id": "cc-20261014T191931Z-ab15b0a5a2",
+  "relay_status": "completed",
+  "status": "completed_with_issues",
+  "submitted_at": "2026-10-14T19:19:29Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-191903",
+  "version": 1
+}

@@ -1,0 +1,103 @@
+steps:
+  - id: bridge-tests
+    name: python:3.13-bookworm
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        install_root=/tmp/codex-slack-bridge-install
+        scoped_root=/tmp/scoped-operations-mcp-install
+        mkdir -p "$install_root" "$scoped_root"
+        cp pyproject.toml "$install_root/"
+        cp -a src "$install_root/"
+        cp tools/scoped-operations-mcp/pyproject.toml "$scoped_root/"
+        cp -a tools/scoped-operations-mcp/src "$scoped_root/"
+        python -m pip install --disable-pip-version-check \
+          "$install_root" \
+          "$scoped_root" \
+          pytest
+        PYTHONPATH=/workspace/src:/workspace/tools/scoped-operations-mcp/src \
+          python -m pytest tests -q
+    waitFor: ['-']
+
+  - id: scoped-provider-tests
+    name: python:3.13-bookworm
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        bridge_root=/tmp/codex-slack-bridge-install
+        scoped_root=/tmp/scoped-operations-mcp-install
+        rescue_root=/tmp/rescue-console-mcp-install
+        mkdir -p "$bridge_root" "$scoped_root" "$rescue_root"
+        cp pyproject.toml "$bridge_root/"
+        cp -a src "$bridge_root/"
+        cp tools/scoped-operations-mcp/pyproject.toml "$scoped_root/"
+        cp -a tools/scoped-operations-mcp/src "$scoped_root/"
+        cp tools/rescue-console-mcp/pyproject.toml "$rescue_root/"
+        cp -a tools/rescue-console-mcp/src "$rescue_root/"
+        python -m pip install --disable-pip-version-check \
+          "$bridge_root" \
+          "$scoped_root[test]" \
+          "$rescue_root[test]"
+        PYTHONPATH=/workspace/src:/workspace/tools/scoped-operations-mcp/src:/workspace/tools/rescue-console-mcp/src \
+          python -m pytest tools/scoped-operations-mcp/tests tools/rescue-console-mcp/tests -q
+    waitFor: ['-']
+
+  - id: package-immutable-runtime
+    name: ubuntu:24.04
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        test -n "$COMMIT_SHA"
+        mkdir -p /artifacts
+        tar \
+          --exclude=.git \
+          --exclude=.pytest_cache \
+          --exclude='*/__pycache__' \
+          --exclude='*.pyc' \
+          --exclude=.env \
+          --exclude=config/ops.env \
+          -C /workspace \
+          -czf "/artifacts/nova-agent-runtime-$COMMIT_SHA.tar.gz" .
+        test -s "/artifacts/nova-agent-runtime-$COMMIT_SHA.tar.gz"
+        sha256sum "/artifacts/nova-agent-runtime-$COMMIT_SHA.tar.gz" \
+          > "/artifacts/nova-agent-runtime-$COMMIT_SHA.sha256"
+    volumes:
+      - name: runtime-artifacts
+        path: /artifacts
+    waitFor:
+      - bridge-tests
+      - scoped-provider-tests
+
+  - id: publish-private-runtime
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        object="gs://${_SOURCE_BUCKET}/${_SOURCE_PREFIX}/$COMMIT_SHA.tar.gz"
+        if ! gcloud storage objects describe "$object" >/dev/null 2>&1; then
+          gcloud storage cp \
+            --custom-metadata="source-commit=$COMMIT_SHA,source-repository=$REPO_NAME" \
+            "/artifacts/nova-agent-runtime-$COMMIT_SHA.tar.gz" \
+            "$object"
+        fi
+        gcloud storage objects describe "$object" \
+          --format='value(name,size,metadata.source-commit)'
+    volumes:
+      - name: runtime-artifacts
+        path: /artifacts
+    waitFor:
+      - package-immutable-runtime
+
+substitutions:
+  _SOURCE_BUCKET: nova-agent-runtime-source-63366976264
+  _SOURCE_PREFIX: releases
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+timeout: 1800s

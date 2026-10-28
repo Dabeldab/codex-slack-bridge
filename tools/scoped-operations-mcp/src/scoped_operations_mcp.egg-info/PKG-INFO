@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: scoped-operations-mcp
+Version: 0.1.0
+Summary: Typed least-privilege provider operations for Nova agents.
+Requires-Python: >=3.11
+Requires-Dist: cryptography<47,>=43
+Requires-Dist: google-auth<3,>=2.30
+Requires-Dist: mcp[cli]==1.28.1
+Requires-Dist: openpyxl<4,>=3.1
+Requires-Dist: pyodbc<6,>=5
+Requires-Dist: python-dotenv<2,>=1.0
+Requires-Dist: pywin32>=306; platform_system == "Windows"
+Requires-Dist: requests<3,>=2.31
+Provides-Extra: test
+Requires-Dist: pytest<10,>=8; extra == "test"
+Requires-Dist: pytest-asyncio<1,>=0.24; extra == "test"
+Requires-Dist: pyyaml<7,>=6; extra == "test"

@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-20T02:25:11Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-20T02:25:08.895205+00:00",
+    "created_at": "2026-10-20T02:22:17.103469+00:00",
+    "error": "tickets_agent command center job failed: RuntimeError: Codex worker exited with code 1. Codex could not complete this run (exit 1; category=authentication_error). Completion was not verified. Inspect the private process trace before retrying.",
+    "job_id": "cc-20261020T022217Z-0bc02faf85",
+    "message": "",
+    "ok": true,
+    "result": "tickets_agent command center job failed: RuntimeError: Codex worker exited with code 1. Codex could not complete this run (exit 1; category=authentication_error). Completion was not verified. Inspect the private process trace before retrying.",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-20T02:22:17.112718+00:00",
+    "status": "failed",
+    "terminal": true
+  },
+  "job_id": "cc-20261020T022217Z-0bc02faf85",
+  "relay_status": "completed",
+  "status": "failed",
+  "submitted_at": "2026-10-20T02:22:13Z",
+  "task_id": "alex-postdeploy-readonly-20261020-70dffde-01",
+  "version": 1
+}

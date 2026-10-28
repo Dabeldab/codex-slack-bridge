@@ -1,0 +1,29 @@
+{
+  "agent": "tickets_agent",
+  "agent_label": "Alex",
+  "bridge_job_id": 1,
+  "completed_at": "2026-10-14T19:04:23Z",
+  "duplicate": false,
+  "error": null,
+  "job": {
+    "agent": "tickets_agent",
+    "bridge_job_id": 1,
+    "completed_at": "2026-10-14T19:04:20.076088+00:00",
+    "created_at": "2026-10-14T18:59:04.980396+00:00",
+    "error": "",
+    "job_id": "cc-20261014T185904Z-391e582012",
+    "message": "",
+    "ok": true,
+    "result": "COMPLETED_WITH_ISSUES\nThe coding_agent handoff job cc-20261014T190221Z-a2b60934f8 finished and returned its verified downstream result to the originating request.\n\nDownstream result:\n- Authentication: Failure — approved Salesforce broker was not callable, so authentication was not reached.\n- Query: Failure.\n- Total open: Unavailable.\n- `1. NOVA Classic`: Unavailable.\n- `2. Nova Wave`: Unavailable.\n- `3. Billing`: Unavailable.\n- Configured result limit: 200.\n- Truncation: Unknown; no live result returned.\n- Operational blocker: Yes — the scoped Salesforce tool surface is missing from this session. No systems were mutated.",
+    "source_type": "agent-direct-chat",
+    "started_at": "2026-10-14T18:59:04.984580+00:00",
+    "status": "completed_with_issues",
+    "terminal": true
+  },
+  "job_id": "cc-20261014T185904Z-391e582012",
+  "relay_status": "completed",
+  "status": "completed_with_issues",
+  "submitted_at": "2026-10-14T18:59:02Z",
+  "task_id": "alex-codex-cli-live-recon-20261014-185836",
+  "version": 1
+}

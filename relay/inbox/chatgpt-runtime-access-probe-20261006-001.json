@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "task_id": "chatgpt-runtime-access-probe-20261006-001",
+  "agent": "taylor",
+  "title": "Read-only Nova runtime access probe",
+  "instruction": "Perform a read-only diagnostic of the live Nova runtime.\nDo not access customer, billing, Salesforce, Maxio, Gmail, Zoom, Rescue, or other customer-facing data.\nDo not modify, deploy, restart, authenticate, or change any resource.\nReport only:\n1. whether this request reached the live Command Center successfully;\n2. runtime mode and host/service identity if available;\n3. deployed source commit/SHA if available;\n4. active agent roster and configured provider for Taylor, Jamie, and Alex;\n5. whether Codex CLI is installed, its version if available, and whether Taylor's Codex login reports authenticated, without returning any credential material;\n6. whether the runtime appears to be using Codex CLI or the GitHub/ChatGPT reasoning relay.\nReturn a concise diagnostic. Do not include secret values, tokens, auth files, environment variable values, customer information, ticket contents, or external platform data.",
+  "timeout_seconds": 900
+}
