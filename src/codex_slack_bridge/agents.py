@@ -2773,9 +2773,13 @@ def _agent_sandbox_dir(agent_name: str, agent: dict[str, Any]) -> str:
 
 
 def _credential_vault_path(agent: dict[str, Any]) -> str:
-    path = _resolve_config_path(agent.get("credential_vault_path") or "data/agent_vault")
-    path.mkdir(parents=True, exist_ok=True)
-    return str(path)
+    """Resolve a vault path without creating it during prompt construction.
+
+    Prompt assembly and read-only capability checks must never create an
+    operator-specific directory. Credential-writing workflows own directory
+    creation when they actually need it.
+    """
+    return str(_resolve_config_path(agent.get("credential_vault_path") or "data/agent_vault"))
 
 
 def _credential_vault_tool_line(agent: dict[str, Any]) -> str:
