@@ -198,7 +198,6 @@ def run_singapore_ftp_fast(
                 # whether a valid customer non-submission notice reaches Julio.
                 known_servers_only=False,
                 servers=canonical_server_records,
-                include_read_since_days=14,
                 exclude_message_ids=processed | claimed_source_ids,
             )
             records = list(getattr(notice_batch, "records", []) or [])
