@@ -63,6 +63,7 @@ def run_singapore_ftp_fast(
     recipient_hint: str = "Julio",
     ops_env_path: str | Path = "config/ops.env",
     include_non_submissions: bool = False,
+    send_reminders: bool = True,
     reactivation_target: str = "",
 ) -> dict[str, Any]:
     """Run Grab & Upload; optionally perform a separately requested review."""
@@ -221,6 +222,10 @@ def run_singapore_ftp_fast(
             new_items, reminder_groups = _partition_date_delivery_items(
                 discovered_items,
                 delivery_history,
+            )
+            reminder_groups = _suppress_reminders_if_disabled(
+                reminder_groups,
+                send_reminders=send_reminders,
             )
             candidate_items, candidate_deferred, selection_unresolved = (
                 _select_zoom_delivery_batch(new_items)
@@ -475,6 +480,7 @@ def run_singapore_ftp_fast(
             upload_result=upload_result,
             config_change_results=config_change_results,
             non_submission_reviewed=include_non_submissions,
+            nonsubmission_reminders_suppressed=not send_reminders,
             mailbox_details=mailbox_details,
             retirement_policy=retirement_policy,
             zero_sales_count=len(zero_sales_message_ids),
@@ -1038,6 +1044,7 @@ def _build_cache(
     upload_result: dict[str, Any],
     config_change_results: list[dict[str, Any]],
     non_submission_reviewed: bool,
+    nonsubmission_reminders_suppressed: bool = False,
     mailbox_details: list[dict[str, Any]] | None = None,
     retirement_policy: dict[str, Any] | None = None,
     zero_sales_count: int = 0,
@@ -1238,6 +1245,8 @@ def _build_cache(
                 else "Julio message is blocked."
             )
         )
+        if nonsubmission_reminders_suppressed:
+            summary += " Non-submission reminder replies are disabled."
         if zero_sales_count:
             summary += f" Auto-read {zero_sales_marked_read} pure zero-sale notice(s) with Gmail readback."
         if deferred_count:
@@ -1267,6 +1276,7 @@ def _build_cache(
             "results": safe_config_change_results,
         },
         "nonsubmissions": items,
+        "nonsubmissionRemindersSuppressed": bool(nonsubmission_reminders_suppressed),
         "deferredNonsubmissionCount": deferred_count,
         "deferredSourceMessageIds": deferred_source_ids,
         "unresolvedNonsubmissions": safe_unresolved_items,
@@ -1735,6 +1745,22 @@ def _write_date_delivery_history(path: Path, history: dict[str, Any]) -> None:
             "dates": dict(history.get("dates") or {}),
         },
     )
+
+
+def _suppress_reminders_if_disabled(
+    reminder_groups: dict[str, list[dict[str, Any]]],
+    *,
+    send_reminders: bool,
+) -> dict[str, list[dict[str, Any]]]:
+    """Drop repeated-machine reminder groups when the operator opts out.
+
+    Reminders are a convenience nudge, not a control. When suppressed the
+    unresolved machine/date items simply go quiet instead of being re-sent;
+    new notices still create fresh review items.
+    """
+    if send_reminders:
+        return reminder_groups
+    return {}
 
 
 def _partition_date_delivery_items(
@@ -2500,6 +2526,7 @@ def main() -> int:
     parser.add_argument("--server-patch-path", default="")
     parser.add_argument("--acknowledge-cached-auth-failures", action="store_true")
     parser.add_argument("--include-non-submissions", action="store_true")
+    parser.add_argument("--disable-nonsubmission-reminders", action="store_true")
     parser.add_argument("--reactivation-target", default="")
     parser.add_argument("--preflight", action="store_true")
     args = parser.parse_args()
@@ -2532,6 +2559,7 @@ def main() -> int:
             recipient_hint=args.recipient_hint,
             ops_env_path=args.ops_env_path,
             include_non_submissions=args.include_non_submissions,
+            send_reminders=not args.disable_nonsubmission_reminders,
             reactivation_target=args.reactivation_target,
         )
     response = {"ok": True, "status": result.get("status"), "summary": result.get("summary", "")}

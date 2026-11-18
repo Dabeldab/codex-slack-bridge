@@ -30,6 +30,7 @@ from codex_slack_bridge.singapore_ftp_runner import (
     _safe_upload_details,
     _send_zoom_message,
     _select_zoom_delivery_batch,
+    _suppress_reminders_if_disabled,
     _write_non_submission_outbox,
     _write_processed_message_ids,
     _write_date_delivery_history,
@@ -1632,3 +1633,42 @@ def test_headless_gmail_auth_never_starts_interactive_flow(tmp_path):
 
     with pytest.raises(RuntimeError, match="interactive reauthentication"):
         _authenticate_gmail_noninteractive(tmp_path, gmail_module)
+
+
+def test_disable_nonsubmission_reminders_flag_reaches_runner(tmp_path, monkeypatch):
+    captured = {}
+
+    def fake_run(**kwargs):
+        captured.clear()
+        captured.update(kwargs)
+        return {"ok": True, "status": "ok", "summary": ""}
+
+    monkeypatch.setattr(singapore_runner, "run_singapore_ftp_fast", fake_run)
+    base = [
+        "prog",
+        "--uploader-root", str(tmp_path),
+        "--server-config-path", str(tmp_path / "servers.json"),
+        "--output-path", str(tmp_path / "out.json"),
+        "--state-dir", str(tmp_path / "state"),
+    ]
+    monkeypatch.setattr(
+        "sys.argv",
+        base + ["--include-non-submissions"],
+    )
+    assert singapore_runner.main() == 0
+    assert captured["send_reminders"] is True
+
+    monkeypatch.setattr(
+        "sys.argv",
+        base + ["--include-non-submissions", "--disable-nonsubmission-reminders"],
+    )
+    assert singapore_runner.main() == 0
+    assert captured["send_reminders"] is False
+
+
+def test_nonsubmission_reminder_suppression_is_operator_opt_out():
+    groups = {
+        "zoom-root": [{"machineId": "8000640", "dates": ["2026-11-18"]}],
+    }
+    assert _suppress_reminders_if_disabled(groups, send_reminders=True) is groups
+    assert _suppress_reminders_if_disabled(groups, send_reminders=False) == {}
